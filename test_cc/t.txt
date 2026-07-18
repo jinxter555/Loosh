@@ -1,0 +1,5 @@
+[Vector[quote, Vector[print, Vector[Vector[noop, a],  , my,  ]], Vector[print, 1, 2, 3]], 
+ Vector[quote, Vector[print, 4, 5, 6], 
+  Vector[print, Vector[Vector[noop, a],  , my,  ] ]
+ ]
+]

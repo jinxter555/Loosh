@@ -1,0 +1,553 @@
+[39m00000 Enter: int main(int, char*[])
+[31m00001 Enter:     LispReader::LispReader(LispExpr *) 
+[31m00001 -msg-       keywords init: 
+[0m[31m00001 Exit:      LispReader
+[0m[32m00002 Enter:     LispExpr::LispExpr()
+[33m00003 Enter:         LispExpr::process_create()
+[34m00004 Enter:             LispExpr::proc_create()
+[35m00005 Enter:                 Node::get_node(size_t& index)
+[35m00005 -msg-                   index: 0
+[0m[35m00005 Exit:                  get_node
+[0m[34m00004 Exit:              process_create
+[0m[33m00003 Exit:          process_create
+[0m[32m00002 Exit:      LispExpr
+[0m[36m00006 Enter:     LispExprInteractive::LispExprInteractive()
+[36m00006 Exit:      Interactive
+[0m[38m00007 Enter:     Commandline::load_files(pipe_1.lisp)
+[90m00008 Enter:         Interactive::load(string cfn)
+[90m00008 -msg-           filename: pipe_1.lisp
+[0m[90m00008 Exit:          load
+[0m[91m00009 Enter:         Interactive::build_program()
+[92m00010 Enter:             LispExpr::build_program(const string&input)
+[92m00010 -msg-               input: module Kernel 
+  def main (x y) 
+    pipe
+      (+ 2 2)
+      (* 4 5)
+      (print " is result \n")
+    end.pipe
+    
+  end.def
+
+
+end.module
+
+[0m[93m00011 Enter:                 LispExpr::eval(Node&process, Lisp::Op op_head, Node::Vector& code_list)
+[93m00011 -msg-                   Infix_input module Kernel 
+  def main (x y) 
+    pipe
+      (+ 2 2)
+      (* 4 5)
+      (print " is result \n")
+    end.pipe
+    
+  end.def
+
+
+end.module
+
+[0m[93m00011 Exit:                  convert_to_infix
+[0m[94m00012 Enter:                 LispReader::is_closurable(const string&token_str) 
+[94m00012 -msg-                   token_str: module
+[0m[95m00013 Enter:                     LispExpr::keyword_to_op()
+[95m00013 -msg-                       lookup input: module
+[0m[95m00013 Exit:                      keyword_to_op
+[0m[94m00012 Exit:                  is_closurable
+[0m[96m00014 Enter:                 LispReader::is_closurable(const string&token_str) 
+[96m00014 -msg-                   token_str: def
+[0m[39m00015 Enter:                     LispExpr::keyword_to_op()
+[39m00015 -msg-                       lookup input: def
+[0m[39m00015 Exit:                      keyword_to_op
+[0m[96m00014 Exit:                  is_closurable
+[0m[31m00016 Enter:                 LispReader::is_closurable(const string&token_str) 
+[31m00016 -msg-                   token_str: pipe
+[0m[32m00017 Enter:                     LispExpr::keyword_to_op()
+[32m00017 -msg-                       lookup input: pipe
+[0m[32m00017 Exit:                      keyword_to_op
+[0m[31m00016 Exit:                  is_closurable
+[0m[33m00018 Enter:                 LispReader::is_closurable(const string&token_str) 
+[33m00018 -msg-                   token_str: (
+[0m[34m00019 Enter:                     LispExpr::keyword_to_op()
+[34m00019 -msg-                       lookup input: (
+[0m[35m00020 Enter:                         Error::ref(Type::KeyNotFound)
+[35m00020 -msg-                           errmsg: key '(' not found in map.
+[0m[35m00020 Exit:                          ref
+[0m[34m00019 -msg-                       Lisp keyword: ( not found , return as scalar
+[0m[34m00019 Exit:                      keyword_to_op
+[0m[33m00018 Exit:                  is_closurable
+[0m[36m00021 Enter:                 LispReader::is_endable(const string&token_str) 
+[36m00021 -msg-                   token_str: )
+[0m[36m00021 Exit:                  is_endable
+[0m[38m00022 Enter:                 LispReader::is_closurable(const string&token_str) 
+[38m00022 -msg-                   token_str: (
+[0m[90m00023 Enter:                     LispExpr::keyword_to_op()
+[90m00023 -msg-                       lookup input: (
+[0m[91m00024 Enter:                         Error::ref(Type::KeyNotFound)
+[91m00024 -msg-                           errmsg: key '(' not found in map.
+[0m[91m00024 Exit:                          ref
+[0m[90m00023 -msg-                       Lisp keyword: ( not found , return as scalar
+[0m[90m00023 Exit:                      keyword_to_op
+[0m[38m00022 Exit:                  is_closurable
+[0m[92m00025 Enter:                 LispReader::is_endable(const string&token_str) 
+[92m00025 -msg-                   token_str: )
+[0m[92m00025 Exit:                  is_endable
+[0m[93m00026 Enter:                 LispReader::is_closurable(const string&token_str) 
+[93m00026 -msg-                   token_str: (
+[0m[94m00027 Enter:                     LispExpr::keyword_to_op()
+[94m00027 -msg-                       lookup input: (
+[0m[95m00028 Enter:                         Error::ref(Type::KeyNotFound)
+[95m00028 -msg-                           errmsg: key '(' not found in map.
+[0m[95m00028 Exit:                          ref
+[0m[94m00027 -msg-                       Lisp keyword: ( not found , return as scalar
+[0m[94m00027 Exit:                      keyword_to_op
+[0m[93m00026 Exit:                  is_closurable
+[0m[96m00029 Enter:                 LispReader::is_endable(const string&token_str) 
+[96m00029 -msg-                   token_str: )
+[0m[96m00029 Exit:                  is_endable
+[0m[39m00030 Enter:                 LispReader::is_closurable(const string&token_str) 
+[39m00030 -msg-                   token_str: end.pipe
+[0m[31m00031 Enter:                     LispExpr::keyword_to_op()
+[31m00031 -msg-                       lookup input: end.pipe
+[0m[32m00032 Enter:                         Error::ref(Type::KeyNotFound)
+[32m00032 -msg-                           errmsg: key 'end.pipe' not found in map.
+[0m[32m00032 Exit:                          ref
+[0m[31m00031 -msg-                       Lisp keyword: end.pipe not found , return as scalar
+[0m[31m00031 Exit:                      keyword_to_op
+[0m[39m00030 Exit:                  is_closurable
+[0m[33m00033 Enter:                 LispReader::is_endable(const string&token_str) 
+[33m00033 -msg-                   token_str: end.pipe
+[0m[34m00034 Enter:                     LispExpr::keyword_to_op()
+[34m00034 -msg-                       lookup input: pipe
+[0m[34m00034 Exit:                      keyword_to_op
+[0m[33m00033 Exit:                  is_endable
+[0m[35m00035 Enter:                 LispReader::is_closurable(const string&token_str) 
+[35m00035 -msg-                   token_str: end.def
+[0m[36m00036 Enter:                     LispExpr::keyword_to_op()
+[36m00036 -msg-                       lookup input: end.def
+[0m[38m00037 Enter:                         Error::ref(Type::KeyNotFound)
+[38m00037 -msg-                           errmsg: key 'end.def' not found in map.
+[0m[38m00037 Exit:                          ref
+[0m[36m00036 -msg-                       Lisp keyword: end.def not found , return as scalar
+[0m[36m00036 Exit:                      keyword_to_op
+[0m[35m00035 Exit:                  is_closurable
+[0m[90m00038 Enter:                 LispReader::is_endable(const string&token_str) 
+[90m00038 -msg-                   token_str: end.def
+[0m[91m00039 Enter:                     LispExpr::keyword_to_op()
+[91m00039 -msg-                       lookup input: def
+[0m[91m00039 Exit:                      keyword_to_op
+[0m[90m00038 Exit:                  is_endable
+[0m[92m00040 Enter:                 LispReader::is_closurable(const string&token_str) 
+[92m00040 -msg-                   token_str: end.module
+[0m[93m00041 Enter:                     LispExpr::keyword_to_op()
+[93m00041 -msg-                       lookup input: end.module
+[0m[94m00042 Enter:                         Error::ref(Type::KeyNotFound)
+[94m00042 -msg-                           errmsg: key 'end.module' not found in map.
+[0m[94m00042 Exit:                          ref
+[0m[93m00041 -msg-                       Lisp keyword: end.module not found , return as scalar
+[0m[93m00041 Exit:                      keyword_to_op
+[0m[92m00040 Exit:                  is_closurable
+[0m[95m00043 Enter:                 LispReader::is_endable(const string&token_str) 
+[95m00043 -msg-                   token_str: end.module
+[0m[96m00044 Enter:                     LispExpr::keyword_to_op()
+[96m00044 -msg-                       lookup input: module
+[0m[96m00044 Exit:                      keyword_to_op
+[0m[95m00043 Exit:                  is_endable
+[0m[39m00045 Enter:                 LispReader::tokenize(string&input)
+[39m00045 -msg-                   input: (module Kernel
+(def main ( x y )
+(pipe
+(+ 2 2)
+(* 4 5)
+(print " is result \n")
+)
+)
+)
+
+[0m[39m00045 Exit:                  tokenize
+[0m[31m00046 Enter:                 LispReader::parse(list<Token>&tokens)
+[32m00047 Enter:                     LispReader::sequence(list<Token>&tokens)
+[32m00047 -msg-                       tokens: [,module,Kernel,(,def,main,(,x,y,),(,pipe,(,+,2,2,),(,*,4,5,),(,print," is result 
+,),),),)]
+[0m[33m00048 Enter:                         LispReader::parse(list<Token>&tokens)
+[33m00048 Exit:                          parse
+[0m[34m00049 Enter:                         LispExpr::keyword_to_op()
+[34m00049 -msg-                           lookup input: module
+[0m[34m00049 Exit:                          keyword_to_op
+[0m[32m00047 -msg-                       Lisp::Op: module
+[0m[35m00050 Enter:                         LispReader::parse(list<Token>&tokens)
+[35m00050 Exit:                          parse
+[0m[36m00051 Enter:                         LispReader::parse(list<Token>&tokens)
+[38m00052 Enter:                             LispReader::sequence(list<Token>&tokens)
+[38m00052 -msg-                               tokens: [,def,main,(,x,y,),(,pipe,(,+,2,2,),(,*,4,5,),(,print," is result 
+,),),),)]
+[0m[90m00053 Enter:                                 LispReader::parse(list<Token>&tokens)
+[90m00053 Exit:                                  parse
+[0m[91m00054 Enter:                                 LispExpr::keyword_to_op()
+[91m00054 -msg-                                   lookup input: def
+[0m[91m00054 Exit:                                  keyword_to_op
+[0m[38m00052 -msg-                               Lisp::Op: def
+[0m[92m00055 Enter:                                 LispReader::parse(list<Token>&tokens)
+[92m00055 Exit:                                  parse
+[0m[93m00056 Enter:                                 LispReader::parse(list<Token>&tokens)
+[94m00057 Enter:                                     LispReader::sequence(list<Token>&tokens)
+[94m00057 -msg-                                       tokens: [,x,y,),(,pipe,(,+,2,2,),(,*,4,5,),(,print," is result 
+,),),),)]
+[0m[95m00058 Enter:                                         LispReader::parse(list<Token>&tokens)
+[95m00058 Exit:                                          parse
+[0m[96m00059 Enter:                                         LispExpr::keyword_to_op()
+[96m00059 -msg-                                           lookup input: x
+[0m[39m00060 Enter:                                             Error::ref(Type::KeyNotFound)
+[39m00060 -msg-                                               errmsg: key 'x' not found in map.
+[0m[39m00060 Exit:                                              ref
+[0m[96m00059 -msg-                                           Lisp keyword: x not found , return as scalar
+[0m[96m00059 Exit:                                          keyword_to_op
+[0m[31m00061 Enter:                                         LispReader::parse(list<Token>&tokens)
+[31m00061 Exit:                                          parse
+[0m[94m00057 Exit:                                      parse_sequence
+[0m[93m00056 Exit:                                  parse
+[0m[32m00062 Enter:                                 LispReader::parse(list<Token>&tokens)
+[33m00063 Enter:                                     LispReader::sequence(list<Token>&tokens)
+[33m00063 -msg-                                       tokens: [,pipe,(,+,2,2,),(,*,4,5,),(,print," is result 
+,),),),)]
+[0m[34m00064 Enter:                                         LispReader::parse(list<Token>&tokens)
+[34m00064 Exit:                                          parse
+[0m[35m00065 Enter:                                         LispExpr::keyword_to_op()
+[35m00065 -msg-                                           lookup input: pipe
+[0m[35m00065 Exit:                                          keyword_to_op
+[0m[33m00063 -msg-                                       Lisp::Op: pipe
+[0m[36m00066 Enter:                                         LispReader::parse(list<Token>&tokens)
+[38m00067 Enter:                                             LispReader::sequence(list<Token>&tokens)
+[38m00067 -msg-                                               tokens: [,+,2,2,),(,*,4,5,),(,print," is result 
+,),),),)]
+[0m[90m00068 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[90m00068 Exit:                                                  parse
+[0m[91m00069 Enter:                                                 LispExpr::keyword_to_op()
+[91m00069 -msg-                                                   lookup input: +
+[0m[91m00069 Exit:                                                  keyword_to_op
+[0m[38m00067 -msg-                                               Lisp::Op: add
+[0m[92m00070 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[92m00070 Exit:                                                  parse
+[0m[93m00071 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[93m00071 Exit:                                                  parse
+[0m[38m00067 Exit:                                              parse_sequence
+[0m[36m00066 Exit:                                          parse
+[0m[94m00072 Enter:                                         LispReader::parse(list<Token>&tokens)
+[95m00073 Enter:                                             LispReader::sequence(list<Token>&tokens)
+[95m00073 -msg-                                               tokens: [,*,4,5,),(,print," is result 
+,),),),)]
+[0m[96m00074 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[96m00074 Exit:                                                  parse
+[0m[39m00075 Enter:                                                 LispExpr::keyword_to_op()
+[39m00075 -msg-                                                   lookup input: *
+[0m[39m00075 Exit:                                                  keyword_to_op
+[0m[95m00073 -msg-                                               Lisp::Op: mul
+[0m[31m00076 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[31m00076 Exit:                                                  parse
+[0m[32m00077 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[32m00077 Exit:                                                  parse
+[0m[95m00073 Exit:                                              parse_sequence
+[0m[94m00072 Exit:                                          parse
+[0m[33m00078 Enter:                                         LispReader::parse(list<Token>&tokens)
+[34m00079 Enter:                                             LispReader::sequence(list<Token>&tokens)
+[34m00079 -msg-                                               tokens: [,print," is result 
+,),),),)]
+[0m[35m00080 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[35m00080 Exit:                                                  parse
+[0m[36m00081 Enter:                                                 LispExpr::keyword_to_op()
+[36m00081 -msg-                                                   lookup input: print
+[0m[36m00081 Exit:                                                  keyword_to_op
+[0m[34m00079 -msg-                                               Lisp::Op: print
+[0m[38m00082 Enter:                                                 LispReader::parse(list<Token>&tokens)
+[38m00082 Exit:                                                  parse
+[0m[34m00079 Exit:                                              parse_sequence
+[0m[33m00078 Exit:                                          parse
+[0m[33m00063 Exit:                                      parse_sequence
+[0m[32m00062 Exit:                                  parse
+[0m[38m00052 Exit:                              parse_sequence
+[0m[36m00051 Exit:                          parse
+[0m[32m00047 Exit:                      parse_sequence
+[0m[31m00046 Exit:                  parse
+[0m[90m00083 Enter:                 LispExpr::parse(Node&tokens)
+[90m00083 -msg-                   tokens: List[module, Kernel, List[def, main, List[x, y ], List[pipe, List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ] ] ]
+[0m[90m00083 -msg-                   LispOp: module
+[0m[91m00084 Enter:                     LispExpr::build_parsed_module(Node::List& list)
+[91m00084 -msg-                       list: List[Kernel, List[def, main, List[x, y ], List[pipe, List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ] ] ]
+[0m[92m00085 Enter:                         LispExpr::parse(Node&tokens)
+[92m00085 -msg-                           tokens: List[def, main, List[x, y ], List[pipe, List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ] ]
+[0m[92m00085 -msg-                           LispOp: def
+[0m[93m00086 Enter:                             LispExpr::build_parsed_def(Node::List& list)
+[93m00086 -msg-                               list: List[main, List[x, y ], List[pipe, List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ] ]
+[0m[94m00087 Enter:                                 LispExpr::build_parsed_vector(Node&)
+[94m00087 -msg-                                   node: List[x, y ]
+[0m[95m00088 Enter:                                     LispExpr::build_parsed_vector(Node::List&list)
+[95m00088 -msg-                                       list: List[x, y ]
+[0m[95m00088 Exit:                                      build_parsed_vector
+[0m[94m00087 Exit:                                  build_parsed_vector
+[0m[96m00089 Enter:                                 LispExpr::build_parsed_vector(Node::List&list)
+[96m00089 -msg-                                   list: List[List[pipe, List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ] ]
+[0m[96m00089 -msg-                                   build nested list: List[pipe, List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ]
+[0m[39m00090 Enter:                                     LispExpr::parse(Node&tokens)
+[39m00090 -msg-                                       tokens: List[pipe, List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ]
+[0m[39m00090 -msg-                                       LispOp: pipe
+[0m[31m00091 Enter:                                         LispExpr::build_parsed_list(Node::List&list)
+[31m00091 -msg-                                           list: List[List[add, 2, 2 ], List[mul, 4, 5 ], List[print,  is result 
+ ] ]
+[0m[32m00092 Enter:                                             LispExpr::build_parsed_vector(Node::List&list)
+[32m00092 -msg-                                               list: List[List[print, List[mul, List[add, 2, 2 ], 4, 5 ],  is result 
+ ] ]
+[0m[32m00092 -msg-                                               build nested list: List[print, List[mul, List[add, 2, 2 ], 4, 5 ],  is result 
+ ]
+[0m[33m00093 Enter:                                                 LispExpr::parse(Node&tokens)
+[33m00093 -msg-                                                   tokens: List[print, List[mul, List[add, 2, 2 ], 4, 5 ],  is result 
+ ]
+[0m[34m00094 Enter:                                                     LispExpr::build_parsed_vector(Node::List&list)
+[34m00094 -msg-                                                       list: List[print, List[mul, List[add, 2, 2 ], 4, 5 ],  is result 
+ ]
+[0m[34m00094 -msg-                                                       build nested list: List[mul, List[add, 2, 2 ], 4, 5 ]
+[0m[35m00095 Enter:                                                         LispExpr::parse(Node&tokens)
+[35m00095 -msg-                                                           tokens: List[mul, List[add, 2, 2 ], 4, 5 ]
+[0m[36m00096 Enter: LispExpr::build_parsed_vector(Node::List&list)
+[36m00096 -msg-   list: List[mul, List[add, 2, 2 ], 4, 5 ]
+[0m[36m00096 -msg-   build nested list: List[add, 2, 2 ]
+[0m[38m00097 Enter:     LispExpr::parse(Node&tokens)
+[38m00097 -msg-       tokens: List[add, 2, 2 ]
+[0m[38m00097 -msg-       LispOp: add
+[0m[90m00098 Enter:         LispExpr::build_parsed_vector(Node::List&list)
+[90m00098 -msg-           list: List[add, 2, 2 ]
+[0m[90m00098 Exit:          build_parsed_vector
+[0m[38m00097 Exit:      parse_build
+[0m[36m00096 -msg-   returned list type: Vector
+[0m[36m00096 Exit:  build_parsed_vector
+[0m[35m00095 Exit:                                                          parse_build
+[0m[34m00094 -msg-                                                       returned list type: Vector
+[0m[34m00094 Exit:                                                      build_parsed_vector
+[0m[33m00093 Exit:                                                  parse_build
+[0m[32m00092 -msg-                                               returned list type: Vector
+[0m[32m00092 Exit:                                              build_parsed_vector
+[0m[31m00091 Exit:                                          build_parsed_pipe
+[0m[39m00090 Exit:                                      parse_build
+[0m[96m00089 -msg-                                   returned list type: Vector
+[0m[96m00089 Exit:                                  build_parsed_vector
+[0m[93m00086 Exit:                              build_parsed_def
+[0m[92m00085 Exit:                          parse_build
+[0m[91m00099 Enter:                         Node::get_node(string& key)
+[91m00099 -msg-                           key: type
+[0m[91m00099 Exit:                          get_node
+[0m[91m00084 Exit:                      build_parsed_module
+[0m[90m00083 Exit:                  parse_build
+[0m[92m00100 Enter:                 LispExpr::type_of(Node& node)
+[92m00100 -msg-                   node.type:Map
+[0m[93m00101 Enter:                     LispExpr::type_of(Node::Map& map)
+[94m00102 Enter:                         Node::get_node(string& key)
+[94m00102 -msg-                           key: type
+[0m[94m00102 Exit:                          get_node
+[0m[93m00101 -msg-                       lisp::Op:: module
+[0m[93m00101 Exit:                      type_of_by_map
+[0m[92m00100 Exit:                  type_of
+[0m[95m00103 Enter:                 LispExpr::attach_module(unique_ptr<Node>module)
+[96m00104 Enter:                     Node::get_node(string& key)
+[96m00104 -msg-                       key: name
+[0m[96m00104 Exit:                      get_node
+[0m[95m00103 Exit:                  attach_module
+[0m[92m00010 Exit:              build_file_str
+[0m[91m00009 Exit:          build_file_str
+[0m[38m00007 Exit:      load_files
+[0m[39m00105 Enter:     Interactive::build_program()
+[31m00106 Enter:         LispExpr::build_program()
+[32m00107 Enter:             LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun&f)
+[32m00107 -msg-               name_mod: Map, name_fun: keys
+[0m[33m00108 Enter:                 Node::get_node(vector& path)
+[33m00108 -msg-                   path: [universe, Lang, CC, Module, Map]
+[0m[34m00109 Enter:                     Error::ref(Type::KeyNotFound)
+[34m00109 -msg-                       errmsg: key 'Map' not found in map.
+[0m[34m00109 Exit:                      ref
+[0m[33m00108 Exit:                  get_node
+[0m[35m00110 Enter:                 Node::merge(Map mv, bool)
+[35m00110 -msg-                   with mapv: {"keys": _to_str() unknown type Function}
+[0m[35m00110 Exit:                  merge
+[0m[32m00107 Exit:              attach_cc_fun
+[0m[36m00111 Enter:             LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun&f)
+[36m00111 -msg-               name_mod: Map, name_fun: get
+[0m[38m00112 Enter:                 Node::get_node(vector& path)
+[38m00112 -msg-                   path: [universe, Lang, CC, Module, Map]
+[0m[38m00112 Exit:                  get_node
+[0m[90m00113 Enter:                 Node::merge(Map mv, bool)
+[90m00113 -msg-                   with mapv: {"get": _to_str() unknown type Function}
+[0m[90m00113 Exit:                  merge
+[0m[36m00111 Exit:              attach_cc_fun
+[0m[91m00114 Enter:             LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun&f)
+[91m00114 -msg-               name_mod: Map, name_fun: set
+[0m[92m00115 Enter:                 Node::get_node(vector& path)
+[92m00115 -msg-                   path: [universe, Lang, CC, Module, Map]
+[0m[92m00115 Exit:                  get_node
+[0m[93m00116 Enter:                 Node::merge(Map mv, bool)
+[93m00116 -msg-                   with mapv: {"set": _to_str() unknown type Function}
+[0m[93m00116 Exit:                  merge
+[0m[91m00114 Exit:              attach_cc_fun
+[0m[94m00117 Enter:             LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun&f)
+[94m00117 -msg-               name_mod: Map, name_fun: del
+[0m[95m00118 Enter:                 Node::get_node(vector& path)
+[95m00118 -msg-                   path: [universe, Lang, CC, Module, Map]
+[0m[95m00118 Exit:                  get_node
+[0m[96m00119 Enter:                 Node::merge(Map mv, bool)
+[96m00119 -msg-                   with mapv: {"del": _to_str() unknown type Function}
+[0m[96m00119 Exit:                  merge
+[0m[94m00117 Exit:              attach_cc_fun
+[0m[39m00120 Enter:             LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun&f)
+[39m00120 -msg-               name_mod: Map, name_fun: has
+[0m[31m00121 Enter:                 Node::get_node(vector& path)
+[31m00121 -msg-                   path: [universe, Lang, CC, Module, Map]
+[0m[31m00121 Exit:                  get_node
+[0m[32m00122 Enter:                 Node::merge(Map mv, bool)
+[32m00122 -msg-                   with mapv: {"has": _to_str() unknown type Function}
+[0m[32m00122 Exit:                  merge
+[0m[39m00120 Exit:              attach_cc_fun
+[0m[33m00123 Enter:             LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun&f)
+[33m00123 -msg-               name_mod: System.Io.File, name_fun: apply
+[0m[34m00124 Enter:                 Node::get_node(vector& path)
+[34m00124 -msg-                   path: [universe, Lang, CC, Module, System.Io.File]
+[0m[35m00125 Enter:                     Error::ref(Type::KeyNotFound)
+[35m00125 -msg-                       errmsg: key 'System.Io.File' not found in map.
+[0m[35m00125 Exit:                      ref
+[0m[34m00124 Exit:                  get_node
+[0m[36m00126 Enter:                 Node::merge(Map mv, bool)
+[36m00126 -msg-                   with mapv: {"apply": _to_str() unknown type Function}
+[0m[36m00126 Exit:                  merge
+[0m[33m00123 Exit:              attach_cc_fun
+[0m[31m00106 Exit:          build_program
+[0m[39m00105 Exit:      build_program
+[0m[38m00127 Enter:     Interactive::run_program()
+[90m00128 Enter:         LispExpr::run_program()
+[91m00129 Enter:             LispExpr::frame_create()
+[91m00129 Exit:              frame_create
+[0m[92m00130 Enter:             Node::get_node(size_t& index)
+[92m00130 -msg-               index: 0
+[0m[92m00130 Exit:              get_node
+[0m[93m00131 Enter:             LispExpr::frame_push(Node&process)
+[94m00132 Enter:                 Node::get_node(string& key)
+[94m00132 -msg-                   key: frames
+[0m[94m00132 Exit:                  get_node
+[0m[93m00131 Exit:              frame_push
+[0m[95m00133 Enter:             LispExpr::scope_create()
+[95m00133 Exit:              scope_create
+[0m[96m00134 Enter:             LispExpr::scope_push_process(process, scope)
+[39m00135 Enter:                 LispExpr::frame_current(Node& process)
+[39m00135 Exit:                  frame_current
+[0m[31m00136 Enter:                 LispExpr::scope_push_frame(frame, scope)
+[32m00137 Enter:                     Node::get_node(string& key)
+[32m00137 -msg-                       key: scopes
+[0m[32m00137 Exit:                      get_node
+[0m[31m00136 Exit:                  scope_push_frame
+[0m[96m00134 Exit:              scope_push_process
+[0m[33m00138 Enter:             Node::get_node(vector& path)
+[33m00138 -msg-               path: [universe, Lang, Lisp, namespace, Main, module, Kernel, function, main, code]
+[0m[33m00138 Exit:              get_node
+[0m[34m00139 Enter:             LispExpr::frame_create()
+[34m00139 Exit:              frame_create
+[0m[35m00140 Enter:             LispExpr::process_create()
+[36m00141 Enter:                 LispExpr::proc_create()
+[38m00142 Enter:                     Node::get_node(size_t& index)
+[38m00142 -msg-                       index: 1
+[0m[38m00142 Exit:                      get_node
+[0m[36m00141 Exit:                  process_create
+[0m[35m00140 Exit:              process_create
+[0m[90m00143 Enter:             LispExpr::frame_push(Node&process)
+[91m00144 Enter:                 Node::get_node(string& key)
+[91m00144 -msg-                   key: frames
+[0m[91m00144 Exit:                  get_node
+[0m[90m00143 Exit:              frame_push
+[0m[92m00145 Enter:             LispExpr::scope_create()
+[92m00145 Exit:              scope_create
+[0m[93m00146 Enter:             LispExpr::scope_push_process(process, scope)
+[94m00147 Enter:                 LispExpr::frame_current(Node& process)
+[94m00147 Exit:                  frame_current
+[0m[95m00148 Enter:                 LispExpr::scope_push_frame(frame, scope)
+[96m00149 Enter:                     Node::get_node(string& key)
+[96m00149 -msg-                       key: scopes
+[0m[96m00149 Exit:                      get_node
+[0m[95m00148 Exit:                  scope_push_frame
+[0m[93m00146 Exit:              scope_push_process
+[0m[39m00150 Enter:             LispExpr::eval(Node&process, Node&code_node)
+[31m00151 Enter:                 LispExpr::eval(Node&process, Node::Vector& code_list)
+[31m00151 -msg-                   code_list: Vector[Vector[Vector[print, Vector[mul, Vector[add, 2, 2], 4, 5],  is result 
+]]]
+[0m[32m00152 Enter:                     LispExpr::eval(Node&process, Node::Vector& code_list, size_t start)
+[32m00152 -msg-                       code_list: Vector[Vector[Vector[print, Vector[mul, Vector[add, 2, 2], 4, 5],  is result 
+]]]
+[0m[32m00152 -msg-                       start: 0
+[0m[33m00153 Enter:                         LispExpr::eval(Node&process, Node&code_node)
+[34m00154 Enter:                             LispExpr::eval(Node&process, Node::Vector& code_list)
+[34m00154 -msg-                               code_list: Vector[Vector[print, Vector[mul, Vector[add, 2, 2], 4, 5],  is result 
+]]
+[0m[35m00155 Enter:                                 LispExpr::eval(Node&process, Node::Vector& code_list, size_t start)
+[35m00155 -msg-                                   code_list: Vector[Vector[print, Vector[mul, Vector[add, 2, 2], 4, 5],  is result 
+]]
+[0m[35m00155 -msg-                                   start: 0
+[0m[36m00156 Enter:                                     LispExpr::eval(Node&process, Node&code_node)
+[38m00157 Enter:                                         LispExpr::eval(Node&process, Node::Vector& code_list)
+[38m00157 -msg-                                           code_list: Vector[print, Vector[mul, Vector[add, 2, 2], 4, 5],  is result 
+]
+[0m[38m00157 -msg-                                           code_list type UniquePtr
+[0m[90m00158 Enter:                                             LispExpr::eval(Node&process, Node::Vector& code_list, size_t start)
+[90m00158 -msg-                                               code_list: Vector[print, Vector[mul, Vector[add, 2, 2], 4, 5],  is result 
+]
+[0m[90m00158 -msg-                                               start: 0
+[0m[91m00159 Enter:                                                 LispExpr::eval(Node&process, Node&code_node)
+[91m00159 Exit:                                                  eval
+[0m[92m00160 Enter:                                                 LispExpr::eval(Node&process, Node&code_node)
+[93m00161 Enter:                                                     LispExpr::eval(Node&process, Node::Vector& code_list)
+[93m00161 -msg-                                                       code_list: Vector[mul, Vector[add, 2, 2], 4, 5]
+[0m[93m00161 -msg-                                                       code_list type UniquePtr
+[0m[94m00162 Enter:                                                         LispExpr::eval(Node&process, Node::Vector& code_list, size_t start)
+[94m00162 -msg-                                                           code_list: Vector[mul, Vector[add, 2, 2], 4, 5]
+[0m[94m00162 -msg-                                                           start: 0
+[0m[95m00163 Enter: LispExpr::eval(Node&process, Node&code_node)
+[95m00163 Exit:  eval
+[0m[96m00164 Enter: LispExpr::eval(Node&process, Node&code_node)
+[39m00165 Enter:     LispExpr::eval(Node&process, Node::Vector& code_list)
+[39m00165 -msg-       code_list: Vector[add, 2, 2]
+[0m[31m00166 Enter:         LispExpr::eval(Node&process, Lisp::Op op_head, Node::Vector& code_list)
+[31m00166 -msg-           Lisp::Op:: add
+[0m[31m00166 -msg-           code_list: Vector[add, 2, 2]
+[0m[31m00166 -msg-           start: 1
+[0m[32m00167 Enter:             LispExpr::eval_math(Node&process, Lisp::Op op_head, Node::Vector& code_list)
+[32m00167 -msg-               Lisp::Op:: add
+[0m[32m00167 -msg-               code_list: Vector[add, 2, 2]
+[0m[32m00167 -msg-               start: 1
+[0m[33m00168 Enter:                 LispExpr::eval(Node&process, Node&code_node)
+[33m00168 Exit:                  eval
+[0m[34m00169 Enter:                 LispExpr::eval(Node&process, Node&code_node)
+[34m00169 Exit:                  eval
+[0m[32m00167 Exit:              eval_math
+[0m[31m00166 Exit:          eval
+[0m[39m00165 Exit:      eval
+[0m[96m00164 Exit:  eval
+[0m[35m00170 Enter: LispExpr::eval(Node&process, Node&code_node)
+[35m00170 Exit:  eval
+[0m[36m00171 Enter: LispExpr::eval(Node&process, Node&code_node)
+[36m00171 Exit:  eval
+[0m[94m00162 Exit:                                                          eval
+[0m[93m00161 Exit:                                                      eval
+[0m[92m00160 Exit:                                                  eval
+[0m[38m00172 Enter:                                                 LispExpr::eval(Node&process, Node&code_node)
+[38m00172 Exit:                                                  eval
+[0m[90m00158 Exit:                                              eval
+[0m[38m00157 Exit:                                          eval
+[0m[36m00156 Exit:                                      eval
+[0m[35m00155 Exit:                                  eval
+[0m[34m00154 Exit:                              eval
+[0m[33m00153 Exit:                          eval
+[0m[32m00152 Exit:                      eval
+[0m[31m00151 Exit:                  eval
+[0m[39m00150 Exit:              eval
+[0m[90m00128 Exit:          run_program
+[0m[38m00127 Exit:      run_program
+[0m[39m00000 Exit:  main
+[0m
