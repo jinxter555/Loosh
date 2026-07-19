@@ -11,6 +11,8 @@
 #define SLOG_MAX_LEVEL 130000
 #define DEBUG
 
+#define LOC_FUN source_location::current().function_name()
+
 using namespace std;
 
 extern std::fstream log_output;

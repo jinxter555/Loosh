@@ -10,7 +10,6 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-#define LOC_FUN source_location::current().function_name()
 
 
 namespace Loosh{

@@ -17,11 +17,23 @@ int main() {
   //ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
 
   Node n1(10l);
+  cout << "n1: " << n1 << "\n";
+
   Node::Vector v1;
   auto m1_ptr = make_unique<Node::Map>();
  // Node::Value vv=m1;
   Node n2(move(v1));
-  cout << "n1: " << n1 << "\n";
+  auto n1_c = n1.clone();
+  cout << "n1_c: " << *n1_c << "\n";
+
+  //Node n2_ptr = n1.clone();
+  Node n2_ptr ; 
+  n2_ptr = n1.clone();
+  cout << "n2_ptr: " << n2_ptr << "\n";
+
+  Node n3_ptr(n1.clone());
+  cout << "n3_ptr: " << n3_ptr << "\n";
+
 
   /*
   Node b(20);

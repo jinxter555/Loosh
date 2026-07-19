@@ -77,6 +77,13 @@ Node::Type Node::value_variant_type() {
   }, value_);
 }
 
+//void  Node::operator = (ValueSimple & v) { value_ = v; }
+void  Node::nil() { value_ = std::monostate{};  type_ = Node::Type::Null; }
+void  Node::operator=(bool v) { value_ = v; type_ = Node::Type::Bool; }
+void  Node::operator=(Integer v) { value_ = v; type_ = Node::Type::Integer; }
+void  Node::operator=(Float v) { value_ = v; type_ = Node::Type::Float; }
+void  Node::operator=(string v) { value_ = v; type_ = Node::Type::String; }
+void  Node::operator=(ptr_U v) { value_ = move(v); type_ = Node::Type::Unique; }
 
 
 

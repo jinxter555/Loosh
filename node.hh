@@ -14,6 +14,8 @@ namespace Loosh
 
 class Node {
 public:
+
+//----------------------------------
   class Error {  public: enum class Type {
     DivideByZero, 
     InvalidOperation, // e.g., calling 'add' on an Integer node
@@ -37,6 +39,7 @@ public:
   string message_;
   };
 
+//----------------------------------
   enum class Type { 
     Null, Bool, Error, Integer, Float, String, 
     Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, ProcState, 
@@ -56,16 +59,15 @@ public:
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
 
   using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun>;
-  //using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, ptr_R, Fun, IMap>;
-  //using Value = variant<monostate, bool, Error, Integer, Float, string, ptr_R, ptr_U>;
+  using ValueSimple = variant<monostate, bool, Error, Integer, Float, string>;
 
-
+//----------------------------------
   
   Node();
-  explicit Node(Value val);
-  //Node(Value val);
+  //explicit Node(Value val);
+  Node(Value val);
   Node(Value v , Type t);
-  //Node(Map v , Type t);
+  ~Node() = default; 
 
   ptr_U create_error(Error::Type err_type, const string& msg);
   static ptr_U create();
@@ -100,12 +102,25 @@ public:
 
   Type value_variant_type();
 
-  ~Node() = default; 
+//----------------------------------
+  void nil();
+  void  operator = (bool v);
+  void  operator = (Integer v);
+  void  operator = (Float v);
+  void  operator = (string v);
+  void  operator = (Error v);
+  void  operator = (ptr_U v);
+
 
 protected:
   Value value_;
   Type type_;
   bool isMarked = false;
+
+private:
+  bool type_set_identifier();
+  bool type_set_atom();
+  bool type_set_object_id();
 
 
 };

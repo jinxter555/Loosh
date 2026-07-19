@@ -4,7 +4,7 @@ CC=g++ -g -std=c++23 -Wall
 TMPDIR = /dev/shm
 MAKE=make
 
-objects = node.o  node_str.o node_out.o scope_logger.o 
+objects = node.o  node_str.o node_out.o node_clone.o scope_logger.o 
 
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
