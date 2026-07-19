@@ -4,6 +4,7 @@
 #include <cmath>
 #include <type_traits>
 #include "node.hh"
+#include "defs.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -55,7 +56,7 @@ unique_ptr<Node> Node::clone() const {
   }, value_);
 
 }
-//-----------------------------------
+//----------------------------------- cc list
 
 unique_ptr<Node> Node::clone(const List& cc_list) {
   MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
@@ -65,7 +66,7 @@ unique_ptr<Node> Node::clone(const List& cc_list) {
   return create(move(cloned_list));
 }
 
-//-----------------------------------
+//----------------------------------- cc deque
 unique_ptr<Node> Node::clone(const DeQue& cc_deque) {
   MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
 
@@ -76,7 +77,7 @@ unique_ptr<Node> Node::clone(const DeQue& cc_deque) {
   return create(move(cloned_deque));
 }
 
-//-----------------------------------
+//----------------------------------- cc vector
 unique_ptr<Node> Node::clone(const Vector& cc_vec) {
   MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
 
@@ -87,12 +88,23 @@ unique_ptr<Node> Node::clone(const Vector& cc_vec) {
   return create(move(cloned_vector));
 }
 
-//-----------------------------------
+//----------------------------------- fun
 unique_ptr<Node> Node::clone(const Fun& f) {
   MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
   return make_unique<Node>(f);
 }
 
 //-----------------------------------
+unique_ptr<Node> Node::clone(const Map& map) {
+  MYLOGGER(trace_function, "Node::clone(const Map&map)", __func__, SLOG_NODE_OP);
+
+  Map cloned_map;
+  for(const auto& [key, child_ptr] : map) {
+    //if(key == CLASS_PTR) { cloned_map.try_emplace(key, create( child_ptr.get())); continue; }
+    //if(key == MODULE_PTR) { cloned_map.try_emplace(key, create( child_ptr.get())); continue; }
+    cloned_map.try_emplace(key, child_ptr->clone());
+  }
+  return create(move(cloned_map));
+}
 
 }
