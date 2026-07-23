@@ -20,9 +20,13 @@ Loosh::Node::Node(Value v, Type t)
 
 //Node::Node(Map v, Type t)  { }
 
+unique_ptr<Node> Node::create_error(Error::Type t, const string& msg) {
+  return make_unique<Node>(Value(Error{t, msg}));
+}
 
 unique_ptr<Node> Node::create() { return make_unique<Node>(); }
 unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
+//unique_ptr<Node> Node::create(ValueSimple v) { return make_unique<Node>(move(v)); }
 unique_ptr<Node> Node::create(Value v, Type t) { return make_unique<Node>(move(v), t); }
 unique_ptr<Node> Node::create(Type t) { 
   switch(t) {
@@ -84,6 +88,54 @@ void  Node::operator=(Integer v) { value_ = v; type_ = Node::Type::Integer; }
 void  Node::operator=(Float v) { value_ = v; type_ = Node::Type::Float; }
 void  Node::operator=(string v) { value_ = v; type_ = Node::Type::String; }
 void  Node::operator=(ptr_U v) { value_ = move(v); type_ = Node::Type::Unique; }
+void  Node::operator=(Error v) { value_ = move(v); type_ = Node::Type::Error; }
+
+void Node::set(unique_ptr<Node> new_node) {
+  if(!new_node) {
+    nil();
+  } else {
+    this->value_ = move(new_node->value_);
+    this->type_ = new_node->type_;
+  }
+}
+
+
+Node::OpStatus Node::set(const string& key, Value v) {
+  return set(key, create(move(v))); 
+
+}
+
+Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
+  if (type_ != Type::Map) {
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
+  }        
+  Map& map= get<Map>(value_);
+  map[key] = move(child);
+  return {true, create(true)};
+}
+
+
+
+Node::OpStatus Node::delete_key(const string &key) {
+  if(type_ != Type::Map)
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
+
+  Map& map = get<Map>(value_);
+  if(map.erase(key)==0)
+    return {false, create_error(Error::Type::InvalidOperation,  "Key '" + key + "' not found in map.")};
+  return {true, Node::create()};
+}
+
+Node::OpStatus Node::delete_key(Integer key) {
+  if(type_ != Type::IMap)
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
+
+  IMap& map = get<IMap>(value_);
+  if(map.erase(key)==0)
+    return {false, create_error(Error::Type::InvalidOperation,  "Key '" + to_string( key) + "' not found in map.")};
+  return {true, Node::create()};
+}
+
 
 
 

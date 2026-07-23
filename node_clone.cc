@@ -39,6 +39,7 @@ unique_ptr<Node> Node::clone() const {
     else if constexpr(
       is_same_v<U, Float> ||  
       is_same_v<U, bool> ||
+      is_same_v<U, ptr_R> ||  
       is_same_v<U, Error >) {
       auto uptr = create(arg); 
       uptr->type_ = type_;
@@ -47,11 +48,11 @@ unique_ptr<Node> Node::clone() const {
     else if constexpr (is_same_v<U, List>) return clone(arg);
     else if constexpr (is_same_v<U, Vector>) return clone(arg);
     else if constexpr (is_same_v<U, DeQue>) return clone(arg);
-    else if constexpr (is_same_v<U, Map>) return create();
-    else if constexpr (is_same_v<U, IMap>) return create();
-    else if constexpr (is_same_v<U, ptr_R>) return create();
-    else if constexpr (is_same_v<U, ptr_U>) return create();
-    else if constexpr (is_same_v<U, Fun>) return create();
+    else if constexpr (is_same_v<U, Map>) return clone(arg);
+    else if constexpr (is_same_v<U, IMap>) return clone(arg);
+    else if constexpr (is_same_v<U, ptr_R>) return create(*arg);
+    //else if constexpr (is_same_v<U, ptr_U>) return create();
+    else if constexpr (is_same_v<U, Fun>) return clone(arg);
     else return nullptr;
   }, value_);
 
@@ -96,7 +97,7 @@ unique_ptr<Node> Node::clone(const Fun& f) {
 
 //-----------------------------------
 unique_ptr<Node> Node::clone(const Map& map) {
-  MYLOGGER(trace_function, "Node::clone(const Map&map)", __func__, SLOG_NODE_OP);
+  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
 
   Map cloned_map;
   for(const auto& [key, child_ptr] : map) {
@@ -106,5 +107,19 @@ unique_ptr<Node> Node::clone(const Map& map) {
   }
   return create(move(cloned_map));
 }
+//-----------------------------------
+
+unique_ptr<Node> Node::clone(const IMap& map) {
+  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+
+  IMap cloned_map;
+  for(const auto& [key, child_ptr] : map) {
+    cloned_map.try_emplace(key, child_ptr->clone());
+  }
+  return create(move(cloned_map));
+}
+
+
+
 
 }

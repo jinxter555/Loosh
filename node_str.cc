@@ -15,6 +15,7 @@
 namespace Loosh{
 
 string Node::_to_str(Type type) {
+  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_TO_STR);
   switch (type) {
     case Type::Null: return "Null";
     case Type::Bool: return "Bool";
@@ -41,8 +42,7 @@ string Node::_to_str(Type type) {
 }
 
 string Node::_to_str() const {
-  //MYLOGGER(trace_function, source_location::current().function_name(), __func__, SLOG_TO_STR);
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_TO_STR);
+  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
 
   switch(type_) {
   case Type::Null: return "nil";
@@ -63,10 +63,32 @@ string Node::_to_str() const {
   case Type::String: {
     string str = get<string>(value_);
     return str; }
+
+  
+    /*
+  case Type::List: {
+      //cout << "_to_str() List\n";
+      auto& list = get<List>(value_);
+      return _to_str(list);}
+  case Type::DeQue: {
+      auto& list = get<DeQue>(value_);
+      return _to_str(list);}
+  case Type::Vector: {
+      //cout << "_to_str() vector\n";
+      auto& list = get<Vector>(value_);
+      return _to_str(list);}
+  case Type::IMap: {
+      auto& map = get<IMap>(value_);
+  return _to_str(map);}
+*/
+  case Type::Map: {
+      auto& map = get<Map>(value_);
+      return _to_str(map);}
+
   case Type::Raw: {
     //cout << "\nraw to_str()\n";
-    auto& ptr_r = get<ptr_R>(value_);
-    return ptr_r->_to_str();
+    auto ptr_r = get<ptr_R>(value_);
+    return "--*ptr_r["  +  addressToHexString( ptr_r ) + "]--";
   }
   case Type::Unique: {
     //cout << "uniqur_ptr to_str()";
@@ -79,7 +101,7 @@ string Node::_to_str() const {
 }
 
 string Node::_to_str(const Map&map) {
-  MYLOGGER(trace_function, "Node::_to_str(const Map&map)", __func__, SLOG_TO_STR);
+  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
 
   if(map.empty()) return "{}";
 
@@ -94,15 +116,10 @@ string Node::_to_str(const Map&map) {
     MYLOGGER_MSG(trace_function, "key: " + key, SLOG_TO_STR);
 
     if(val==nullptr) {cerr << "val is null\n"; return "";}
-    if(key == MODULE_PTR || key == CLASS_PTR  || key == CURRENT_CLASS_PTR
-      || key == CURRENT_MODULE_PTR || key == CURRENT_FUNCTION_PTR || key == UNIVERSE) {
-      //outstr = q + key + q  + colon + "--*ptr--";
-      //outstr = q + key + q  + colon + "--*ptr["  +  addressToHexString( &val->get_node()) + "]--";
-      outstr = q + key + q  + colon + "--*ptr[]--";
-    } else  {
-      if(val) outstr = q + key + q  + colon + " " + val->_to_str();
-      else outstr = q + key + q  + colon + " " + "NULL-VAL";
-    }
+
+    if(val) outstr = q + key + q  + ":" + " " + val->_to_str();
+    else outstr = q + key + q  + colon + " " + "NULL-VAL";
+
     kv_paires.push_back(outstr);
   }
 
@@ -115,6 +132,28 @@ string Node::_to_str(const Map&map) {
   return (outstr);
 }
 
+
+
+
+
+string Node::_to_str(const Vector&list) {
+  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  size_t s = list.size(), i;
+  //if(s==0) {return "Vector[]";}
+  if(s==0) {return "():nil";}
+  string outstr("Vector[");
+
+  for(i=0; i<s-1; i++) {
+    auto &e = list[i];
+    if(e==nullptr) continue;
+    outstr = outstr + e->_to_str() + ", ";
+  }
+  if(list[i]) 
+    outstr = outstr + list[i]->_to_str() + "]";
+   else 
+    outstr = outstr + "NULLPTR" + "]";
+  return outstr;
+}
 
 
 

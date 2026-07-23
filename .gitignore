@@ -3,6 +3,7 @@
 .ccls-cache/
 *.d
 build/
+out
 
 # Compiled Object files
 *.slo

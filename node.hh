@@ -1,3 +1,4 @@
+#pragma once
 #include <variant>                                                                    
 #include <memory>                                                                     
 #include <string>                                                                     
@@ -7,12 +8,17 @@
 #include <unordered_map>                                                                        
 #include <functional>
 
+#include "defs.hh"
+#include "lisp.hh"
+
 
 using namespace std;
 namespace Loosh 
 {
 
+
 class Node {
+friend class Tree;
 public:
 
 //----------------------------------
@@ -42,10 +48,11 @@ public:
 //----------------------------------
   enum class Type { 
     Null, Bool, Error, Integer, Float, String, 
-    Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, ProcState, 
-    ControlFlow, Atom, ObjectId, Shared, Raw, Unique, Fun };
+    Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
+    ControlFlow, Atom, ObjectId, Raw, Unique, Fun };
 
-  using Integer = long; using Float = double;
+  using Integer = LOOSH_T_LONG; 
+  using Float = double;
 
   using List = list<unique_ptr<Loosh::Node>>;
   using Vector = vector<unique_ptr<Node>>;
@@ -58,8 +65,8 @@ public:
   using Map = unordered_map<string, unique_ptr<Node>>;
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
 
-  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun>;
-  using ValueSimple = variant<monostate, bool, Error, Integer, Float, string>;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun>;
+  using ValueSimple = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op>;
 
 //----------------------------------
   
@@ -69,9 +76,10 @@ public:
   Node(Value v , Type t);
   ~Node() = default; 
 
-  ptr_U create_error(Error::Type err_type, const string& msg);
+  static ptr_U create_error(Error::Type err_type, const string& msg);
   static ptr_U create();
   static ptr_U create(Value v);
+  //static ptr_U create(ValueSimple v);
   static ptr_U create(Value v, Type t);
   static ptr_U create(Type t);
 
@@ -110,6 +118,27 @@ public:
   void  operator = (string v);
   void  operator = (Error v);
   void  operator = (ptr_U v);
+  //
+  void set(unique_ptr<Node> new_node);
+
+  // map
+
+  OpStatus set(const string&key, unique_ptr<Node> child);
+  OpStatus set(const string& key, Value v);
+  OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
+  bool extend(const vector<string>&path, bool override=false);
+
+ static Node* extend_map_by_key(Map& map, const string&key, bool create=true); // for map
+
+
+
+
+  OpStatus delete_key(const string &key);
+  OpStatus delete_key(Integer key);
+
+
+
+  uintptr_t GetObjectId(Node* obj) { return reinterpret_cast<uintptr_t>(obj); }
 
 
 protected:

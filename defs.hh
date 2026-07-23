@@ -62,3 +62,5 @@
 #define FINALIZE "finalize"
 
 #define CLOSURABLE_FILE "closurable.txt"
+
+#define LOOSH_T_LONG long
