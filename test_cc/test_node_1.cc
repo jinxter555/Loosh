@@ -35,25 +35,26 @@ int main() {
   cout << "n3_ptr: " << n3_ptr << "\n";
 
 
-  // Node n4 = 123l; XXXXXX don't work
 
 
 
-  /*
-  Node b(20);
+  Node a(10l);
+  Node b(20l);
+  Node t(true);
+  auto vptr = Node::create(true);
+  cout << "b: " << b << "\n";
   
   Node c = a + b;
   Node d = c + Node(123.333);
-  string v1 = c._to_str();
-  string v2 = d._to_str();
+  string vs1 = c._to_str();
+  string vs2 = d._to_str();
 
-  cout << "v1: " << v1  << "\n";
-  cout << "v2: " << v2  << "\n";
+  cout << "vs1: " << vs1  << "\n";
+  cout << "vs2: " << vs2  << "\n";
 
-  cout << "v1: " << v1  << "\n";
-
+  //cout << "v1: " << v1  << "\n";
   Node e;
-  e.set(d.clone());
+  //e.set(d.clone());
   cout << "e: " << e._to_str() << "\n";
 
   Node t1(Node::Type::Map);
@@ -72,6 +73,7 @@ int main() {
 
   cout << "\nList\n";
   Node list(Node::Type::List);
+  /*
   list.add(Node::create(123l));
   list.add(Node::create("hello"));
   list.add(Node::create("world"));

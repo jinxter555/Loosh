@@ -245,5 +245,4 @@ Node Node::operator!() const {
   bool r = get<bool>(value_) ;
   return Node(!r, Type::Bool);
 }
-
 }

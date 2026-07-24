@@ -9,6 +9,9 @@ Node::Node() : type_(Type::Null) {
   value_ = {};
 }
 
+Node::Node(ptr_U ptr) : value_(move(ptr)), type_(Type::Unique) {};
+Node::Node(ptr_R ptr) : value_(ptr), type_(Type::Raw) {};
+
 Loosh::Node::Node(Value val) 
 : value_(move(val)) 
 , type_(value_variant_type())
@@ -19,6 +22,47 @@ Loosh::Node::Node(Value v, Type t)
 , type_(t) {}
 
 //Node::Node(Map v, Type t)  { }
+
+Node::Node(Type t)
+  : type_(t) {
+  switch(t) {
+  case Type::Null: value_= {}; break;
+  case Type::Bool: value_=true; break;
+  case Type::Integer: value_=0; break;
+  case Type::Float: value_=0.0; break;
+  case Type::String: value_=""; break;
+  //case Type::Error: value_ = {} ; break;
+  case Type::Error: value_ = Error{Error::Type::Unknown, "Unknown Init"} ; break;
+  case Type::Map: { 
+    Map nm={};
+    value_ = move(nm);
+    break;}
+  case Type::IMap: { 
+    IMap nm={};
+    value_ = move(nm);
+    break;}
+
+  case Type::List: { 
+    List l={};
+    value_ = move(l);
+    break;}
+  case Type::Vector: { 
+    Vector l={};
+    value_ = move(l);
+    break;}
+  case Type::DeQue: { 
+    DeQue l={};
+    value_ = move(l);
+    break;}
+  default: {
+    value_ = monostate{};
+    type_ = Type::Null;
+
+  }}
+}
+
+
+
 
 unique_ptr<Node> Node::create_error(Error::Type t, const string& msg) {
   return make_unique<Node>(Value(Error{t, msg}));

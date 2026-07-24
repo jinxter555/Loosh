@@ -80,7 +80,11 @@ public:
   
   Node();
   //explicit Node(Value val);
-  Node(Value val);
+  Node(Type t);
+  Node(Value v);
+  Node(ptr_U uptr) ;
+  Node(ptr_R rptr) ;
+
   Node(Value v , Type t);
   ~Node() = default; 
 
