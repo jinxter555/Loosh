@@ -13,6 +13,7 @@
 
 #define LOC_FUN source_location::current().function_name()
 
+
 using namespace std;
 
 extern std::fstream log_output;
@@ -39,6 +40,10 @@ public:
   static void set_current_verbose_level(int);
   string spacing();
 };
+
+
+std::string clean_function_name(const std::source_location& location = std::source_location::current()) ;
+std::string clean_function_name2(const std::source_location& location = std::source_location::current()) ;
 
 
 #ifdef SLOG_DEBUG_TRACE_FUNC

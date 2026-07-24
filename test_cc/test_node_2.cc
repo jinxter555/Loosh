@@ -1,4 +1,7 @@
-#include <iostream>
+#include <cassert>
+#include <catch2/catch_all.hpp>
+
+
 #include "../node.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -9,7 +12,8 @@ using namespace Loosh;
   
 
 
-int main() {
+
+TEST_CASE("check node 2") {
 
 
   trace_function.open("trace.log", std::ios::out);
@@ -19,10 +23,9 @@ int main() {
   Node n1(10l);
   Node n1_b(10l);
   cout << "n1: " << n1 << "\n";
+  CHECK(n1._get_integer() == 10l );
 
-  if((n1 == n1_b)._get_bool()) { 
-    cout << "n1 == n1_b\n";
-  }
+  CHECK((n1 == n1_b)._get_bool()); 
 
   Node::Vector v1;
   auto m1_ptr = make_unique<Node::Map>();
@@ -38,6 +41,7 @@ int main() {
 
   Node n3_ptr(n1.clone());
   cout << "n3_ptr: " << n3_ptr << "\n";
+  CHECK((n2_ptr.get_node() == n3_ptr.get_node())._get_bool()); 
 
 
 
@@ -50,7 +54,9 @@ int main() {
   cout << "b: " << b << "\n";
   
   Node c = a + b;
-  Node d = c + Node(123.333);
+  CHECK(c._get_str() == "30"); 
+  Node d = c + Node(123.33);
+  CHECK(d._get_str() == "153.33"); 
   string vs1 = c._to_str();
   string vs2 = d._to_str();
 

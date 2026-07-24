@@ -107,3 +107,47 @@ void ScopeLogger::set_current_verbose_level(int l) { verbosity = l; }
 string  ScopeLogger::spacing() {
   return string(current_level % color_size * 4 , ' ');
 }
+
+
+
+std::string clean_function_name2(const std::source_location& location) {
+    // 1. Get the raw function signature as a standard string copy
+    std::string name = location.function_name();
+    
+    // 2. Find where the arguments start at '('
+    size_t paren = name.find('(');
+    if (paren == std::string::npos) return name; // Fallback if format is unexpected
+
+    // 3. Extract the left portion before the parenthesis
+    std::string prefix = name.substr(0, paren);
+
+    // 4. Find the last space, which separates the return type from the function name
+    size_t last_space = prefix.find_last_of(" \t\n\r");
+    if (last_space != std::string::npos) {
+        return prefix.substr(last_space + 1); // Returns just the function name
+    }
+
+    return prefix;
+}
+
+string clean_function_name(const std::source_location& location) {
+    std::string name = location.function_name();
+    
+    // 1. Find where the arguments start at '('
+    size_t paren = name.find('(');
+    if (paren == std::string::npos) return name; // Fallback if no layout match
+
+    // 2. Isolate the portion before the parenthesis to find the return type space
+    std::string prefix = name.substr(0, paren);
+
+    // 3. Find the last space right before the function name starts
+    size_t last_space = prefix.find_last_of(" \t\n\r");
+    if (last_space != std::string::npos) {
+        // 4. Return from that space onward, preserving the name and the full prototype
+        return name.substr(last_space + 1);
+    }
+
+    return name;
+}
+
+

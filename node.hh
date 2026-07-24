@@ -142,6 +142,8 @@ public:
   //
   Node& get_node(); // returns node if it's ptrs shared raw unique
 
+  OpStatusRef operator[](size_t index) ;
+  OpStatusRef operator[](const std::string& key) ;
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(size_t i);
@@ -150,13 +152,26 @@ public:
 
   OpStatus delete_key(const string &key);
   OpStatus delete_key(Integer key);
-  //
 
+  //
   Type _get_type() const;
   Type _get_value_type() const;
   Node get_type() const;
 
-  //
+  // _get
+  Integer _get_integer() const;
+  Float _get_float() const;
+  Lisp::Op _get_lisp_op() const;
+  bool _get_bool() const;
+  string _get_str() const;
+  Map& _get_map_ref() ;
+  Node& get_ref(Node::Integer); // this returns the node object that's stored in objectstore
+  IMap& _get_imap_ref() ;
+  Vector& _get_vector_ref() ;
+  DeQue& _get_deque_ref() ;
+  List& _get_list_ref() ;
+  ptr_R _get_ptr_r() const;
+
   uintptr_t GetObjectId(Node* obj) { return reinterpret_cast<uintptr_t>(obj); }
 
   //

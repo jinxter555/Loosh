@@ -42,7 +42,9 @@ string Node::_to_str(Type type) {
 }
 
 string Node::_to_str() const {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  //MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  //auto f=  clean_function_name();
 
   switch(type_) {
   case Type::Null: return "nil";

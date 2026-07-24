@@ -1,5 +1,8 @@
 #include "node.hh"
 
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 using namespace std;
 namespace Loosh 
 {
@@ -203,7 +206,7 @@ Node::OpStatus Node::delete_key(Integer key) {
 }
 
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------ _get
 
 Node& Node::get_node() {
   switch(type_) {
@@ -219,6 +222,54 @@ Node& Node::get_node() {
   }
   return *this;
 }
+//------------------------------ _get
+bool Node::_get_bool() const { return get<bool>(value_); }
+
+Lisp::Op Node::_get_lisp_op() const { return get<Lisp::Op>(value_); }
+
+Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
+
+Node::Float Node::_get_float() const { return get<Float>(value_); }
+
+string Node::_get_str() const { return _to_str(); }
+
+//------------------------------
+
+Node::OpStatusRef Node::operator[](size_t index) {
+  if(type_ != Type::Vector) {
+    return { false,
+    Error::ref(
+      Error::Type::InvalidOperation,
+      "Operator[] (index) can only be used on vector nodes. Current type: " + _to_str(type_)
+    )};
+  }
+  Vector& list = get<Vector>(value_);
+  if(index >= list.size()){
+    string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
+    return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
+  }
+  return {true, *list[index]};
+}
+
+Node::OpStatusRef Node::operator[](const string& key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+
+  if(type_ != Type::Map){
+    return {false, Error::ref(Error::Type::InvalidOperation, 
+    "Operator[] (key: " + key +  ") can only be used on Map nodes. Current type: " + _to_str(type_))};
+  }
+  const Map& map = get<Map>(value_);
+  auto it=map.find(key);
+
+  if(it==map.end()) {
+    string msg = "key '" + key + "' not found in map.";
+    return {false, Error::ref(Error::Type::KeyNotFound, msg)};
+  }
+  return {true, *it->second};
+}
+
+
+
 
 
 } 
