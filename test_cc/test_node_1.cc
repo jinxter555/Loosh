@@ -34,6 +34,7 @@ int main() {
   Node n3_ptr(n1.clone());
   cout << "n3_ptr: " << n3_ptr << "\n";
 
+
   // Node n4 = 123l; XXXXXX don't work
 
 

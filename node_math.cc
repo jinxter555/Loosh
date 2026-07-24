@@ -1,6 +1,15 @@
 #include "node.hh"
 #include <iostream>
 
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
+
+using namespace std;
+namespace Loosh 
+{
+
+
 
 //------------------------------------------------------------------------
 Node Node::operator+(const Node &other) const {
@@ -235,4 +244,6 @@ Node Node::operator!() const {
    return Node(Error{Error::Type::InvalidOperation, "not Bool type for !(op)"});
   bool r = get<bool>(value_) ;
   return Node(!r, Type::Bool);
+}
+
 }

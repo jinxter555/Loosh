@@ -39,10 +39,17 @@ public:
     User,
     NotEqual,
     Eval,
-    Unknown,
-  };
-  Type type_;
-  string message_;
+    Unknown };
+    //
+    Error(Type t, const string msg="");
+    static Node& ref(Type t); 
+    static Node& ref(Type t, const string& msg); 
+    static string _to_str(Type t) ;
+    static void init() ;
+    static vector<unique_ptr<Node>> list;
+
+    Type type_;
+    string message_;
   };
 
 //----------------------------------
@@ -60,6 +67,7 @@ public:
   using ptr_R = Node *;
   using ptr_U = unique_ptr<Node>;
   using OpStatus = pair<bool, unique_ptr<Node>>;
+  using OpStatusRef = pair<bool, Node&>;
 
   using IMap = unordered_map<Integer, unique_ptr<Node>>;
   using Map = unordered_map<string, unique_ptr<Node>>;
@@ -122,23 +130,57 @@ public:
   void set(unique_ptr<Node> new_node);
 
   // map
-
   OpStatus set(const string&key, unique_ptr<Node> child);
   OpStatus set(const string& key, Value v);
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
   bool extend(const vector<string>&path, bool override=false);
+  static Node* extend_map_by_key(Map& map, const string&key, bool create=true); // for map
+  //
+  Node& get_node(); // returns node if it's ptrs shared raw unique
 
- static Node* extend_map_by_key(Map& map, const string&key, bool create=true); // for map
+  OpStatusRef get_node(const string&key);
+  OpStatusRef get_node(const vector<string>&path);
+  OpStatusRef get_node(size_t i);
 
-
-
+  bool has_node(const vector<string>&path);
 
   OpStatus delete_key(const string &key);
   OpStatus delete_key(Integer key);
+  //
 
+  Type _get_type() const;
+  Type _get_value_type() const;
+  Node get_type() const;
 
-
+  //
   uintptr_t GetObjectId(Node* obj) { return reinterpret_cast<uintptr_t>(obj); }
+
+  //
+  Node operator +(const Node& other) const;
+  Node operator -(const Node& other) const;
+  Node operator *(const Node& other) const;
+  Node operator /(const Node& other) const;
+  //
+  Node operator >(const Node& other) const;
+  Node operator <(const Node& other) const;
+  Node operator >=(const Node& other) const;
+  Node operator <=(const Node& other) const;
+  Node operator ==(const Node& other) const;
+  Node operator !=(const Node& other) const;
+  //
+  Node operator &&(const Node& other) const;
+  Node operator ||(const Node& other) const;
+  Node operator !() const;
+
+
+  //
+  void print(int depth=0) const;
+  static void print_value_recursive(const Node& node, int depth=0);
+  static void print_value(const Value& node, int depth=0);
+
+
+
+
 
 
 protected:
@@ -157,6 +199,6 @@ private:
 };
 
 ostream& operator<<(ostream& os, const Loosh::Node& v) ;
-//ostream& operator<<(ostream& os, const Node::OpStatus& s) ;
-//ostream& operator<<(ostream& os, const Node::OpStatusRef& s) ;
+ostream& operator<<(ostream& os, const Loosh::Node::OpStatus& s) ;
+ostream& operator<<(ostream& os, const Loosh::Node::OpStatusRef& s) ;
 

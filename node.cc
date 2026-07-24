@@ -31,7 +31,6 @@ unique_ptr<Node> Node::create(Value v, Type t) { return make_unique<Node>(move(v
 unique_ptr<Node> Node::create(Type t) { 
   switch(t) {
 
-/*
   case Type::IMap: {
     Node::IMap im;
     return make_unique<Node>(move(im));}
@@ -50,7 +49,6 @@ unique_ptr<Node> Node::create(Type t) {
     Node::DeQue q;
     return make_unique<Node>(move(q)); 
   }
-*/
 
   default: return make_unique<Node>(); }
 
@@ -59,6 +57,7 @@ unique_ptr<Node> Node::create(Type t) {
 
 
 
+//------------------------------------------------------------------------
 
 Node::Type Node::value_variant_type() {
   return visit([](auto&& inner_arg) -> Type {
@@ -81,7 +80,26 @@ Node::Type Node::value_variant_type() {
   }, value_);
 }
 
-//void  Node::operator = (ValueSimple & v) { value_ = v; }
+//------------------------------------------------------------------------
+Node::Type Node::_get_type() const { return type_; }
+Node::Type Node::_get_value_type() const { 
+  switch(type_) {
+  case Node::Type::Unique: {
+    auto& ptr = get<ptr_U>(value_);
+    return ptr->_get_value_type();
+  }
+  case Node::Type::Raw:  {
+    auto& ptr = get<ptr_R>(value_);
+    return ptr->_get_value_type();
+  }
+  default:  {}
+  }
+  return type_;
+}
+
+
+//------------------------------------------------------------------------
+
 void  Node::nil() { value_ = std::monostate{};  type_ = Node::Type::Null; }
 void  Node::operator=(bool v) { value_ = v; type_ = Node::Type::Bool; }
 void  Node::operator=(Integer v) { value_ = v; type_ = Node::Type::Integer; }
@@ -90,6 +108,9 @@ void  Node::operator=(string v) { value_ = v; type_ = Node::Type::String; }
 void  Node::operator=(ptr_U v) { value_ = move(v); type_ = Node::Type::Unique; }
 void  Node::operator=(Error v) { value_ = move(v); type_ = Node::Type::Error; }
 
+//void  Node::operator = (ValueSimple & v) { value_ = v; }
+
+//------------------------------------------------------------------------
 void Node::set(unique_ptr<Node> new_node) {
   if(!new_node) {
     nil();
@@ -115,6 +136,7 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
 }
 
 
+//------------------------------------------------------------------------
 
 Node::OpStatus Node::delete_key(const string &key) {
   if(type_ != Type::Map)
@@ -137,6 +159,22 @@ Node::OpStatus Node::delete_key(Integer key) {
 }
 
 
+//------------------------------------------------------------------------
+
+Node& Node::get_node() {
+  switch(type_) {
+  case Node::Type::Unique: {
+    auto& ptr = get<ptr_U>(value_);
+    return ptr->get_node();
+  }
+  case Node::Type::Raw:  {
+    auto& ptr = get<ptr_R>(value_);
+    return ptr->get_node();
+  }
+  default:  {}
+  }
+  return *this;
+}
 
 
 } 

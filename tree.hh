@@ -14,6 +14,8 @@ class Node;
 class Tree {
 private:
 using OpStatus = pair<bool, unique_ptr<Node>>;
+using OpStatusRef = pair<bool, Node&>;
+
 protected:
   unique_ptr<Node> root;
 public:
@@ -26,7 +28,7 @@ public:
 
   // use Node methods
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
-  //Node::OpStatusRef get_node(const vector<string>&path);
+  OpStatusRef get_node(const vector<string>&path);
   void print() const;
 };
 

@@ -88,13 +88,14 @@ const Node* Tree::get_root() const {
 }
 
 
-Node::OpStatus Tree::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
+Tree::OpStatus Tree::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
   return root->set(path, move(child), override);
 }
 
-Node::OpStatusRef Tree::get_node(const vector<string>&path) { return root->get_node(path); }
+Tree::OpStatusRef Tree::get_node(const vector<string>&path) { return root->get_node(path); }
 
 void Tree::print() const {
-  root->print();
+//  root->print();
 }
+
 }
