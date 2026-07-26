@@ -84,7 +84,6 @@ TEST_CASE("check node 2") {
 
   cout << "\nList\n";
   Node list(Node::Type::List);
-  /*
   list.add(Node::create(123l));
   list.add(Node::create("hello"));
   list.add(Node::create("world"));
@@ -92,9 +91,11 @@ TEST_CASE("check node 2") {
 
 
   Node tm2(Node::Type::Map);
+  tm2.add("hello", Node::create("world"));
+  tm2.add("value", Node::create(555l));
+  CHECK(tm2["value"].second._get_integer() ==555l); 
   cout << "\ntm2: " <<  tm2 << "\n";
-  vector<string> p = {"hello", "world"};
-  tm2.extend(p, true);
+//  vector<string> p = {"hello", "world"};
+//  tm2.extend(p, true);
   cout << "tm2: " <<  tm2 << "\n";
-  */
 }

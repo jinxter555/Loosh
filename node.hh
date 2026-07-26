@@ -172,7 +172,18 @@ public:
   List& _get_list_ref() ;
   ptr_R _get_ptr_r() const;
 
+  //
+  OpStatus add(unique_ptr<Node> child);
+  OpStatus add(const string&key, unique_ptr<Node> child);
+  OpStatus pop_back();
+  OpStatus pop_front();
+  OpStatus push_front(unique_ptr<Node>node);
+  OpStatus push_back(unique_ptr<Node>node);
+
+
+
   uintptr_t GetObjectId(Node* obj) { return reinterpret_cast<uintptr_t>(obj); }
+  //
 
   //
   Node operator +(const Node& other) const;

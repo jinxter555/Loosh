@@ -43,7 +43,7 @@ string Node::_to_str(Type type) {
 
 string Node::_to_str() const {
   //MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
   //auto f=  clean_function_name();
 
   switch(type_) {
@@ -67,22 +67,21 @@ string Node::_to_str() const {
     return str; }
 
   
-    /*
   case Type::List: {
       //cout << "_to_str() List\n";
-      auto& list = get<List>(value_);
-      return _to_str(list);}
+      auto& cc_list = get<List>(value_);
+      return _to_str(cc_list);}
   case Type::DeQue: {
-      auto& list = get<DeQue>(value_);
-      return _to_str(list);}
+      auto&  cc_dq= get<DeQue>(value_);
+      return _to_str(cc_dq);}
   case Type::Vector: {
       //cout << "_to_str() vector\n";
-      auto& list = get<Vector>(value_);
-      return _to_str(list);}
+      auto& cc_vec = get<Vector>(value_);
+      return _to_str(cc_vec);}
+
   case Type::IMap: {
       auto& map = get<IMap>(value_);
   return _to_str(map);}
-*/
   case Type::Map: {
       auto& map = get<Map>(value_);
       return _to_str(map);}
@@ -102,8 +101,9 @@ string Node::_to_str() const {
 
 }
 
+//----------------------------------- cc map
 string Node::_to_str(const Map&map) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
 
   if(map.empty()) return "{}";
 
@@ -136,25 +136,96 @@ string Node::_to_str(const Map&map) {
 
 
 
-
-
-string Node::_to_str(const Vector&list) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
-  size_t s = list.size(), i;
+//----------------------------------- cc vec
+string Node::_to_str(const Vector&cc_vec) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  size_t s = cc_vec.size(), i;
   //if(s==0) {return "Vector[]";}
   if(s==0) {return "():nil";}
   string outstr("Vector[");
 
   for(i=0; i<s-1; i++) {
-    auto &e = list[i];
+    auto &e = cc_vec[i];
     if(e==nullptr) continue;
     outstr = outstr + e->_to_str() + ", ";
   }
-  if(list[i]) 
-    outstr = outstr + list[i]->_to_str() + "]";
+  if(cc_vec[i]) 
+    outstr = outstr + cc_vec[i]->_to_str() + "]";
    else 
     outstr = outstr + "NULLPTR" + "]";
   return outstr;
+}
+//----------------------------------- cc list
+
+string Node::_to_str(const List&cc_list) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  size_t s = cc_list.size(), i=0;
+  MYLOGGER_MSG(trace_function, string("size: ") + to_string(s), SLOG_TO_STR+30);
+  if(s==0) {return "List[]";}
+
+  string outstr("List[");
+
+  for(auto &e : cc_list) {
+    if(i==s-1) break;
+    if(e==nullptr) {
+      cerr << "list::_to_str() is null!\n";
+      continue;
+    }
+    outstr = outstr + e->_to_str() + ", ";
+    i++;
+  }
+  if(cc_list.empty()) return outstr + "]";
+  auto& e = cc_list.back(); 
+  // to prevent last back() node_ptr is null 
+
+  if(e==nullptr)  return outstr + "]"; 
+  return outstr + e->_to_str() +" ]";
+}
+
+//----------------------------------- cc dq
+string Node::_to_str(const DeQue&cc_dq) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  size_t s = cc_dq.size();
+  if(s==0) {return "DeQue[]";}
+  string outstr("DeQue[");
+
+  for(auto &e : cc_dq) {
+    if(e==nullptr) continue;
+    outstr = outstr + e->_to_str() + ", ";
+  }
+  outstr = outstr + " ]";
+  return outstr;
+}
+
+//----------------------------------- cc imap
+string Node::_to_str(const IMap&cc_imap) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+
+  if(cc_imap.empty()) return "{}";
+
+  vector<string> kv_paires ;
+  string colon(":");
+  string q("\"");
+  string outstr;
+
+  for (auto const& [key, val] : cc_imap) {
+      //outstr = q + Lang::atom_to_str( key) + q  + colon + " " + val->_to_str();
+      auto atom_key_str = Lang::atom_to_str_imap(key);
+      if(atom_key_str.back() == 'i')
+        outstr =  atom_key_str  + " " + val->_to_str();
+      else
+        outstr =  ":" + atom_key_str   + "  " + val->_to_str();
+
+    kv_paires.push_back(outstr);
+  }
+
+  outstr="{";
+  int i, s = kv_paires.size();
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + kv_paires[i] + ", ";
+  }
+  outstr = outstr + kv_paires[i] + "}";
+  return (outstr);
 }
 
 

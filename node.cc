@@ -168,11 +168,9 @@ void Node::set(unique_ptr<Node> new_node) {
 }
 
 
-Node::OpStatus Node::set(const string& key, Value v) {
-  return set(key, create(move(v))); 
+Node::OpStatus Node::set(const string& key, Value v) { return set(key, create(move(v))); }
 
-}
-
+// it doesn't matter if element exist or not. use add to check if prevent adding adition element
 Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   if (type_ != Type::Map) {
     return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
@@ -268,6 +266,42 @@ Node::OpStatusRef Node::operator[](const string& key) {
   return {true, *it->second};
 }
 
+
+
+Node::OpStatus Node::add(unique_ptr<Node> child) {
+  switch(type_) {
+  case Type::List: {
+    List& cc_list = get<List>(value_);
+    cc_list.push_back(move(child)); 
+    break; }
+
+  case Type::DeQue: {
+    DeQue& cc_dq = get<DeQue>(value_);
+    cc_dq.push_back(move(child));
+    break; }
+  case Type::Vector: {
+    Vector& cc_vec= get<Vector>(value_);
+    cc_vec.push_back(move(child));
+    break; }
+
+  default: return {false, create_error(Error::Type::InvalidOperation, "Cannot add element to a non-List node.")};
+  }
+
+  return {true, Node::create(true)};
+}
+
+// only no element is present
+Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
+  if (type_ != Type::Map) {
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
+  }        
+  Map& map = get<Map>(value_);
+
+  if(!map.try_emplace(key, std::move(child)).second) {
+    return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  }
+    return {true, Node::create(true)};
+}
 
 
 
