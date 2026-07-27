@@ -7,7 +7,7 @@ MAKE=make
 #objects = node.o  node_str.o node_out.o node_clone.o scope_logger.o  my_helpers.o lang.o
 objects =  node.o  node_str.o node_out.o node_clone.o scope_logger.o  \
 	my_helpers.o  lisp.o lang.o node_error.o  node_math.o \
-	node_map.o node_list.o
+	node_map.o node_sequence.o
 
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)

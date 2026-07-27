@@ -61,7 +61,7 @@ public:
   using Integer = LOOSH_T_LONG; 
   using Float = double;
 
-  using List = list<unique_ptr<Loosh::Node>>;
+  using List = list<unique_ptr<Node>>;
   using Vector = vector<unique_ptr<Node>>;
   using DeQue = deque<unique_ptr<Node>>;
   using ptr_R = Node *;

@@ -1,4 +1,0 @@
-clang++
-%h %cpp -std=c++17
--I /usr/lib/llvm-14/include
-

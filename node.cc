@@ -134,21 +134,19 @@ Node::Type Node::_get_value_type() const {
   switch(type_) {
   case Node::Type::Unique: {
     auto& ptr = get<ptr_U>(value_);
-    return ptr->_get_value_type();
-  }
+    return ptr->_get_value_type();}
   case Node::Type::Raw:  {
     auto& ptr = get<ptr_R>(value_);
-    return ptr->_get_value_type();
-  }
-  default:  {}
-  }
+    return ptr->_get_value_type();}
+  default:  {}}
+
   return type_;
 }
 Node Node::get_type() const { return type_; }
 
 
 //------------------------------------------------------------------------ _get
-//------------------------------
+//------------------------------ _get_map_ref()
 Node::Map& Node::_get_map_ref() { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   switch(type_) {
@@ -161,13 +159,126 @@ Node::Map& Node::_get_map_ref() {
   case Type::Map:  {
     return get<Map>(value_);}
   default: {
-    cerr << "Node::_get_map_ref() Error! not a map: Node::type_ " 
+    cerr << "Node::_get_map_ref() Error! not a Node::Map: Node::type_ " 
       <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
     throw std::bad_typeid();
   }}
   
   return get<Map>(value_); 
 }
+//------------------------------ _get_imap_ref
+Node::IMap& Node::_get_imap_ref() { 
+
+  switch(type_) {
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->_get_imap_ref(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->_get_imap_ref(); }
+  default: {
+    cerr << "Node::_get_imap_ref() Error! not a Node::IMap: Node::type_ " 
+      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    throw std::bad_typeid();
+  }}
+  
+  return get<IMap>(value_); 
+}
+
+
+//------------------------------ _get_vector_ref
+Node::Vector& Node::_get_vector_ref() { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+
+  switch(type_) {
+  case Type::Raw: {
+    auto rptr = get<ptr_R>(value_);
+    cout << "get_vector_ref() " << rptr->_get_str() << "\n";
+    return rptr->_get_vector_ref(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->_get_vector_ref(); }
+  case Type::Vector:  {
+    return get<Vector>(value_); 
+  }
+  default: {
+    cerr << "Node::_get_vector_ref() Error! not a Node::Vector: Node::type_ " 
+      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    throw std::bad_typeid();
+  }}
+
+  return get<Vector>(value_); 
+}
+
+//------------------------------ _get_deque_ref
+Node::DeQue& Node::_get_deque_ref() { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  switch(type_) {
+  case Type::Raw: {
+    auto rptr = get<ptr_R>(value_);
+    return rptr->_get_deque_ref(); }
+  case Type::Unique:  {
+    auto &uptr = get<ptr_U>(value_);
+    return uptr->_get_deque_ref(); }
+  default: {
+    cerr << "Node::_get_deque_ref() Error! not a Node::DeQue: Node::type_ " 
+      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    throw std::bad_typeid(); 
+  }}
+
+  return get<DeQue>(value_); 
+}
+
+
+//
+
+
+
+//------------------------------ _get_list_ref
+Node::List& Node::_get_list_ref() { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+
+  switch(type_) {
+  case Type::Raw: {
+    auto rptr = get<ptr_R>(value_);
+    return rptr->_get_list_ref(); }
+  case Type::Unique:  {
+    auto &uptr = get<ptr_U>(value_);
+    return uptr->_get_list_ref(); }
+  default: {
+    cerr << "Node::_get_list_ref() Error! not a Node::List: Node::type_ " 
+      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    throw std::bad_typeid();
+  }}
+  
+  return get<List>(value_); 
+}
+
+//------------------------------------------------------------------------
+//------------------------------ _get_rptr_ref
+Node::ptr_R Node::_get_ptr_r() const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  auto ret_ptr_r = get<ptr_R>(value_);
+
+  switch(type_) {
+  case Type::Raw: {
+    auto rptr = get<ptr_R>(value_);
+    if(ret_ptr_r->type_ == Node::Type::Raw) {
+      auto msg = "Warning! Node::get_ptr_r(): ret_ptr_r is pointing to another RAW pointer!";
+      cerr << msg << "\n";
+      MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP+30)
+    }
+    return rptr;
+  }
+  default: {
+  }}
+  cerr << "Node::_get_rptr_r() Error! not a Node::ptr_R: Node::type_ " 
+  <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+  throw std::bad_typeid();
+  
+}
+
+
 
 
 
@@ -198,7 +309,9 @@ void Node::set(unique_ptr<Node> new_node) {
 
 Node::OpStatus Node::set(const string& key, Value v) { return set(key, create(move(v))); }
 
-// it doesn't matter if element exist or not. use add to check if prevent adding adition element
+// here, it doesn't matter if element exist or not. 
+//use add to check if prevent adding additional key element
+
 Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if (type_ != Type::Map) {

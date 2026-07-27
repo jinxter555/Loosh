@@ -16,7 +16,8 @@ namespace Loosh
 //
 Node* Node::extend_map_by_key(Map& map,  const string&key, bool create) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
-  MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_NODE_OP+30)
+  MYLOGGER_MSG(trace_function, "key: " + key, SLOG_NODE_OP+30)
+  MYLOGGER_MSG(trace_function, "create: " + to_string(create), SLOG_NODE_OP+30)
 
   if (map.find(key) != map.end()) return map[key].get(); // key found
   if(!create) return nullptr; // don't create
@@ -28,6 +29,7 @@ Node* Node::extend_map_by_key(Map& map,  const string&key, bool create) {
 //----------------------------------- extend
 bool Node::extend(const vector<string>&path, bool create) {
   MYLOGGER(trace_function, "Node::extend(vector& path)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "create: " + to_string(create), SLOG_NODE_OP+30)
 
   Node* node_ptr=this;
   for(auto key : path) {
@@ -48,6 +50,7 @@ bool Node::extend(const vector<string>&path, bool create) {
 Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "path: " + _to_str_ext(path), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "override: " + to_string(override), SLOG_NODE_OP+30)
 
   Node* node_ptr=this;
   for(auto key : path) {
@@ -84,7 +87,7 @@ bool Node::has_node(const vector<string>&path){
 
 Node::OpStatusRef Node::get_node(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
-  MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_NODE_OP+30)
+  MYLOGGER_MSG(trace_function, "key: " + key, SLOG_NODE_OP+30)
 
   switch(type_) {
   case Type::Raw: {
@@ -114,7 +117,7 @@ Node::OpStatusRef Node::get_node(const string&key) {
 //----------------------------------- get_node
 Node::OpStatusRef Node::get_node(const vector<string>&path) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
-  MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_NODE_OP+30);
+  MYLOGGER_MSG(trace_function, "path: " + _to_str_ext(path), SLOG_NODE_OP+30)
 
   switch(type_) {
   case Type::Raw: {

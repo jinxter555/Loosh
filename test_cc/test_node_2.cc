@@ -114,7 +114,7 @@ TEST_CASE("check node 2") {
   Node::Map &nv = tm4._get_map_ref();
   cout << "nv: " << Node::_to_str( nv) << "\n";
 
-  SECTION("list throw::bad_id") {
+  SECTION("list throw::bad_type_id") {
     REQUIRE_THROWS_AS(list._get_map_ref(), std::bad_typeid);
   }
 
