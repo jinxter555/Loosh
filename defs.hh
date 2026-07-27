@@ -63,4 +63,4 @@
 
 #define CLOSURABLE_FILE "closurable.txt"
 
-#define LOOSH_T_LONG long
+#define LOOSH_T_LONG long long

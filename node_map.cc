@@ -8,11 +8,12 @@ using namespace std;
 namespace Loosh 
 {
 
+
 // private has to be call from Map handling functions
 // get and extend node by key
 Node* Node::extend_map_by_key(Map& map,  const string&key, bool create) { 
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
-  MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_NODE_OP+30);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_NODE_OP+30)
 
   if (map.find(key) != map.end()) return map[key].get(); // key found
   if(!create) return nullptr; // don't create
@@ -21,10 +22,11 @@ Node* Node::extend_map_by_key(Map& map,  const string&key, bool create) {
   return map[key].get();
 }
 
+//----------------------------------- set
 
 Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
-  MYLOGGER_MSG(trace_function, "path: " + _to_str_ext(path), SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  MYLOGGER_MSG(trace_function, "path: " + _to_str_ext(path), SLOG_FUNC_INFO+30)
 
   Node* node_ptr=this;
   for(auto key : path) {
@@ -49,8 +51,11 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
   return {true, Node::create(true)};
 }
 
+//---------------------------------------------------------------------- get_node
+// get nested pointer node reference.
+
 Node::OpStatusRef Node::get_node(const string&key) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP)
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_NODE_OP+30)
 
   switch(type_) {
@@ -63,7 +68,6 @@ Node::OpStatusRef Node::get_node(const string&key) {
   default: {}
   }
 
-
   if(type_ != Type::Map){
     return {false, Error::ref(Error::Type::IndexWrongType, 
     "get_node(string&key) only works Map nodes. Current type: " + _to_str(type_))};
@@ -75,9 +79,62 @@ Node::OpStatusRef Node::get_node(const string&key) {
     return {false, Error::ref(Error::Type::KeyNotFound, msg)};
   }
 
-  return {true, *it->second.get()};
+  //return {true, *it->second.get()};
+  return {true, *it->second};
 }
 
+//----------------------------------- get_node
+Node::OpStatusRef Node::get_node(const vector<string>&path) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_NODE_OP+30);
+
+  switch(type_) {
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->get_node(path); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->get_node(path); }
+  default: {}
+  }
+
+  Node* current = this;
+  for(const auto&key : path) {
+    Integer ikey;
+
+    try {
+      ikey = stol(key);
+
+      auto current_node_ref = current->get_node(ikey);
+      if(!current_node_ref.first) {
+        string msg = "key '" + key + "' not found in vector or out of bound.";
+        cerr << msg << "\n";
+        return {false, Error::ref(Error::Type::KeyNotFound, msg)};
+      }
+      current = &current_node_ref.second;
+
+    } catch(...) {
+      if(type_ != Type::Map){
+        cerr << "Node::get_node(path) not Type::Map!\n"; 
+        return {false, Error::ref(Error::Type::IndexWrongType, 
+        "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(type_))};
+      }
+
+      auto current_node_ref = current->get_node(key);
+      if(!current_node_ref.first) {
+        string msg = "key '" + key + "' not found in map.";
+        return {false, Error::ref(Error::Type::KeyNotFound, msg)};
+      }
+
+      current = &current_node_ref.second;
+    }
+
+    //cout << "currento node ref: " << current_node_ref << "\n";
+
+  }
+
+  return {true, *current};
+}
 
 
 }

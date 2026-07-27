@@ -15,7 +15,7 @@
 namespace Loosh{
 
 string Node::_to_str(Type type) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_TO_STR);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
   switch (type) {
     case Type::Null: return "Null";
     case Type::Bool: return "Bool";
@@ -42,9 +42,7 @@ string Node::_to_str(Type type) {
 }
 
 string Node::_to_str() const {
-  //MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
-  //auto f=  clean_function_name();
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
 
   switch(type_) {
   case Type::Null: return "nil";
@@ -103,7 +101,7 @@ string Node::_to_str() const {
 
 //----------------------------------- cc map
 string Node::_to_str(const Map&map) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
 
   if(map.empty()) return "{}";
 
@@ -138,7 +136,7 @@ string Node::_to_str(const Map&map) {
 
 //----------------------------------- cc vec
 string Node::_to_str(const Vector&cc_vec) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
   size_t s = cc_vec.size(), i;
   //if(s==0) {return "Vector[]";}
   if(s==0) {return "():nil";}
@@ -158,7 +156,7 @@ string Node::_to_str(const Vector&cc_vec) {
 //----------------------------------- cc list
 
 string Node::_to_str(const List&cc_list) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
   size_t s = cc_list.size(), i=0;
   MYLOGGER_MSG(trace_function, string("size: ") + to_string(s), SLOG_TO_STR+30);
   if(s==0) {return "List[]";}
@@ -184,7 +182,7 @@ string Node::_to_str(const List&cc_list) {
 
 //----------------------------------- cc dq
 string Node::_to_str(const DeQue&cc_dq) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
   size_t s = cc_dq.size();
   if(s==0) {return "DeQue[]";}
   string outstr("DeQue[");
@@ -199,7 +197,7 @@ string Node::_to_str(const DeQue&cc_dq) {
 
 //----------------------------------- cc imap
 string Node::_to_str(const IMap&cc_imap) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
 
   if(cc_imap.empty()) return "{}";
 

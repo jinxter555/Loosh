@@ -19,7 +19,7 @@ bool Node::type_set_object_id() { type_ = Node::Type::ObjectId; return true;};
 
 //-----------------------------------
 unique_ptr<Node> Node::clone() const {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   return visit([&](auto&& arg) -> ptr_U {
     using U = decay_t<decltype(arg)>;
     if constexpr (is_same_v<U, monostate>) return make_unique<Node>();
@@ -60,7 +60,7 @@ unique_ptr<Node> Node::clone() const {
 //----------------------------------- cc list
 
 unique_ptr<Node> Node::clone(const List& cc_list) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   List cloned_list;
   for(const auto& child_u_ptr : cc_list ) 
     cloned_list.push_back(child_u_ptr->clone());
@@ -69,7 +69,7 @@ unique_ptr<Node> Node::clone(const List& cc_list) {
 
 //----------------------------------- cc deque
 unique_ptr<Node> Node::clone(const DeQue& cc_deque) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
 
   DeQue cloned_deque;
 
@@ -80,7 +80,7 @@ unique_ptr<Node> Node::clone(const DeQue& cc_deque) {
 
 //----------------------------------- cc vector
 unique_ptr<Node> Node::clone(const Vector& cc_vec) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
 
   Vector cloned_vector;
 
@@ -91,13 +91,13 @@ unique_ptr<Node> Node::clone(const Vector& cc_vec) {
 
 //----------------------------------- fun
 unique_ptr<Node> Node::clone(const Fun& f) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   return make_unique<Node>(f);
 }
 
 //-----------------------------------
 unique_ptr<Node> Node::clone(const Map& map) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
 
   Map cloned_map;
   for(const auto& [key, child_ptr] : map) {
@@ -110,7 +110,7 @@ unique_ptr<Node> Node::clone(const Map& map) {
 //-----------------------------------
 
 unique_ptr<Node> Node::clone(const IMap& map) {
-  MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
 
   IMap cloned_map;
   for(const auto& [key, child_ptr] : map) {

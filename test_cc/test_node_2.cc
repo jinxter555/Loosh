@@ -95,7 +95,14 @@ TEST_CASE("check node 2") {
   tm2.add("value", Node::create(555l));
   CHECK(tm2["value"].second._get_integer() ==555l); 
   cout << "\ntm2: " <<  tm2 << "\n";
-//  vector<string> p = {"hello", "world"};
+
+  /*
+  Node tm3(Node::Type::Map);
+  vector<string> br1_key = {"branch1", "branch2"};
+  auto tm3_node_status_ref = tm3.get_node(br1_key);
+  CHECK(tm3_node_status_ref.first);
+  cout << "tm3_node_status_ref: " << tm3_node_status_ref << "\n";
+*/
+
 //  tm2.extend(p, true);
-  cout << "tm2: " <<  tm2 << "\n";
 }

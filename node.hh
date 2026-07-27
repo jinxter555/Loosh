@@ -54,7 +54,7 @@ public:
 
 //----------------------------------
   enum class Type { 
-    Null, Bool, Error, Integer, Float, String, 
+    Null, Bool, Error, Size, Integer, Float, String, 
     Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
     ControlFlow, Atom, ObjectId, Raw, Unique, Fun };
 
@@ -74,7 +74,7 @@ public:
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
 
   using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun>;
-  using ValueSimple = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op>;
+  //using ValueSimple = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op>;
 
 //----------------------------------
   
@@ -142,11 +142,11 @@ public:
   //
   Node& get_node(); // returns node if it's ptrs shared raw unique
 
-  OpStatusRef operator[](size_t index) ;
+  OpStatusRef operator[](Integer index) ;
   OpStatusRef operator[](const std::string& key) ;
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
-  OpStatusRef get_node(size_t i);
+  OpStatusRef get_node(Integer index);
 
   bool has_node(const vector<string>&path);
 

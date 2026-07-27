@@ -31,6 +31,7 @@ Node::Node(Type t)
   switch(t) {
   case Type::Null: value_= {}; break;
   case Type::Bool: value_=true; break;
+  case Type::Size: value_=0; break;
   case Type::Integer: value_=0; break;
   case Type::Float: value_=0.0; break;
   case Type::String: value_=""; break;
@@ -159,6 +160,7 @@ void  Node::operator=(Error v) { value_ = move(v); type_ = Node::Type::Error; }
 
 //------------------------------------------------------------------------
 void Node::set(unique_ptr<Node> new_node) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if(!new_node) {
     nil();
   } else {
@@ -172,6 +174,7 @@ Node::OpStatus Node::set(const string& key, Value v) { return set(key, create(mo
 
 // it doesn't matter if element exist or not. use add to check if prevent adding adition element
 Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if (type_ != Type::Map) {
     return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
   }        
@@ -184,6 +187,7 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
 //------------------------------------------------------------------------
 
 Node::OpStatus Node::delete_key(const string &key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if(type_ != Type::Map)
     return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
 
@@ -194,6 +198,7 @@ Node::OpStatus Node::delete_key(const string &key) {
 }
 
 Node::OpStatus Node::delete_key(Integer key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if(type_ != Type::IMap)
     return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
 
@@ -207,6 +212,7 @@ Node::OpStatus Node::delete_key(Integer key) {
 //------------------------------------------------------------------------ _get
 
 Node& Node::get_node() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   switch(type_) {
   case Node::Type::Unique: {
     auto& ptr = get<ptr_U>(value_);
@@ -233,22 +239,40 @@ string Node::_get_str() const { return _to_str(); }
 
 //------------------------------
 
-Node::OpStatusRef Node::operator[](size_t index) {
-  if(type_ != Type::Vector) {
-    return { false,
-    Error::ref(
-      Error::Type::InvalidOperation,
-      "Operator[] (index) can only be used on vector nodes. Current type: " + _to_str(type_)
-    )};
+Node::OpStatusRef Node::operator[](Integer index) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  switch(type_) {
+  case Type::Vector: {
+    Vector& cc_vec = get<Vector>(value_);
+    const Integer cc_vec_size =  static_cast<Integer>(cc_vec.size());
+    if(index < 0 || index >= cc_vec_size){
+      string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(cc_vec_size) + ".";
+      return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
+    }
+    return {true, *cc_vec[index]};}
+
+  case Type::IMap: {
+    IMap& imap = get<IMap>(value_);
+    if (auto it = imap.find(index); it != imap.end())  return {true, *imap[index]};
+
+    return {false,
+      Error::ref(Error::Type::KeyNotFound,
+        "IMap::Operator[] (key) " + to_string(index) +" not found: " + _to_str(type_)
+    )};}
+
+  default: {}
   }
-  Vector& list = get<Vector>(value_);
-  if(index >= list.size()){
-    string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
-    return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
-  }
-  return {true, *list[index]};
+
+  return {false,
+    Error::ref( Error::Type::InvalidOperation,
+      "Operator[] (index) can only be used on vector/IMap nodes. Current type: " + _to_str(type_)
+  )};
+
 }
 
+//
+// doesn't get nested pointer node reference
+//
 Node::OpStatusRef Node::operator[](const string& key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
@@ -269,6 +293,7 @@ Node::OpStatusRef Node::operator[](const string& key) {
 
 
 Node::OpStatus Node::add(unique_ptr<Node> child) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   switch(type_) {
   case Type::List: {
     List& cc_list = get<List>(value_);
@@ -292,6 +317,7 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
 
 // only no element is present
 Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if (type_ != Type::Map) {
     return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
   }        

@@ -15,7 +15,7 @@ Node::Error::Error(Type t, string msg) : type_(t), message_(msg) {}
 
 void Node::Error::init() {
   list.resize(size_t(Type::Unknown)+1);
-  list[size_t(Error::Type::DivideByZero)] =  Node::create_error(Type::DivideByZero, "");
+  list[size_t(Type::DivideByZero)] =  Node::create_error(Type::DivideByZero, "");
   list[size_t(Type::InvalidOperation)] =  Node::create_error(Type::InvalidOperation, "");
   list[size_t(Type::KeyAlreadyExists)] = Node::create_error(Type::KeyAlreadyExists, "");
   list[size_t(Type::KeyNotFound)] = Node::create_error(Type::KeyNotFound, "");
@@ -34,8 +34,8 @@ void Node::Error::init() {
 
 Node& Node::Error::ref(Error::Type t) { return *list[size_t(t)]; } 
 Node& Node::Error::ref(Error::Type t, const string& msg) { 
-  MYLOGGER(trace_function, "Error::ref(Type::" + _to_str(t)  + ")", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "errmsg: " + msg, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  MYLOGGER_MSG(trace_function, "errmsg: " + msg, SLOG_NODE_OP);
  // cerr << "Error Message: " << msg << "\n";
   return *list[size_t(t)]; 
 } 
