@@ -9,8 +9,11 @@ namespace Loosh
 {
 
 
+//---------------------------------------------------------------------- extend
+//----------------------------------- extend_by_map
 // private has to be call from Map handling functions
 // get and extend node by key
+//
 Node* Node::extend_map_by_key(Map& map,  const string&key, bool create) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_NODE_OP+30)
@@ -21,6 +24,24 @@ Node* Node::extend_map_by_key(Map& map,  const string&key, bool create) {
   map[key] = Node::create(move(new_map));
   return map[key].get();
 }
+
+//----------------------------------- extend
+bool Node::extend(const vector<string>&path, bool create) {
+  MYLOGGER(trace_function, "Node::extend(vector& path)", __func__, SLOG_FUNC_INFO);
+
+  Node* node_ptr=this;
+  for(auto key : path) {
+    try { 
+      auto &map = get<Map>(node_ptr->value_);
+      node_ptr = extend_map_by_key(map, key, create);
+      if(node_ptr==nullptr && !create) return false;
+    } catch (...) {
+      if(!create) return false;
+    }
+  }
+  return true;
+}
+
 
 //----------------------------------- set
 
@@ -34,22 +55,29 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
       auto &map = get<Map>(node_ptr->value_);
       node_ptr = extend_map_by_key(map, key, override);
     } catch (...) {
-      if(!override) return {false, Node::create(false)};
+      if(!override) return {true, Node::create(false)};
     }
-    if(node_ptr==nullptr) return {false, Node::create(false)};
+    if(node_ptr==nullptr) return {true, Node::create(false)};
   }
-  /*
-  auto status_empty = node_ptr->empty();
-  if(!status_empty.first) { // operation success or not , not = not map
-    if(!override) return status_empty;
-  }*/
   // operation is good, current node_ptr is a map
-  if(!override) return {false, create(false)};
-
+  if(!override) return {true, create(false)};
 
   node_ptr->set(move(child));
   return {true, Node::create(true)};
 }
+
+//---------------------------------------------------------------------- has_node
+bool Node::has_node(const vector<string>&path){
+  try {
+    auto status  = get_node(path);
+    if(!status.first) return false;
+    return true;
+  } catch(...) {
+
+    return false;
+  }
+}
+
 
 //---------------------------------------------------------------------- get_node
 // get nested pointer node reference.
@@ -103,7 +131,8 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
     Integer ikey;
 
     try {
-      ikey = stol(key);
+      // for vector of integer and Imap nodes
+      ikey = stoll(key);
 
       auto current_node_ref = current->get_node(ikey);
       if(!current_node_ref.first) {

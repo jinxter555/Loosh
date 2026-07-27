@@ -137,8 +137,8 @@ public:
   OpStatus set(const string&key, unique_ptr<Node> child);
   OpStatus set(const string& key, Value v);
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
-  bool extend(const vector<string>&path, bool override=false);
   static Node* extend_map_by_key(Map& map, const string&key, bool create=true); // for map
+  bool extend(const vector<string>&path, bool create=true);
   //
   Node& get_node(); // returns node if it's ptrs shared raw unique
 

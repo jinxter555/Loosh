@@ -144,6 +144,32 @@ Node::Type Node::_get_value_type() const {
   }
   return type_;
 }
+Node Node::get_type() const { return type_; }
+
+
+//------------------------------------------------------------------------ _get
+//------------------------------
+Node::Map& Node::_get_map_ref() { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  switch(type_) {
+  case Type::Raw: {
+    auto rptr = get<ptr_R>(value_);
+    return rptr->_get_map_ref(); }
+  case Type::Unique:  {
+    auto &uptr = get<ptr_U>(value_);
+    return uptr->_get_map_ref(); }
+  case Type::Map:  {
+    return get<Map>(value_);}
+  default: {
+    cerr << "Node::_get_map_ref() Error! not a map: Node::type_ " 
+      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    throw std::bad_typeid();
+  }}
+  
+  return get<Map>(value_); 
+}
+
+
 
 
 //------------------------------------------------------------------------

@@ -109,7 +109,16 @@ TEST_CASE("check node 2") {
   tm3.set(br4_key, Node::create(777l), false);
   auto tm4_node_status_ref = tm3.get_node(br4_key);
   //cout << "tm4_node_status_ref: " << tm4_node_status_ref << "\n";
-   CHECK(!tm4_node_status_ref.first);
+  CHECK(!tm4_node_status_ref.first);
+
+  Node::Map &nv = tm4._get_map_ref();
+  cout << "nv: " << Node::_to_str( nv) << "\n";
+
+  SECTION("list throw::bad_id") {
+    REQUIRE_THROWS_AS(list._get_map_ref(), std::bad_typeid);
+  }
+
+
 
 
 //  tm2.extend(p, true);
