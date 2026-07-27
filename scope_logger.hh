@@ -42,8 +42,9 @@ public:
 };
 
 
+std::string remove_first_namespace(std::string_view raw) ;
 std::string clean_function_name(const std::source_location& location = std::source_location::current()) ;
-std::string clean_function_name2(const std::source_location& location = std::source_location::current()) ;
+std::string clean_function_name_ns(const std::source_location& location = std::source_location::current()) ;
 
 
 #ifdef SLOG_DEBUG_TRACE_FUNC

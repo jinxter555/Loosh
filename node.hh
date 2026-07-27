@@ -143,7 +143,7 @@ public:
   Node& get_node(); // returns node if it's ptrs shared raw unique
 
   OpStatusRef operator[](Integer index) ;
-  OpStatusRef operator[](const std::string& key) ;
+  OpStatusRef operator[](const string& key) ;
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(Integer index);

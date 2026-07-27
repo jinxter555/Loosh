@@ -14,6 +14,7 @@ using namespace Loosh;
 
 
 TEST_CASE("check node 2") {
+    Node::Error::init();
 
 
   trace_function.open("trace.log", std::ios::out);
@@ -96,13 +97,20 @@ TEST_CASE("check node 2") {
   CHECK(tm2["value"].second._get_integer() ==555l); 
   cout << "\ntm2: " <<  tm2 << "\n";
 
-  /*
   Node tm3(Node::Type::Map);
-  vector<string> br1_key = {"branch1", "branch2"};
-  auto tm3_node_status_ref = tm3.get_node(br1_key);
+  vector<string> br3_key = {"branch1", "branch2"};
+  tm3.set(br3_key, Node::create(777l), true);
+  auto tm3_node_status_ref = tm3.get_node(br3_key);
   CHECK(tm3_node_status_ref.first);
   cout << "tm3_node_status_ref: " << tm3_node_status_ref << "\n";
-*/
+
+  Node tm4(Node::Type::Map);
+  vector<string> br4_key = {"branch4", "branch4b"};
+  tm3.set(br4_key, Node::create(777l), false);
+  auto tm4_node_status_ref = tm3.get_node(br4_key);
+  //cout << "tm4_node_status_ref: " << tm4_node_status_ref << "\n";
+   CHECK(!tm4_node_status_ref.first);
+
 
 //  tm2.extend(p, true);
 }

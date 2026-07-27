@@ -148,7 +148,7 @@ Node::Type Node::_get_value_type() const {
 
 //------------------------------------------------------------------------
 
-void  Node::nil() { value_ = std::monostate{};  type_ = Node::Type::Null; }
+void  Node::nil() { value_ = monostate{};  type_ = Node::Type::Null; }
 void  Node::operator=(bool v) { value_ = v; type_ = Node::Type::Bool; }
 void  Node::operator=(Integer v) { value_ = v; type_ = Node::Type::Integer; }
 void  Node::operator=(Float v) { value_ = v; type_ = Node::Type::Float; }
@@ -323,7 +323,7 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
   }        
   Map& map = get<Map>(value_);
 
-  if(!map.try_emplace(key, std::move(child)).second) {
+  if(!map.try_emplace(key, move(child)).second) {
     return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
     return {true, Node::create(true)};

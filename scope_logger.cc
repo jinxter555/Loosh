@@ -110,27 +110,25 @@ string  ScopeLogger::spacing() {
 
 
 
-std::string clean_function_name2(const std::source_location& location) {
-    // 1. Get the raw function signature as a standard string copy
-    std::string name = location.function_name();
-    
-    // 2. Find where the arguments start at '('
-    size_t paren = name.find('(');
-    if (paren == std::string::npos) return name; // Fallback if format is unexpected
+std::string remove_first_namespace(std::string_view raw) {
+  if (raw.empty()) return "";
 
-    // 3. Extract the left portion before the parenthesis
-    std::string prefix = name.substr(0, paren);
+  // 1. Find the first occurrence of the double-colon separator
+  size_t first_colons = raw.find("::");
 
-    // 4. Find the last space, which separates the return type from the function name
-    size_t last_space = prefix.find_last_of(" \t\n\r");
-    if (last_space != std::string::npos) {
-        return prefix.substr(last_space + 1); // Returns just the function name
-    }
+  // 2. If no "::" exists, return the original string untouched
+  if (first_colons == std::string_view::npos) {
+    return std::string{raw};
+  }
 
-    return prefix;
+  // 3. Skip past the first colons (+2 characters) to extract the remaining string
+  std::string_view stripped = raw.substr(first_colons + 2);
+  return std::string{stripped};
 }
 
-string clean_function_name(const std::source_location& location) {
+
+
+string clean_function_name_ns(const std::source_location& location) {
     std::string name = location.function_name();
     
     // 1. Find where the arguments start at '('
@@ -151,3 +149,8 @@ string clean_function_name(const std::source_location& location) {
 }
 
 
+
+
+std::string clean_function_name(const std::source_location& loc ) {
+  return remove_first_namespace(clean_function_name_ns(loc));
+}

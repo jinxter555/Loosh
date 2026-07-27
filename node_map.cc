@@ -75,7 +75,7 @@ Node::OpStatusRef Node::get_node(const string&key) {
   Node::Map& map = get<Node::Map>(value_);
   auto it = map.find(key);
   if(it==map.end()) {
-    string msg = "key '" + key + "' not found in map.";
+    string msg = clean_function_name() + ": key '" + key + "' not found in map.";
     return {false, Error::ref(Error::Type::KeyNotFound, msg)};
   }
 
@@ -122,7 +122,7 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
       auto current_node_ref = current->get_node(key);
       if(!current_node_ref.first) {
-        string msg = "key '" + key + "' not found in map.";
+        string msg = clean_function_name() + ": key '" + key + "' not found in map.";
         return {false, Error::ref(Error::Type::KeyNotFound, msg)};
       }
 

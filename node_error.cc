@@ -36,7 +36,7 @@ Node& Node::Error::ref(Error::Type t) { return *list[size_t(t)]; }
 Node& Node::Error::ref(Error::Type t, const string& msg) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "errmsg: " + msg, SLOG_NODE_OP);
- // cerr << "Error Message: " << msg << "\n";
+  cerr << "Error Message: " << msg << "\n";
   return *list[size_t(t)]; 
 } 
 
