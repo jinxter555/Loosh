@@ -159,8 +159,10 @@ Node::Map& Node::_get_map_ref() {
   case Type::Map:  {
     return get<Map>(value_);}
   default: {
-    cerr << "Node::_get_map_ref() Error! not a Node::Map: Node::type_ " 
-      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    auto msg =  "Node::_get_map_ref() Error! not a Node::Map: Node::type_ " 
+      + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+    cerr << msg << "\n";
+    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}
   
@@ -168,6 +170,7 @@ Node::Map& Node::_get_map_ref() {
 }
 //------------------------------ _get_imap_ref
 Node::IMap& Node::_get_imap_ref() { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
   switch(type_) {
   case Type::Raw: {
@@ -177,8 +180,10 @@ Node::IMap& Node::_get_imap_ref() {
     auto &sptr = get<ptr_U>(value_);
     return sptr->_get_imap_ref(); }
   default: {
-    cerr << "Node::_get_imap_ref() Error! not a Node::IMap: Node::type_ " 
-      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    auto msg = "Node::_get_imap_ref() Error! not a Node::IMap: Node::type_ " 
+      +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
+    cerr << msg << "\n";
+    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}
   
@@ -202,8 +207,10 @@ Node::Vector& Node::_get_vector_ref() {
     return get<Vector>(value_); 
   }
   default: {
-    cerr << "Node::_get_vector_ref() Error! not a Node::Vector: Node::type_ " 
-      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    auto msg ="Node::_get_vector_ref() Error! not a Node::Vector: Node::type_ " 
+      + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+    cerr << msg << "\n";
+    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}
 
@@ -221,8 +228,11 @@ Node::DeQue& Node::_get_deque_ref() {
     auto &uptr = get<ptr_U>(value_);
     return uptr->_get_deque_ref(); }
   default: {
-    cerr << "Node::_get_deque_ref() Error! not a Node::DeQue: Node::type_ " 
-      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    auto msg = "Node::_get_deque_ref() Error! not a Node::DeQue: Node::type_ " 
+      +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
+    cerr << msg << "\n";
+    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+
     throw std::bad_typeid(); 
   }}
 
@@ -246,8 +256,10 @@ Node::List& Node::_get_list_ref() {
     auto &uptr = get<ptr_U>(value_);
     return uptr->_get_list_ref(); }
   default: {
-    cerr << "Node::_get_list_ref() Error! not a Node::List: Node::type_ " 
-      <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    auto msg =  "Node::_get_list_ref() Error! not a Node::List: Node::type_ " 
+      +  _to_str(type_) + ", Node::value_ " +  _to_str();
+    cerr << msg << "\n";
+    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}
   
@@ -266,21 +278,19 @@ Node::ptr_R Node::_get_ptr_r() const {
     if(ret_ptr_r->type_ == Node::Type::Raw) {
       auto msg = "Warning! Node::get_ptr_r(): ret_ptr_r is pointing to another RAW pointer!";
       cerr << msg << "\n";
-      MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP+30)
+      MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP)
     }
     return rptr;
   }
   default: {
   }}
-  cerr << "Node::_get_rptr_r() Error! not a Node::ptr_R: Node::type_ " 
-  <<  _to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+  auto msg = "Node::_get_rptr_r() Error! not a Node::ptr_R: Node::type_ " 
+  +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
+   MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP)
+
   throw std::bad_typeid();
   
 }
-
-
-
-
 
 
 //------------------------------------------------------------------------
@@ -447,14 +457,17 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
     Vector& cc_vec= get<Vector>(value_);
     cc_vec.push_back(move(child));
     break; }
-
-  default: return {false, create_error(Error::Type::InvalidOperation, "Cannot add element to a non-List node.")};
-  }
+  default: {
+    auto msg =  clean_function_name() + ": Cannot add element to a non-Node::__Sequence__, Node::type" + _to_str(type_)  + ", Node::value_: " +  _to_str();
+    cerr << msg <<  "\n";
+    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+    throw std::bad_typeid();
+  }}
 
   return {true, Node::create(true)};
 }
 
-// only no element is present
+// only when no existing key is present
 Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if (type_ != Type::Map) {

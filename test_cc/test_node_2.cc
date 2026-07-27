@@ -13,7 +13,7 @@ using namespace Loosh;
 
 
 
-TEST_CASE("check node 2") {
+TEST_CASE("check node 2:  map") {
     Node::Error::init();
 
 
@@ -83,12 +83,6 @@ TEST_CASE("check node 2") {
   cout << "\nt2: " <<  t2 << "\n";
   Node::print_value_recursive(t2, 0);
 
-  cout << "\nList\n";
-  Node list(Node::Type::List);
-  list.add(Node::create(123l));
-  list.add(Node::create("hello"));
-  list.add(Node::create("world"));
-  cout << "list: " << list._to_str() << "\n";
 
 
   Node tm2(Node::Type::Map);
@@ -111,15 +105,31 @@ TEST_CASE("check node 2") {
   //cout << "tm4_node_status_ref: " << tm4_node_status_ref << "\n";
   CHECK(!tm4_node_status_ref.first);
 
-  Node::Map &nv = tm4._get_map_ref();
-  cout << "nv: " << Node::_to_str( nv) << "\n";
+  tm4.set(br4_key, Node::create(777l), true);
+  Node::Map &m4 = tm4._get_map_ref();
+  cout << "m4: " << Node::_to_str( m4) << "\n";
 
-  SECTION("list throw::bad_type_id") {
-    REQUIRE_THROWS_AS(list._get_map_ref(), std::bad_typeid);
+
+  SECTION("tm4._add() throw::bad_type_id") {
+    REQUIRE_THROWS_AS(tm4.add(Node::create(1234l)), std::bad_typeid);
   }
 
 
 
+  vector<string> p = {"universe", "plan"};
 
-//  tm2.extend(p, true);
+  tm2.extend(p, true);
+}
+
+TEST_CASE("check node 2: list ") {
+  cout << "\ntest l1\n";
+  Node l1(Node::Type::List);
+  l1.add(Node::create(123l));
+  l1.add(Node::create("hello"));
+  l1.add(Node::create("world"));
+  cout << "l1: " << l1._to_str() << "\n";
+
+  SECTION("l1._get_map_ref() throw::bad_type_id") {
+    REQUIRE_THROWS_AS(l1._get_map_ref(), std::bad_typeid);
+  }
 }

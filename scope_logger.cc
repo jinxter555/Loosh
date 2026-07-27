@@ -73,6 +73,17 @@ ScopeLogger::~ScopeLogger() {
     exit(1);
   }
 }
+void ScopeLogger::destroy() {   
+  this->~ScopeLogger();
+
+  auto color_code = colors[1].code;
+  auto color = string("\033[") + to_string(color_code) + "m";
+  cout << color << "scopelogger::destroy()\n";
+  delete this;
+  return ;
+}
+
+
 void ScopeLogger::msg(const string& msg, int verbose_level) {   
   if(!out.is_open()) return;
 
@@ -87,6 +98,7 @@ void ScopeLogger::msg(const string& msg, int verbose_level) {
 
 
   out << color << s << " -msg-  " << spacing() << " " << msg << "\n";
+  //cout << color << s << " -msg-  " << spacing() << " " << msg << "\n";
 
   const std::string reset("\033[0m");
   out << reset;

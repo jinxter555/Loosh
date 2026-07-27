@@ -8,10 +8,10 @@ using namespace std;
 namespace Loosh 
 {
 
-// 
+//---------------------------------------------------------------------- 
 Node::OpStatusRef Node::get_node(Integer index) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
-  MYLOGGER_MSG(trace_function, string("index: ") + to_string(index), SLOG_NODE_OP+30)
+  MYLOGGER_MSG(trace_function, "index: " + to_string(index), SLOG_NODE_OP+30)
 
   //cout << "get_node value:  " << _to_str() << "\n";
   //cout << "get_node type: " << _to_str(type_) << "\n";
@@ -46,6 +46,36 @@ Node::OpStatusRef Node::get_node(Integer index) {
   )};
 }
 
+//----------------------------------- 
+Node::OpStatus Node::push_front(unique_ptr<Node> node_uptr) {
+
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  switch(type_) {
+  case Type::List: {
+    List& cc_list = get<List>(value_);
+    cc_list.push_front(move(node_uptr)); 
+    
+    break; }
+
+  case Type::DeQue: {
+    DeQue& cc_dq = get<DeQue>(value_);
+    cc_dq.push_front(move(node_uptr));
+    break; }
+  case Type::Vector: {
+    Vector& cc_vec= get<Vector>(value_);
+    cerr << "Warning!: Node::push_front() with vector object\n";
+    cc_vec.insert(cc_vec.begin(), move(node_uptr));
+    return {true, create()};
+
+    break; }
+  default: {
+    auto msg =  clean_function_name() +  "Cannot push_front() element to a non-Node::__Sequence__ node.";
+    cerr << msg <<  "\n" <<_to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
+    throw std::bad_typeid();
+  }}
+
+  return {true, Node::create(true)};
+}
 
 
 }

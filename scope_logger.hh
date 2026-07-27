@@ -14,6 +14,11 @@
 #define LOC_FUN source_location::current().function_name()
 
 
+#define CONCAT_HIDDEN(x, y) x##y
+#define CONCAT(x, y) CONCAT_HIDDEN(x, y)
+
+// The new clean macro
+
 using namespace std;
 
 extern std::fstream log_output;
@@ -33,8 +38,9 @@ private:
 
   int verbosity_obj = 0;
 public:
-  ScopeLogger( fstream &,  const string & , const string &, int verbose_level=0);
+  ScopeLogger( fstream &,  const string&msg_enter , const string&msg_exit, int verbose_level=0);
   ~ScopeLogger() ;
+  void destroy() ;
   void msg(const string&, int verbose_level=0);
   void set_current_stack_level();
   static void set_current_verbose_level(int);
@@ -47,6 +53,7 @@ std::string clean_function_name(const std::source_location& location = std::sour
 std::string clean_function_name_ns(const std::source_location& location = std::source_location::current()) ;
 
 
+// define Macros: has to take an arguemnt
 #ifdef SLOG_DEBUG_TRACE_FUNC
 #define MYLOGGER(x, y, z, v) ScopeLogger l_##x##_scope(x, y, z, v);
 #define MYLOGGER_MSG(x, y, v) l_##x##_scope.msg(y, v);
