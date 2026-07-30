@@ -458,7 +458,7 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
     cc_vec.push_back(move(child));
     break; }
   default: {
-    auto msg =  clean_function_name() + ": Cannot add element to a non-Node::__Sequence__, Node::type" + _to_str(type_)  + ", Node::value_: " +  _to_str();
+    auto msg =  clean_function_name() + ": Cannot add element to a non-Node::__Sequence__, type: " + _to_str(type_)  + ", Node::value_: " +  _to_str();
     cerr << msg <<  "\n";
     MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();

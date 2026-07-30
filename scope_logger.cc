@@ -49,10 +49,14 @@ ScopeLogger::ScopeLogger( fstream &o,  string const & mi, string const& mo, int 
 
   //out << color << s << ":" << current_level << " Enter: " << spacing()  << msg_in << endl; 
   out << color << s << " Enter: " << spacing()  << msg_in << endl; 
+  //cout << color << s << " Enter: " << spacing()  << msg_in << endl; 
 }
 
 ScopeLogger::~ScopeLogger() {   
-  if(!out.is_open()) return;
+  if(!out.is_open()) {
+    cout << "trace.log is closed!\n\n";
+     return;
+  }
   if(verbosity_obj > verbosity) return;
 
   char s[25]; sprintf(s, "%05d", id_);
@@ -63,6 +67,7 @@ ScopeLogger::~ScopeLogger() {
 
 
   out << color << s << " Exit:  " << spacing() << msg_out << endl; 
+  //cout << color << s << " Exit:  " << spacing() << msg_out << endl; 
   const std::string reset("\033[0m");
   out << reset;
 

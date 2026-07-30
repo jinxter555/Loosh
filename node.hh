@@ -7,6 +7,8 @@
 #include <deque>
 #include <unordered_map>                                                                        
 #include <functional>
+#include <spdlog/spdlog.h>
+
 
 #include "defs.hh"
 #include "lisp.hh"
@@ -165,7 +167,6 @@ public:
   bool _get_bool() const;
   string _get_str() const;
   Map& _get_map_ref() ;
-  Node& get_ref(Node::Integer); // this returns the node object that's stored in objectstore
   IMap& _get_imap_ref() ;
   Vector& _get_vector_ref() ;
   DeQue& _get_deque_ref() ;
@@ -175,6 +176,7 @@ public:
   //
   OpStatus add(unique_ptr<Node> child);
   OpStatus add(const string&key, unique_ptr<Node> child);
+  //
   OpStatus pop_back();
   OpStatus pop_front();
   OpStatus push_front(unique_ptr<Node>node);
