@@ -9,6 +9,8 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "../scope_logger.hh"
 
+
+
 using namespace  std;
 using namespace Loosh;
   
@@ -148,10 +150,10 @@ TEST_CASE("map") {
   cout << "m4: " << Node::_to_str( m4) << "\n";
 
   SECTION("tm4.add(Integer) throw::bad_type_id") {
-    REQUIRE_THROWS_AS(tm4.add(Node::create(1234l)), std::bad_typeid);
+    REQUIRE_THROWS_AS(tm4.add(Node::create(1234l)), bad_typeid);
   }
   SECTION("tm4.add(String) throw::bad_type_id") {
-    REQUIRE_THROWS_AS(tm4.add(Node::create("hello")), std::bad_typeid);
+    REQUIRE_THROWS_AS(tm4.add(Node::create("hello")), bad_typeid);
   }
   REQUIRE_THROWS_AS(tm4.push_front(Node::create(5555l)), std::bad_typeid);
 

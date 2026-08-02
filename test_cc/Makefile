@@ -16,7 +16,7 @@ LDLIBS   = -lCatch2Main -lCatch2 -lfmt -lspdlog
 MAKE=make
 node_o := $(wildcard ../*.o)
 
-objects = test_node_1.o test_node_2.o 
+#objects = test_node_1.o test_node_2.o 
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
 

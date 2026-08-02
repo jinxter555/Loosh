@@ -58,7 +58,7 @@ public:
   enum class Type { 
     Null, Bool, Error, Size, Integer, Float, String, 
     Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
-    ControlFlow, Atom, ObjectId, Raw, Unique, Fun };
+    ControlFlow, Atom, ObjectId, NodeObject, Raw, Unique, Fun };
 
   using Integer = LOOSH_T_LONG; 
   using Float = double;
@@ -134,6 +134,8 @@ public:
   void  operator = (ptr_U v);
   //
   void set(unique_ptr<Node> new_node);
+  void set(const Integer, Type );
+  void set(const string&, Type );
 
   // map
   OpStatus set(const string&key, unique_ptr<Node> child);
@@ -167,6 +169,7 @@ public:
   bool _get_bool() const;
   string _get_str() const;
   Map& _get_map_ref() ;
+  Map& _get_map_ref(const string &key) ;
   IMap& _get_imap_ref() ;
   Vector& _get_vector_ref() ;
   DeQue& _get_deque_ref() ;
@@ -182,6 +185,10 @@ public:
   OpStatus push_front(unique_ptr<Node>node);
   OpStatus push_back(unique_ptr<Node>node);
 
+
+  //
+  OpStatus has_key(const string&key);
+  bool m_has_key(const string&key);
 
 
   uintptr_t GetObjectId(Node* obj) { return reinterpret_cast<uintptr_t>(obj); }
@@ -208,7 +215,7 @@ public:
   //
   void print(int depth=0) const;
   static void print_value_recursive(const Node& node, int depth=0);
-  static void print_value(const Value& node, int depth=0);
+  //static void print_value(const Value& node, int depth=0);
 
 
 
@@ -220,6 +227,10 @@ protected:
   Type type_;
   bool isMarked = false;
 
+  OpStatus object_info_create();
+  OpStatus object_info_add(const string&key, unique_ptr<Node> child);
+  OpStatus object_info_set(const string&key, unique_ptr<Node> child);
+
 private:
   bool type_set_identifier();
   bool type_set_atom();
@@ -227,6 +238,18 @@ private:
 
 
 };
+
+class NodeObject : public Node {
+private:
+  Node* obj_ptr;
+public:
+  NodeObject();
+
+
+};
+
+extern Node node_null;
+
 
 };
 

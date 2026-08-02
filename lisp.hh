@@ -4,19 +4,11 @@
 #include <unordered_map>
 #include "lang.hh"
 #include "tree.hh"
-//#include "node.hh"
 
 using namespace  std;
-
-
-
-
-
 namespace Loosh 
 {
 
-
-//class Lisp : public Lang {
 class Lisp : public Lang {
   friend class Node;
 
@@ -40,5 +32,7 @@ public:
   Lisp();
   static string _to_str(Lisp::Op op);
 };
+
+
 
 }

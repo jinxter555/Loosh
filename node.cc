@@ -6,6 +6,9 @@
 using namespace std;
 namespace Loosh 
 {
+
+Node node_null(Node::Type::Null);
+
   
 
 Node::Node() : type_(Type::Null) {
@@ -158,6 +161,27 @@ Node::Map& Node::_get_map_ref() {
     return uptr->_get_map_ref(); }
   case Type::Map:  {
     return get<Map>(value_);}
+  default: {}}
+
+  auto msg =  "Node::_get_map_ref() Error! not a Node::Map: Node::type_ " 
+    + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  cerr << msg << "\n";
+  MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
+  
+}
+
+Node::Map& Node::_get_map_ref(const string& key) { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  switch(type_) {
+  case Type::Raw: {
+    auto rptr = get<ptr_R>(value_);
+    return rptr->_get_map_ref(key); }
+  case Type::Unique:  {
+    auto &uptr = get<ptr_U>(value_);
+    return uptr->_get_map_ref(key); }
+  case Type::Map:  {
+    return get<Map>(value_);}
   default: {
     auto msg =  "Node::_get_map_ref() Error! not a Node::Map: Node::type_ " 
       + _to_str(type_) + ", Node::value_ " +  _to_str() ;
@@ -165,9 +189,12 @@ Node::Map& Node::_get_map_ref() {
     MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}
-  
-  return get<Map>(value_); 
+
+
 }
+
+
+
 //------------------------------ _get_imap_ref
 Node::IMap& Node::_get_imap_ref() { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -440,6 +467,7 @@ Node::OpStatusRef Node::operator[](const string& key) {
 }
 
 
+//------------------------------ add
 
 Node::OpStatus Node::add(unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -467,6 +495,7 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
   return {true, Node::create(true)};
 }
 
+//------------------------------ add
 // only when no existing key is present
 Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -478,8 +507,14 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
   if(!map.try_emplace(key, move(child)).second) {
     return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
-    return {true, Node::create(true)};
+  return {true, Node::create(true)};
+
 }
+//------------------------------ add
+
+
+void Node::set(const Integer v, Type t) { value_ = v; type_ = t; } // could be regular Integer or Atom
+void Node::set(const string&v, Type t) { value_ = v; type_ = t; } // could be reuglar string or identifer
 
 
 
