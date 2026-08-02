@@ -13,25 +13,18 @@ NodeObject::NodeObject() : Node(Type::Map) {
 
 }
 
-//------------------------------ add
-/*
-Node::OpStatus NodeObject::object_info_create() {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  Map& map= get<Map>(value_);
-  map[OBJ_INFO] = Node::create(Node::Type::Map);
-  return {true, create(true)};
-}
-*/
-//------------------------------ set
-Node::OpStatus Node::object_info_add(const string&key, unique_ptr<Node> child) {
 
+//------------------------------ set
+Node::OpStatus NodeObject::info_add(const string&key, unique_ptr<Node> child) {
+
+  /*
   auto ref_status  = get_node(LOOSH_OBJ_INFO);
   if(!ref_status.first) {
     return {false, Node::create_error(Error::Type::KeyNotFound, "ObjInfo: "  LOOSH_OBJ_INFO  "not found")};
   }
   auto &obj_info_map = ref_status.second._get_map_ref();
-
-
+  */ 
+  auto &obj_info_map = _get_map_ref(key);
   if(!obj_info_map.try_emplace(key, move(child)).second) {
     return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
@@ -40,7 +33,7 @@ Node::OpStatus Node::object_info_add(const string&key, unique_ptr<Node> child) {
 }
 
 //------------------------------ set
-Node::OpStatus Node::object_info_set(const string&key, unique_ptr<Node> child) {
+Node::OpStatus NodeObject::info_set(const string&key, unique_ptr<Node> child) {
 
   auto ref_status  = get_node(LOOSH_OBJ_INFO);
   if(!ref_status.first) {
@@ -55,6 +48,9 @@ Node::OpStatus Node::object_info_set(const string&key, unique_ptr<Node> child) {
 
 }
 
+string NodeObject::_to_str() const  {
+  return Node::_to_str();
+}
 
 
 

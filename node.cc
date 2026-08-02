@@ -163,10 +163,9 @@ Node::Map& Node::_get_map_ref() {
     return get<Map>(value_);}
   default: {}}
 
-  auto msg =  "Node::_get_map_ref() Error! not a Node::Map: Node::type_ " 
-    + _to_str(type_) + ", Node::value_ " +  _to_str() ;
-  cerr << msg << "\n";
-  MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+  auto msg =  "Not a Node::Map, Node::type_ " + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  spdlog::error(clean_function_name() + ": " +  msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
   throw std::bad_typeid();
   
 }
@@ -182,13 +181,14 @@ Node::Map& Node::_get_map_ref(const string& key) {
     return uptr->_get_map_ref(key); }
   case Type::Map:  {
     return get<Map>(value_);}
-  default: {
-    auto msg =  "Node::_get_map_ref() Error! not a Node::Map: Node::type_ " 
-      + _to_str(type_) + ", Node::value_ " +  _to_str() ;
-    cerr << msg << "\n";
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }}
+  default: {}}
+
+  auto msg =  "Not a Node::Map, Node::type_ " 
+    + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+
+  spdlog::error(clean_function_name() + ": " +  msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
 
 
 }
@@ -206,15 +206,16 @@ Node::IMap& Node::_get_imap_ref() {
   case Type::Unique:  {
     auto &sptr = get<ptr_U>(value_);
     return sptr->_get_imap_ref(); }
-  default: {
-    auto msg = "Node::_get_imap_ref() Error! not a Node::IMap: Node::type_ " 
+  case Type::IMap:  {
+    return get<IMap>(value_);}
+  default: {}}
+
+  auto msg = "Not a Node::IMap, Node::type_ " 
       +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
-    cerr << msg << "\n";
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }}
+  spdlog::error(clean_function_name() + ": " +  msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
   
-  return get<IMap>(value_); 
 }
 
 
@@ -233,15 +234,14 @@ Node::Vector& Node::_get_vector_ref() {
   case Type::Vector:  {
     return get<Vector>(value_); 
   }
-  default: {
-    auto msg ="Node::_get_vector_ref() Error! not a Node::Vector: Node::type_ " 
-      + _to_str(type_) + ", Node::value_ " +  _to_str() ;
-    cerr << msg << "\n";
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }}
+  default: {}}
 
-  return get<Vector>(value_); 
+  auto msg ="Node::_get_vector_ref(): not a Node::Vector: Node::type_ " 
+    + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  spdlog::error(msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
+
 }
 
 //------------------------------ _get_deque_ref
@@ -254,16 +254,17 @@ Node::DeQue& Node::_get_deque_ref() {
   case Type::Unique:  {
     auto &uptr = get<ptr_U>(value_);
     return uptr->_get_deque_ref(); }
-  default: {
-    auto msg = "Node::_get_deque_ref() Error! not a Node::DeQue: Node::type_ " 
-      +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
-    cerr << msg << "\n";
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+  case Type::DeQue:  {
+    return get<DeQue>(value_); 
+  }
+  default: {}}
 
-    throw std::bad_typeid(); 
-  }}
+  auto msg = "Not a Node::DeQue: Node::type_ " 
+    +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  spdlog::error(clean_function_name() + ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid(); 
 
-  return get<DeQue>(value_); 
 }
 
 
@@ -282,39 +283,41 @@ Node::List& Node::_get_list_ref() {
   case Type::Unique:  {
     auto &uptr = get<ptr_U>(value_);
     return uptr->_get_list_ref(); }
-  default: {
-    auto msg =  "Node::_get_list_ref() Error! not a Node::List: Node::type_ " 
+  case Type::List:  {
+    return get<List>(value_); 
+  }
+  default: {}}
+
+  auto msg =  "Not a Node::List: Node::type_ " 
       +  _to_str(type_) + ", Node::value_ " +  _to_str();
-    cerr << msg << "\n";
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }}
+  spdlog::error(clean_function_name() + ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
   
-  return get<List>(value_); 
 }
 
 //------------------------------------------------------------------------
 //------------------------------ _get_rptr_ref
 Node::ptr_R Node::_get_ptr_r() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  auto ret_ptr_r = get<ptr_R>(value_);
 
   switch(type_) {
   case Type::Raw: {
     auto rptr = get<ptr_R>(value_);
-    if(ret_ptr_r->type_ == Node::Type::Raw) {
-      auto msg = "Warning! Node::get_ptr_r(): ret_ptr_r is pointing to another RAW pointer!";
-      cerr << msg << "\n";
-      MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP)
+    if(rptr->type_ == Node::Type::Raw) {
+      string msg = "Raw, ptr_R is pointing to another RAW pointer!";
+      spdlog::warn(clean_function_name() + ": " + msg);
+      MYLOGGER_MSG(trace_function, "Warning: "  + msg, SLOG_NODE_OP)
     }
     return rptr;
   }
-  default: {
-  }}
-  auto msg = "Node::_get_rptr_r() Error! not a Node::ptr_R: Node::type_ " 
-  +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
-   MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP)
+  default: {}}
 
+  auto msg = "Node::_get_rptr_r() Error! not a Node::ptr_R: Node::type_ " 
+  + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+
+  spdlog::error(clean_function_name() + ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
   throw std::bad_typeid();
   
 }
@@ -486,9 +489,9 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
     cc_vec.push_back(move(child));
     break; }
   default: {
-    auto msg =  clean_function_name() + ": Cannot add element to a non-Node::__Sequence__, type: " + _to_str(type_)  + ", Node::value_: " +  _to_str();
-    cerr << msg <<  "\n";
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+    auto msg =  "Cannot add element to a non-Node::__Sequence__, type: " + _to_str(type_)  + ", Node::value_: " +  _to_str();
+    spdlog::error(clean_function_name() + ": " + msg);
+    MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}
 

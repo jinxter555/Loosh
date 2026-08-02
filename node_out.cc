@@ -18,6 +18,12 @@ ostream& operator<<(ostream& os, const Loosh::Node& v) {
   cout << v._to_str();
   return os;
 }
+ostream& operator<<(ostream& os, const Loosh::NodeObject& v) {
+  cout << v._to_str();
+  return os;
+}
+
+
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatus& s) {
   MYLOGGER(trace_function, LOC_FUN, LOC_FUN, SLOG_FUNC_INFO);
   if(s.first)  cout << "true: "; else cout << "false: ";
@@ -98,9 +104,9 @@ void Node::print_value_recursive(const Node& node, int depth) {
         indent(); 
         cout << "  - " << key << " (Type: " << Node::_to_str(child_ptr->type_) << "): ";
         //if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr[" << &child_ptr->value_ << "]==\n"; continue; }
-        if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr[" << &child_ptr->get_node() << "]==\n"; continue; }
+        if(key == LOOSH_MODULE_PTR || key == LOOSH_CLASS_PTR) { cout << "==*ptr[" << &child_ptr->get_node() << "]==\n"; continue; }
         //if(key == CURRENT_MODULE_PTR || key == CURRENT_CLASS_PTR) { cout << "###*ptr["<< &child_ptr->value_ << "]##\n"; continue; }
-        if(key == CURRENT_MODULE_PTR || key == CURRENT_CLASS_PTR) { cout << "###*ptr["<< &child_ptr->get_node()<< "]##\n"; continue; }
+        if(key == LOOSH_CURRENT_MODULE_PTR || key == LOOSH_CURRENT_CLASS_PTR) { cout << "###*ptr["<< &child_ptr->get_node()<< "]##\n"; continue; }
 
         print_value_recursive(*child_ptr.get(), depth+1);
         cout << "\n";

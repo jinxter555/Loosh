@@ -33,6 +33,13 @@ TEST_CASE("check node 2") {
     REQUIRE_THROWS_AS(tm4.add(Node::create(1234l)), std::bad_typeid);
   }
 
+  NodeObject tm5;
+  tm5.info_add("class_name", Node::create("MyClass"));
+  tm5.info_add("class_ptr", Node::create());
+  tm5.info_add("object_count", Node::create(555));
+  cout << "tm5: " <<  tm5 << "\n";
+  
+
 
 
 

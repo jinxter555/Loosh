@@ -227,9 +227,6 @@ protected:
   Type type_;
   bool isMarked = false;
 
-  OpStatus object_info_create();
-  OpStatus object_info_add(const string&key, unique_ptr<Node> child);
-  OpStatus object_info_set(const string&key, unique_ptr<Node> child);
 
 private:
   bool type_set_identifier();
@@ -244,6 +241,11 @@ private:
   Node* obj_ptr;
 public:
   NodeObject();
+  OpStatus info_add(const string&key, unique_ptr<Node> child);
+  OpStatus info_set(const string&key, unique_ptr<Node> child);
+  OpStatus data_add(const string&key, unique_ptr<Node> child);
+  OpStatus data_set(const string&key, unique_ptr<Node> child);
+  string _to_str() const ;
 
 
 };
@@ -254,6 +256,7 @@ extern Node node_null;
 };
 
 ostream& operator<<(ostream& os, const Loosh::Node& v) ;
+ostream& operator<<(ostream& os, const Loosh::NodeObject& v) ;
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatus& s) ;
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatusRef& s) ;
 

@@ -70,10 +70,9 @@ Node::OpStatus Node::push_front(unique_ptr<Node> node_uptr) {
     cc_vec.insert(cc_vec.begin(), move(node_uptr));
     break; }
   default: {
-    auto msg =  clean_function_name() +  ": Cannot push_front() element to a non-Node::__Sequence__ node." 
-      + "\nNode::type: " + _to_str(type_) + ", Node::value_ " +  _to_str() + "\n";
-    spdlog::error(msg);
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+    auto msg =  "Cannot push_front() element to a non-Node::__Sequence__ node.\n Node::type: " + _to_str(type_) + ", Node::value_ " +  _to_str() + "\n";
+    spdlog::error(clean_function_name() + ": " + msg);
+    MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}
 
@@ -88,26 +87,24 @@ Node::OpStatus Node::push_back(unique_ptr<Node> node_uptr) {
   case Type::List: {
     List& cc_list = get<List>(value_);
     cc_list.push_back(move(node_uptr)); 
-    
     break; }
 
   case Type::DeQue: {
     DeQue& cc_dq = get<DeQue>(value_);
     cc_dq.push_back(move(node_uptr));
     break; }
+
   case Type::Vector: {
     Vector& cc_vec= get<Vector>(value_);
     cc_vec.push_back(move(node_uptr));
     break; }
-  default: {
-    auto msg =  clean_function_name() +  ": Cannot push_back() element to a non-Node::__Sequence__ node.";
-    //cerr << msg <<  "\n" <<_to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
-    spdlog::error(msg);
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }}
 
-  return {true, Node::create(true)};
+  default: {}}
+
+  string msg =  "Cannot push_back() element to a non-Node::__Sequence__ node Node::type: " + _to_str(type_) + ", Node::value: " +  _to_str() ;
+  spdlog::error(clean_function_name() + ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
 }
 
 Node::OpStatus Node::pop_front() {
@@ -131,21 +128,19 @@ Node::OpStatus Node::pop_front() {
   case Type::Vector: {
     Vector& cc_vec= get<Vector>(value_);
     auto front = move(cc_vec.front());
-    auto msg = clean_function_name() + " with vector object";
-    spdlog::warn(msg);
+    string msg = " with vector object";
+    spdlog::warn(clean_function_name() +  msg);
     MYLOGGER_MSG(trace_function, "Warning:" + msg, SLOG_FUNC_INFO);
     cc_vec.erase(cc_vec.begin());
+
     return {true, move(front)}; 
   }
-  default: {
-    auto msg =  clean_function_name() +  ": Cannot pop_front() element to a non-Node::__Sequence__ node.";
-    //cerr << msg <<  "\n" <<_to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
-    spdlog::error(msg);
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }}
-
-  return {false, Node::create()};
+  default: {}}
+  auto msg =  "Cannot pop_front() element to a non-Node::__Sequence__ node. Node::type:" 
+    + _to_str(type_)  + ", Node::Value: " + _to_str();
+  spdlog::error(clean_function_name() +  ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
 }
 
 Node::OpStatus Node::pop_back() {
@@ -175,14 +170,14 @@ Node::OpStatus Node::pop_back() {
     cc_vec.pop_back();
     return {true, move(back)}; 
   }
-  default: {
-    auto msg =  clean_function_name() +  ": Cannot push_back() element to a non-Node::__Sequence__ node.";
-    //cerr << msg <<  "\n" <<_to_str(type_) << ", Node::value_ " <<  _to_str() << "\n";
-    spdlog::error(msg);
-    MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }}
-  return {false, Node::create()};
+
+  default: {}}
+  string msg =  "Cannot push_back() element to a non-Node::__Sequence__ node. Node::Type:"
+    + _to_str(type_)  + ", Node::Value: " + _to_str();
+
+  spdlog::error(clean_function_name() +  ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
 
 }
 
