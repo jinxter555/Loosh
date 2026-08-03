@@ -5,51 +5,39 @@
 using namespace std;
 namespace Loosh {
 
-NodeObject::NodeObject() : Node(Type::Map) {
-  add(LOOSH_OBJ_INFO, Node::create(Node::Type::Map));
-  add(LOOSH_OBJ_DATA, Node::create(Node::Type::Map));
+NodeObject::NodeObject() :
+  obj_ptr_u(make_unique<Node>(Node::Type::Map)) {
 
-//  auto v = map[OBJ_INFO];
+  obj_ptr_u->add(LOOSH_OBJ_INFO, Node::create(Node::Type::Map));
+  obj_ptr_u->add(LOOSH_OBJ_DATA, Node::create(Node::Type::Map));
+
+  obj_ptr_r = obj_ptr_u.get();
+  info_ptr_r = &obj_ptr_u->_get_map_ref(LOOSH_OBJ_INFO);
+  data_ptr_r = &obj_ptr_u->_get_map_ref(LOOSH_OBJ_INFO);
 
 }
 
-
-//------------------------------ set
-Node::OpStatus NodeObject::info_add(const string&key, unique_ptr<Node> child) {
-
-  /*
-  auto ref_status  = get_node(LOOSH_OBJ_INFO);
-  if(!ref_status.first) {
-    return {false, Node::create_error(Error::Type::KeyNotFound, "ObjInfo: "  LOOSH_OBJ_INFO  "not found")};
-  }
-  auto &obj_info_map = ref_status.second._get_map_ref();
-  */ 
-  auto &obj_info_map = _get_map_ref(key);
-  if(!obj_info_map.try_emplace(key, move(child)).second) {
-    return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+//------------------------------ ptr 
+Node::OpStatus NodeObject::ptr_add(Node::Map *ptr, const string&key, unique_ptr<Node> child) {
+  if(!ptr->try_emplace(key, move(child)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
   return {true, Node::create(true)};
-
+}
+Node::OpStatus NodeObject::ptr_set(Node::Map *ptr, const string&key, unique_ptr<Node> child) {
+  (*ptr)[key] = move(child);
+  return {true, Node::create(true)};
 }
 
 //------------------------------ set
+Node::OpStatus NodeObject::info_add(const string&key, unique_ptr<Node> child) { 
+  return ptr_add(info_ptr_r, key, move(child)); }
+
 Node::OpStatus NodeObject::info_set(const string&key, unique_ptr<Node> child) {
-
-  auto ref_status  = get_node(LOOSH_OBJ_INFO);
-  if(!ref_status.first) {
-    return {false, Node::create_error(Error::Type::KeyNotFound, "ObjInfo: "  LOOSH_OBJ_INFO  "not found")};
-  }
-  auto &obj_info_map = ref_status.second._get_map_ref();
-
-
-  obj_info_map[key] = move(child);
-
-  return {true, Node::create(true)};
-
-}
+  return ptr_set(info_ptr_r, key, move(child)); }
 
 string NodeObject::_to_str() const  {
-  return Node::_to_str();
+  return obj_ptr_r->_to_str();
 }
 
 

@@ -21,6 +21,7 @@ namespace Loosh
 
 class Node {
 friend class Tree;
+friend class NodeObject;
 public:
 
 //----------------------------------
@@ -236,15 +237,22 @@ private:
 
 };
 
-class NodeObject : public Node {
+class NodeObject {
 private:
-  Node* obj_ptr;
+  Node::ptr_U obj_ptr_u;
+  Node::ptr_R obj_ptr_r;
+  Node::Map* info_ptr_r;
+  Node::Map* data_ptr_r;
 public:
   NodeObject();
-  OpStatus info_add(const string&key, unique_ptr<Node> child);
-  OpStatus info_set(const string&key, unique_ptr<Node> child);
-  OpStatus data_add(const string&key, unique_ptr<Node> child);
-  OpStatus data_set(const string&key, unique_ptr<Node> child);
+
+  Node::OpStatus ptr_add(Node::Map *ptr, const string&key, unique_ptr<Node> child);
+  Node::OpStatus ptr_set(Node::Map *ptr, const string&key, unique_ptr<Node> child);
+
+  Node::OpStatus info_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus info_set(const string&key, unique_ptr<Node> child);
+  Node::OpStatus data_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus data_set(const string&key, unique_ptr<Node> child);
   string _to_str() const ;
 
 

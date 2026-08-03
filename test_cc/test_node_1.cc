@@ -38,6 +38,8 @@ TEST_CASE("check node 2") {
   tm5.info_add("class_ptr", Node::create());
   tm5.info_add("object_count", Node::create(555));
   cout << "tm5: " <<  tm5 << "\n";
+  tm5.info_set("object_count", Node::create(777));
+  cout << "tm5: " <<  tm5 << "\n";
   
 
 
