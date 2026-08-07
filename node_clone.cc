@@ -62,8 +62,8 @@ unique_ptr<Node> Node::clone() const {
 unique_ptr<Node> Node::clone(const List& cc_list) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   List cloned_list;
-  for(const auto& child_u_ptr : cc_list ) 
-    cloned_list.push_back(child_u_ptr->clone());
+  for(const auto& child_ptr_u : cc_list ) 
+    cloned_list.push_back(child_ptr_u->clone());
   return create(move(cloned_list));
 }
 
@@ -73,8 +73,8 @@ unique_ptr<Node> Node::clone(const DeQue& cc_deque) {
 
   DeQue cloned_deque;
 
-  for(const auto& child_u_ptr : cc_deque ) 
-    cloned_deque.push_back(child_u_ptr->clone());
+  for(const auto& child_ptr_u : cc_deque ) 
+    cloned_deque.push_back(child_ptr_u->clone());
   return create(move(cloned_deque));
 }
 
@@ -84,8 +84,8 @@ unique_ptr<Node> Node::clone(const Vector& cc_vec) {
 
   Vector cloned_vector;
 
-  for(const auto& child_u_ptr : cc_vec ) 
-    cloned_vector.push_back(child_u_ptr->clone());
+  for(const auto& child_ptr_u : cc_vec ) 
+    cloned_vector.push_back(child_ptr_u->clone());
   return create(move(cloned_vector));
 }
 

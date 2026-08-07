@@ -5,7 +5,7 @@ using namespace std;
 namespace Loosh 
 {
 
-const vector<string> Lang::atoms_key = {UNIVERSE, "Lang", "Atoms"};
+const vector<string> Lang::atoms_key = {LOOSH_UNIVERSE, "Lang", "Atoms"};
 
 unordered_map<Integer , string> Lang::Atoms;
 std::hash<string> Lang::hasher;
@@ -71,5 +71,9 @@ const Integer Lang::Atom::extended=str_to_atom("extended");
 const Integer Lang::Atom::awk=str_to_atom("awk");
 const Integer Lang::Atom::grep=str_to_atom("grep");
 const Integer Lang::Atom::egrep=str_to_atom("egrep");
+
+const Integer Lang::Atom::scope=str_to_atom("scope");
+const Integer Lang::Atom::frame=str_to_atom("frame");
+const Integer Lang::Atom::process=str_to_atom("process");
 
 };

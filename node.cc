@@ -44,6 +44,15 @@ Node::Node(Type t)
     Map nm={};
     value_ = move(nm);
     break;}
+  case Type::ObjectMeta: {
+    Map nm={};
+    nm[LOOSH_OBJ_INFO] = Node::create(Node::Type::Map);
+    nm[LOOSH_OBJ_DATA] = Node::create(Node::Type::Map);
+    value_ = move(nm);
+    //cout << "Node::Node(ObjectMeta)" << _to_str() << "\n";
+    break;
+  }
+
   case Type::IMap: { 
     IMap nm={};
     value_ = move(nm);
@@ -159,6 +168,7 @@ Node::Map& Node::_get_map_ref() {
   case Type::Unique:  {
     auto &uptr = get<ptr_U>(value_);
     return uptr->_get_map_ref(); }
+  case Type::ObjectMeta:
   case Type::Map:  {
     return get<Map>(value_);}
   default: {}}

@@ -18,10 +18,6 @@ ostream& operator<<(ostream& os, const Loosh::Node& v) {
   cout << v._to_str();
   return os;
 }
-ostream& operator<<(ostream& os, const Loosh::NodeObject& v) {
-  cout << v._to_str();
-  return os;
-}
 
 
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatus& s) {

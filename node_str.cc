@@ -27,6 +27,7 @@ string Node::_to_str(Type type) {
     case Type::List: return "List";
     case Type::Vector: return "Vector";
     case Type::DeQue: return "DeQue";
+    case Type::ObjectMeta: return "ObjectMeta";
     case Type::Map: return "Map";
     case Type::IMap: return "IMap";
     case Type::Atom: return "Atom";
@@ -51,6 +52,10 @@ string Node::_to_str() const {
     if(b== true) return "true";
     return "false";}
 
+  case Type::Atom: {
+    Integer num = get<Integer>(value_);
+    return ":" + Lang::atom_to_str(num); 
+  }
   case Type::Integer: {
       Integer num = get<Integer>(value_);
       return to_string(num); }
@@ -78,8 +83,9 @@ string Node::_to_str() const {
       return _to_str(cc_vec);}
 
   case Type::IMap: {
-      auto& map = get<IMap>(value_);
-  return _to_str(map);}
+      auto& imap = get<IMap>(value_);
+  return _to_str(imap);}
+  case Type::ObjectMeta: 
   case Type::Map: {
       auto& map = get<Map>(value_);
       return _to_str(map);}
@@ -115,10 +121,10 @@ string Node::_to_str(const Map&map) {
     //cout << "to_str(Map&): key: " << key << "\n";
     MYLOGGER_MSG(trace_function, "key: " + key, SLOG_TO_STR);
 
-    if(val==nullptr) {cerr << "val is null\n"; return "";}
+    //if(val==nullptr) { cerr << "k: " << key << ", val=null\n"; return ""; }
 
     if(val) outstr = q + key + q  + ":" + " " + val->_to_str();
-    else outstr = q + key + q  + colon + " " + "NULL-VAL";
+    else outstr = q + key + q  + colon + " " + "nil";
 
     kv_paires.push_back(outstr);
   }

@@ -4,26 +4,27 @@ using namespace  std;
 namespace Loosh 
 {
 
-class Environment {
+class Environment : public Node {
 public:
+  Environment(Node::Type t) ;
   virtual ~Environment() = default;
   virtual Node::OpStatusRef lookup(const string&name) = 0;
-  virtual void define(const string&name, Node::ptr_U) = 0;
+  virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
 
 };
 
 // this is an Scope interface to Node
 class Scope : public Environment {
 private:
-  Node* scope;
-  Node* table_ptr;
-  Node* parent_env_ptr;
+  Node::Map* scope_map_ptr_r=nullptr;
+  Node* table_ptr_r=nullptr;
+  Node* parent_ptr_r=nullptr;
 public:
   Scope(Node* parent);
-  Scope(const Node& scope);
-  Node::ptr_U create();
+  Scope();
   Node::OpStatusRef lookup(const string&name) ;
-  void add(const string&name, Node::ptr_U) ;
+  Node::OpStatusRef add(const string&name, Node::ptr_U) ;
+  void print();
 };
 
 class Frame : public Environment {

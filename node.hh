@@ -56,10 +56,12 @@ public:
   };
 
 //----------------------------------
+// GCObjectId: for Garbage collection
+// MapObjectId: 
   enum class Type { 
     Null, Bool, Error, Size, Integer, Float, String, 
     Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
-    ControlFlow, Atom, ObjectId, NodeObject, Raw, Unique, Fun };
+    ControlFlow, Atom, ObjectId, ObjectMeta, Raw, Unique, Fun };
 
   using Integer = LOOSH_T_LONG; 
   using Float = double;
@@ -221,6 +223,7 @@ public:
 
 
 
+//------------------------------ node object
 
 
 protected:
@@ -228,6 +231,23 @@ protected:
   Type type_;
   bool isMarked = false;
 
+//------------------------------ node object
+  Node::OpStatus obj_meta_add(const string& meta_key, const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
+
+  Node::OpStatus obj_info_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_info_set(const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_info_get(const string&key);
+
+
+  Node::OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_data_get(const string&key);
+
+
+//------------------------------ 
+  
 
 private:
   bool type_set_identifier();
@@ -237,26 +257,6 @@ private:
 
 };
 
-class NodeObject {
-private:
-  Node::ptr_U obj_ptr_u;
-  Node::ptr_R obj_ptr_r;
-  Node::Map* info_ptr_r;
-  Node::Map* data_ptr_r;
-public:
-  NodeObject();
-
-  Node::OpStatus ptr_add(Node::Map *ptr, const string&key, unique_ptr<Node> child);
-  Node::OpStatus ptr_set(Node::Map *ptr, const string&key, unique_ptr<Node> child);
-
-  Node::OpStatus info_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus info_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatus data_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus data_set(const string&key, unique_ptr<Node> child);
-  string _to_str() const ;
-
-
-};
 
 extern Node node_null;
 
@@ -264,7 +264,6 @@ extern Node node_null;
 };
 
 ostream& operator<<(ostream& os, const Loosh::Node& v) ;
-ostream& operator<<(ostream& os, const Loosh::NodeObject& v) ;
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatus& s) ;
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatusRef& s) ;
 
