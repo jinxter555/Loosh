@@ -10,7 +10,7 @@ public:
   virtual ~Environment() = default;
   virtual Node::OpStatusRef lookup(const string&name) = 0;
   virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
-
+  static OpStatusRef lookup(Map& table, const string& name);
 };
 
 // this is an Scope interface to Node
@@ -24,6 +24,9 @@ public:
   Scope();
   Node::OpStatusRef lookup(const string&name) ;
   Node::OpStatusRef add(const string&name, Node::ptr_U) ;
+  Node::OpStatusRef var_add(const string&name, Node::ptr_U) ;
+  Node::OpStatusRef immute_add(const string&name, Node::ptr_U) ;
+  Node::OpStatusRef arg_add(const string&name, Node::ptr_U) ;
   void print();
 };
 

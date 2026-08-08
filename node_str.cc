@@ -34,6 +34,7 @@ string Node::_to_str(Type type) {
     case Type::ObjectId: return "ObjectId";
     case Type::LispOp: return "LispOp";
     case Type::Identifier: return "Identifier";
+    case Type::Identifier_g: return "Global Identifier";
     case Type::Raw: return "RawPtr";
     case Type::Unique: return "UniquePtr";
     case Type::Fun: return "Function";
@@ -64,6 +65,9 @@ string Node::_to_str() const {
       Float num = get<Float>(value_);
       oss << fixed << setprecision(2) << num;
       return oss.str(); }
+  case Type::Identifier_g:  {
+    string str = "$" + get<string>(value_);
+    return str; }
   case Type::Identifier: 
   case Type::String: {
     string str = get<string>(value_);

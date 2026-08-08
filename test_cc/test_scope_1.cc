@@ -24,6 +24,7 @@ TEST_CASE("check scope 1") {
   s1_node_obj.add("k1", Node::create("hello, world"));
 
   cout << "scope s1_node_obj: " << s1_node_obj << "\n";
+  cout << "scope s1_node_obj  k1: " << s1_node_obj.lookup("k1") << "\n";
 
 //  s1_node_obj.print();
 

@@ -6,7 +6,38 @@
 using namespace  std;
 namespace Loosh 
 {
+
+
 Environment::Environment(Node::Type t)  : Node(t) {}
+
+Node::OpStatusRef  Environment::lookup(Map &table, const string& name) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+
+  auto &arg_ptr_u = table[LOOSH_ARG];
+  auto &immute_ptr_u = table[LOOSH_IMMUTE];
+  auto &var_ptr_u = table[LOOSH_VAR];
+
+  { // argument lookup 
+  auto rv_ref_status = arg_ptr_u->get_node(name);
+  if(rv_ref_status.first) return rv_ref_status;
+  }
+
+  { // immutable lookup
+  auto rv_ref_status = immute_ptr_u->get_node(name);
+  if(rv_ref_status.first) return rv_ref_status;
+  }
+
+  { // variable lookup
+  auto rv_ref_status = var_ptr_u->get_node(name);
+  if(rv_ref_status.first) return rv_ref_status;
+  }
+
+  string msg = "identifer: " + name +  " not found!";
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  spdlog::error(clean_function_name() + ": " + msg);
+  return {false, Error::ref(Error::Type::KeyNotFound )};
+
+}
 
 //----------------------------------------------------------------------  scope
 //Scope::Scope(const Node& scope_node) : scope(scope_node._get_ptr_r()) {}
@@ -14,13 +45,19 @@ Environment::Environment(Node::Type t)  : Node(t) {}
 
 Scope::Scope() : Environment(Type::ObjectMeta) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  obj_data_add("table", Node::create(Type::Map) );
-  obj_data_add("parent", nullptr);
-  obj_info_add("cc_obj_type", Node::create(Lang::Atom::scope, Type::Atom) );
+
+  auto ltable_ptr_u  = create(Type::Map);
+  ltable_ptr_u->set({LOOSH_IMMUTE}, create(Type::Map), true);
+  ltable_ptr_u->set({LOOSH_VAR}, create(Type::Map), true);
+  ltable_ptr_u->set({LOOSH_ARG}, create(Type::Map), true);
+
+  obj_data_add(LOOSH_TABLE, move(ltable_ptr_u));
+  obj_data_add(LOOSH_PARENT, nullptr);
+  obj_info_add(LOOSH_CC_OBJ_TYPE, Node::create(Lang::Atom::scope, Type::Atom) );
 
   scope_map_ptr_r = &_get_map_ref();
 
-  auto table_status = obj_data_get("table");
+  auto table_status = obj_data_get(LOOSH_TABLE);
   table_ptr_r = &table_status.second->get_node();
 
 /*
@@ -29,7 +66,9 @@ Scope::Scope() : Environment(Type::ObjectMeta) {
 */
 
   if(table_ptr_r==nullptr) { 
-    cerr << "Scope::Scope(), table_ptr is nullptr";
+    string msg = "table_ptr is nullptr";
+    MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+    spdlog::error(clean_function_name() + ": " + msg);
     throw system_error();
   }
 
@@ -54,6 +93,7 @@ Node::ptr_U Scope::create(Node *parent) {
 */
 
 Node::OpStatusRef Scope::lookup(const string&name) {
+  return Environment::lookup(table_ptr_r->_get_map_ref(), name);
   /*
   try {
     auto table = table_ptr->_get_map_ref();
@@ -61,7 +101,6 @@ Node::OpStatusRef Scope::lookup(const string&name) {
   } catch(bad_typeid) {
 
   }*/
- return {false, node_null};
 
 }
 

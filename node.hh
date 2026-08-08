@@ -60,7 +60,7 @@ public:
 // MapObjectId: 
   enum class Type { 
     Null, Bool, Error, Size, Integer, Float, String, 
-    Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
+    Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
     ControlFlow, Atom, ObjectId, ObjectMeta, Raw, Unique, Fun };
 
   using Integer = LOOSH_T_LONG; 
