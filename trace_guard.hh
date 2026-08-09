@@ -13,6 +13,7 @@
 #include <thread>
 #include <sstream>
 #include <vector>
+#include "defs.hh"
 
 using namespace std;
 
@@ -20,9 +21,11 @@ class TraceGuard {
 private:
   //const char* function_name;
   const string function_name;
+   LOOSH_T_LONG instance_id;
 
   // Thread-local depth counter. Isolated per thread.
   static thread_local int call_depth ;
+  inline static atomic<LOOSH_T_LONG>  global_sequence_counter{0};
 
   // 1. Array of standard ANSI Color codes (Foreground types)
   // We omit dark colors like black or dark blue to keep it readable on dark themes.

@@ -45,11 +45,14 @@ string TraceGuard::get_thread_id_str() const {
 TraceGuard::TraceGuard(const string & name) : function_name(name) {
   const char* current_color = get_color(call_depth);
 
+  instance_id = global_sequence_counter.fetch_add(1, memory_order_relaxed);
+
+
   spdlog::info("TraceGuard() name {}", name);
   
   // Wrap the payload with the target color prefix and the reset suffix
-  SPDLOG_TRACE("[Thread {}] [Depth {}] {}{}-─> Entering: {}{}", 
-    get_thread_id_str(), call_depth, get_indent(), 
+  SPDLOG_TRACE("[Thread {}] [Depth {}] [Id: #{}] {}{}-─> Entering: {}{}", 
+    get_thread_id_str(), call_depth, instance_id, get_indent(), 
     current_color, function_name, reset_color);
   call_depth++;
 }
@@ -58,8 +61,8 @@ TraceGuard::~TraceGuard() {
   call_depth--;
   const char* current_color = get_color(call_depth);
   
-  SPDLOG_TRACE("[Thread {}] [Depth {}] {}{}<── Exiting: {}{}", 
-    get_thread_id_str(), call_depth, get_indent(), 
+  SPDLOG_TRACE("[Thread {}] [Depth {}] [Id: #{}] {}{}<──  Exiting: {}{}", 
+    get_thread_id_str(), call_depth, instance_id, get_indent(), 
     current_color, function_name, reset_color);
 }
 
