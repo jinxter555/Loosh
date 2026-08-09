@@ -1,7 +1,10 @@
 #include "node.hh"
 
+
+#include "trace_guard.hh"
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
+
 
 using namespace std;
 namespace Loosh 
@@ -161,6 +164,8 @@ Node Node::get_type() const { return type_; }
 //------------------------------ _get_map_ref()
 Node::Map& Node::_get_map_ref() { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
   switch(type_) {
   case Type::Raw: {
     auto rptr = get<ptr_R>(value_);
@@ -182,6 +187,7 @@ Node::Map& Node::_get_map_ref() {
 
 Node::Map& Node::_get_map_ref(const string& key) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
   switch(type_) {
   case Type::Raw: {
     auto rptr = get<ptr_R>(value_);
@@ -402,6 +408,7 @@ Node::OpStatus Node::delete_key(Integer key) {
 
 Node& Node::get_node() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
   switch(type_) {
   case Node::Type::Unique: {
     auto& ptr = get<ptr_U>(value_);

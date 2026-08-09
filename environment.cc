@@ -1,5 +1,7 @@
 #include "environment.hh"
 
+#include "trace_guard.hh"
+
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
@@ -12,6 +14,7 @@ Environment::Environment(Node::Type t)  : Node(t) {}
 
 Node::OpStatusRef  Environment::lookup(Map &table, const string& name) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
 
   auto &arg_ptr_u = table[LOOSH_ARG];
   auto &immute_ptr_u = table[LOOSH_IMMUTE];
@@ -57,6 +60,7 @@ Node::OpStatus Environment::var_add(Map& table_var, const string&name, Node::ptr
 
 Scope::Scope() : Environment(Type::ObjectMeta) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
 
   auto ltable_ptr_u  = create(Type::Map);
   ltable_ptr_u->set({LOOSH_IMMUTE}, create(Type::Map), true);
@@ -89,6 +93,7 @@ Scope::Scope() : Environment(Type::ObjectMeta) {
 
 Scope::Scope(Node* parent) : Environment(Type::Map), parent_ptr_r(parent) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
 }
 
 
@@ -106,6 +111,7 @@ Node::ptr_U Scope::create(Node *parent) {
 
 Node::OpStatusRef Scope::lookup(const string&name) {
   return Environment::lookup(table_ptr_r->_get_map_ref(), name);
+  AUTO_TRACE();
   /*
   try {
     auto table = table_ptr->_get_map_ref();
@@ -142,6 +148,7 @@ void Scope::print() {
 Node::OpStatus Scope::var_add(const string&name, Node::ptr_U val) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "val:" + val->_to_str(), SLOG_FUNC_INFO)
+  AUTO_TRACE();
 
   if(table_ptr_r==nullptr) { 
     spdlog::error("table_ptr is nullptr");

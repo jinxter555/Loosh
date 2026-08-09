@@ -3,6 +3,7 @@
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
+#include "trace_guard.hh"
 
 using namespace std;
 namespace Loosh 
@@ -88,6 +89,7 @@ bool Node::has_node(const vector<string>&path){
 Node::OpStatusRef Node::get_node(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "key: " + key, SLOG_NODE_OP)
+  AUTO_TRACE();
 
   switch(type_) {
   case Type::Raw: {
