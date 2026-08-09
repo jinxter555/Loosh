@@ -107,7 +107,7 @@ Node::OpStatusRef Node::get_node(const string&key) {
   auto it = map.find(key);
   if(it==map.end()) {
     string msg = clean_function_name() + ": key '" + key + "' not found in map.";
-    return {false, Error::ref(Error::Type::KeyNotFound, msg)};
+    return {false, Error::ref_log(Error::Type::KeyNotFound, msg)};
   }
 
   return {true, *it->second};

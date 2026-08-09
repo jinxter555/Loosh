@@ -21,7 +21,7 @@ TEST_CASE("check scope 1") {
   ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
 
   Scope s1_node_obj;
-  s1_node_obj.add("k1", Node::create("hello, world"));
+  s1_node_obj.var_add("k1", Node::create("hello, world"));
 
   cout << "scope s1_node_obj: " << s1_node_obj << "\n";
   cout << "scope s1_node_obj  k1: " << s1_node_obj.lookup("k1") << "\n";

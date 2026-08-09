@@ -47,6 +47,8 @@ public:
     Error(Type t, const string msg="");
     static Node& ref(Type t); 
     static Node& ref(Type t, const string& msg); 
+    static Node& ref_out(Type t, const string& msg);
+    static Node& ref_log(Type t, const string& msg); 
     static string _to_str(Type t) ;
     static void init() ;
     static vector<unique_ptr<Node>> list;

@@ -9,8 +9,14 @@ public:
   Environment(Node::Type t) ;
   virtual ~Environment() = default;
   virtual Node::OpStatusRef lookup(const string&name) = 0;
-  virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
+//  virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
   static OpStatusRef lookup(Map& table, const string& name);
+
+  Node::OpStatus var_add(Map& table, const string&name, Node::ptr_U) ;
+  Node::OpStatus immute_add(const string&name, Node::ptr_U) ;
+  Node::OpStatus arg_add(const string&name, Node::ptr_U) ;
+  Node::OpStatus var_set(const string&name, Node::ptr_U) ;
+  Node::OpStatus arg_set(const string&name, Node::ptr_U) ;
 };
 
 // this is an Scope interface to Node
@@ -23,10 +29,10 @@ public:
   Scope(Node* parent);
   Scope();
   Node::OpStatusRef lookup(const string&name) ;
-  Node::OpStatusRef add(const string&name, Node::ptr_U) ;
-  Node::OpStatusRef var_add(const string&name, Node::ptr_U) ;
-  Node::OpStatusRef immute_add(const string&name, Node::ptr_U) ;
-  Node::OpStatusRef arg_add(const string&name, Node::ptr_U) ;
+  //Node::OpStatus add(const string&name, Node::ptr_U) ;
+  Node::OpStatus var_add(const string&name, Node::ptr_U) ;
+  Node::OpStatus immute_add(const string&name, Node::ptr_U) ;
+  Node::OpStatus arg_add(const string&name, Node::ptr_U) ;
   void print();
 };
 

@@ -17,6 +17,9 @@ Node::OpStatusRef  Environment::lookup(Map &table, const string& name) {
   auto &immute_ptr_u = table[LOOSH_IMMUTE];
   auto &var_ptr_u = table[LOOSH_VAR];
 
+  cout << "lookup() var_ptr_u: " << var_ptr_u->_to_str() << "\n";
+
+
   { // argument lookup 
   auto rv_ref_status = arg_ptr_u->get_node(name);
   if(rv_ref_status.first) return rv_ref_status;
@@ -28,14 +31,23 @@ Node::OpStatusRef  Environment::lookup(Map &table, const string& name) {
   }
 
   { // variable lookup
+
   auto rv_ref_status = var_ptr_u->get_node(name);
+
+  //cout << "var rv_ref_status:  " << rv_ref_status << "\n";
   if(rv_ref_status.first) return rv_ref_status;
+
   }
 
   string msg = "identifer: " + name +  " not found!";
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
   spdlog::error(clean_function_name() + ": " + msg);
   return {false, Error::ref(Error::Type::KeyNotFound )};
+
+}
+Node::OpStatus Environment::var_add(Map& table_var, const string&name, Node::ptr_U ptr) {
+  //auto &var_ptr_u = table[LOOSH_VAR];
+  
 
 }
 
@@ -104,7 +116,8 @@ Node::OpStatusRef Scope::lookup(const string&name) {
 
 }
 
-Node::OpStatusRef Scope::add(const string&name, Node::ptr_U val) {
+/*
+Node::OpStatus Scope::add(const string&name, Node::ptr_U val) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "val:" + val->_to_str(), SLOG_FUNC_INFO)
   if(table_ptr_r==nullptr) { 
@@ -114,13 +127,38 @@ Node::OpStatusRef Scope::add(const string&name, Node::ptr_U val) {
 //  cout << "1 table_ptr_r: " << table_ptr_r->_to_str() << "\n";
   table_ptr_r->add(name, move(val));
 //  cout << "2 table_ptr_r: " << table_ptr_r->_to_str() << "\n";
-  return table_ptr_r->get_node(name);
+  //return table_ptr_r->get_node(name);
 }
+*/
+
+
+
 //------------------------------ ptr 
 void Scope::print() {
   //scope_map_ptr_r->print();
 }
+//------------------------------ ptr 
 
+Node::OpStatus Scope::var_add(const string&name, Node::ptr_U val) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  MYLOGGER_MSG(trace_function, "val:" + val->_to_str(), SLOG_FUNC_INFO)
+
+  if(table_ptr_r==nullptr) { 
+    spdlog::error("table_ptr is nullptr");
+    throw system_error();
+  }
+  auto var_ref_status = (*table_ptr_r)[LOOSH_VAR];
+  if(!var_ref_status.first) {
+    spdlog::error("var_ref error");
+    throw system_error();
+  }
+
+  var_ref_status.second.add(name,  move(val));
+  return {true, Node::create(true)};
+
+
+
+}
 
 //---------------------------------------------------------------------- 
 }
