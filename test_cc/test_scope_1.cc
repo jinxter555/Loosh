@@ -21,7 +21,8 @@ TEST_CASE("check scope 1") {
     auto file_logger = spdlog::basic_logger_mt("lisp_logger", "logs/nested_trace.log", true);
     spdlog::set_default_logger(file_logger);
     spdlog::set_level(spdlog::level::trace);
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l] %v");
+    //spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l] %v");
+    spdlog::set_pattern("[thread %t] [%l] %v");
     Node::Error::init();
 
 

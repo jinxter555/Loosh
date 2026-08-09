@@ -41,7 +41,8 @@ string TraceGuard::get_thread_id_str() const {
   return ss.str();
 }
 
-TraceGuard::TraceGuard(const char* name) : function_name(name) {
+//TraceGuard::TraceGuard(const char* name) : function_name(name) { }
+TraceGuard::TraceGuard(const string & name) : function_name(name) {
   const char* current_color = get_color(call_depth);
 
   spdlog::info("TraceGuard() name {}", name);
@@ -62,8 +63,4 @@ TraceGuard::~TraceGuard() {
     current_color, function_name, reset_color);
 }
 
-//TraceGuard::TraceGuard(const TraceGuard&) = delete;
-//TraceGuard& TraceGuard::operator=(const TraceGuard&) = delete;
-
-#define AUTO_TRACE() TraceGuard trace_guard_obj(__func__)
 

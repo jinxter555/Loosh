@@ -18,7 +18,8 @@ using namespace std;
 
 class TraceGuard {
 private:
-  const char* function_name;
+  //const char* function_name;
+  const string function_name;
 
   // Thread-local depth counter. Isolated per thread.
   static thread_local int call_depth ;
@@ -38,7 +39,8 @@ private:
   string get_thread_id_str() const ;
 
 public:
-  TraceGuard(const char* name) ;
+  //TraceGuard(const char* name) ;
+  TraceGuard(const string& name) ;
 
   ~TraceGuard() ;
 
@@ -46,7 +48,8 @@ public:
   TraceGuard& operator=(const TraceGuard&) = delete;
 };
 
-#define AUTO_TRACE() TraceGuard trace_guard_obj(__func__)
+//#define AUTO_TRACE() TraceGuard trace_guard_obj(__func__)
+#define AUTO_TRACE() TraceGuard trace_guard_obj(clean_function_name())
 
 
 
