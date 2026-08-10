@@ -39,8 +39,10 @@ public:
 class Frame : public Environment {
 private:
   Node* fun;
-  Node* local_scope;
+  Node* scopes_ptr_r=nullptr; // vector of scopes
 public:
+  Frame(Node* parent);
+  Frame();
 
 
 };

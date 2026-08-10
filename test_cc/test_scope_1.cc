@@ -32,11 +32,17 @@ TEST_CASE("check scope 1") {
 
   Scope s1_node_obj;
   s1_node_obj.var_add("k1", Node::create("hello, world"));
-
   cout << "scope s1_node_obj: " << s1_node_obj << "\n";
-  cout << "scope s1_node_obj  k1: " << s1_node_obj.lookup("k1") << "\n";
+  cout << "scope s1_node_obj  k1: " << s1_node_obj.lookup("k1") << "\n\n";
 
-  spdlog::info("hello, world!");
+  Node n1(12345l);
+  Scope s2_node_obj(&n1);
+  cout << "scope s2_node_obj  : " << s2_node_obj << "\n";
+
+
+
+
+  spdlog::info("1234!");
 
 //  s1_node_obj.print();
 
