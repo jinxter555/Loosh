@@ -37,12 +37,13 @@ TEST_CASE("check scope 1") {
 
   Node n1(12345l);
   Scope s2_node_obj(&n1);
-  cout << "scope s2_node_obj  : " << s2_node_obj << "\n";
+  cout << "scope s2_node_obj  : " << s2_node_obj << "\n\n";
+
+  auto s3_ptr_u = Scope::meta_create();
+  cout << "scope s3_ptr_u: " << s3_ptr_u->_to_str() << "\n\n";
 
 
 
-
-  spdlog::info("1234!");
 
 //  s1_node_obj.print();
 

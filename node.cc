@@ -47,7 +47,7 @@ Node::Node(Type t)
     Map nm={};
     value_ = move(nm);
     break;}
-  case Type::ObjectMeta: {
+  case Type::MetaObject: {
     Map nm={};
     nm[LOOSH_OBJ_INFO] = Node::create(Node::Type::Map);
     nm[LOOSH_OBJ_DATA] = Node::create(Node::Type::Map);
@@ -173,7 +173,7 @@ Node::Map& Node::_get_map_ref() {
   case Type::Unique:  {
     auto &uptr = get<ptr_U>(value_);
     return uptr->_get_map_ref(); }
-  case Type::ObjectMeta:
+  case Type::MetaObject:
   case Type::Map:  {
     return get<Map>(value_);}
   default: {}}
@@ -337,6 +337,20 @@ Node::ptr_R Node::_get_ptr_r() const {
   throw std::bad_typeid();
   
 }
+
+Node::ptr_U Node::_get_ptr_u() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  if(type_ != Type::Unique)  {
+    auto msg = "Not a Node::ptr_U, Node::type_ " + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+    cerr << clean_function_name() << ": " << msg << "\n";
+    spdlog::error(clean_function_name() + ": " + msg);
+    MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
+    throw std::bad_typeid();
+  }
+  return move(get<ptr_U>(value_));
+
+}
+
 
 
 //------------------------------------------------------------------------

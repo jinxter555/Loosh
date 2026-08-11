@@ -57,16 +57,17 @@ Node::OpStatusRef  Environment::lookup(Map &table, const string& name) {
 Scope::Scope() : Scope(nullptr) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
+  //cout << clean_function_name() << ": _to_str(): " <<  _to_str() << "\n\n";
 }
 
-Scope::Scope(Node* parent) : Environment(Type::ObjectMeta), parent_ptr_r(parent) {
+Scope::Scope(Node* parent) : Environment(Type::MetaObject), parent_ptr_r(parent) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  auto ltable_ptr_u  = create(Type::Map);
-  ltable_ptr_u->set({LOOSH_IMMUTE}, create(Type::Map), true);
-  ltable_ptr_u->set({LOOSH_VAR}, create(Type::Map), true);
-  ltable_ptr_u->set({LOOSH_ARG}, create(Type::Map), true);
+  auto ltable_ptr_u  = Node::create(Type::Map);
+  ltable_ptr_u->set({LOOSH_IMMUTE}, Node::create(Type::Map), true);
+  ltable_ptr_u->set({LOOSH_VAR}, Node::create(Type::Map), true);
+  ltable_ptr_u->set({LOOSH_ARG}, Node::create(Type::Map), true);
 
   obj_data_add(LOOSH_TABLE, move(ltable_ptr_u));
   obj_data_add(LOOSH_PARENT, create(parent));
@@ -77,7 +78,7 @@ Scope::Scope(Node* parent) : Environment(Type::ObjectMeta), parent_ptr_r(parent)
   auto table_status = obj_data_get(LOOSH_TABLE);
   table_ptr_r = &table_status.second->get_node();
 
-  cout  << clean_function_name() <<": table_ptr_r "  << table_ptr_r->_to_str() << "\n";
+  //cout  << clean_function_name() <<": table_ptr_r "  << table_ptr_r->_to_str() << "\n";
 
   if(table_ptr_r==nullptr) { 
     string msg =  "table_ptr_r is nullptr";
@@ -87,19 +88,34 @@ Scope::Scope(Node* parent) : Environment(Type::ObjectMeta), parent_ptr_r(parent)
   }
 
 }
+Scope::Scope(Node* meta_ptr, bool use_meta) : Environment(Type::MetaPtr), parent_ptr_r(nullptr) {
+
+}
 
 
+//Node::OpStatus Scope::move_ptr_u() { }
 
-/*
-Node::ptr_U Scope::create(Node *parent) {
+//
+Node::ptr_U Scope::meta_create(Node *parent) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-  //auto  scope_ptr_u_new  = make_unique<Node>();
-  obj_data_add("table", make_unique<Node>(Node::Type::Map));
- // scope_ptr_u_new->obj_data_add("parent", Node::create(parent));
-  //return scope_ptr_u_new;
+  auto meta_scope = Node::create(Type::MetaObject);
+
+  auto ltable_ptr_u  = Node::create(Type::Map);
+  ltable_ptr_u->set({LOOSH_IMMUTE}, Node::create(Type::Map), true);
+  ltable_ptr_u->set({LOOSH_VAR}, Node::create(Type::Map), true);
+  ltable_ptr_u->set({LOOSH_ARG}, Node::create(Type::Map), true);
+
+  meta_scope->obj_data_add(LOOSH_TABLE, move(ltable_ptr_u));
+  meta_scope->obj_data_add(LOOSH_PARENT, create(parent));
+  meta_scope->obj_info_add(LOOSH_CC_OBJ_TYPE, Node::create(Lang::Atom::scope, Type::Atom) );
+
+
+  return meta_scope;
+
+
 }
-*/
+//Scope& Scope::meta_map_obj(Node* meta_obj) { }
 
 Node::OpStatusRef Scope::lookup(const string&name) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)

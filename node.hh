@@ -21,7 +21,9 @@ namespace Loosh
 
 class Node {
 friend class Tree;
-friend class NodeObject;
+friend class Environment;
+friend class Scope;
+friend class Frame;
 public:
 
 //----------------------------------
@@ -63,7 +65,7 @@ public:
   enum class Type { 
     Null, Bool, Error, Size, Integer, Float, String, 
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
-    ControlFlow, Atom, ObjectId, ObjectMeta, Raw, Unique, Fun };
+    ControlFlow, Atom, ObjectId, MetaObject, MetaPtr, Raw, Unique, Fun }; // shadow object for meta that is in tree, or vector
 
   using Integer = LOOSH_T_LONG; 
   using Float = double;
@@ -180,6 +182,7 @@ public:
   DeQue& _get_deque_ref() ;
   List& _get_list_ref() ;
   ptr_R _get_ptr_r() const;
+  ptr_U _get_ptr_u() ;
 
   //
   OpStatus add(unique_ptr<Node> child);
