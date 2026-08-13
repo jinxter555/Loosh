@@ -89,6 +89,27 @@ Scope::Scope(Node* parent) : Environment(Type::MetaObject), parent_ptr_r(parent)
 
 }
 Scope::Scope(Node* meta_ptr, bool use_meta) : Environment(Type::MetaPtr), parent_ptr_r(nullptr) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  if(use_meta) moved = true; 
+  value_ = meta_ptr;
+  auto &m = meta_ptr->get_node();
+  if(m.type_ != Type::MetaObject)  {
+    string msg =  "Not a meta_object!";
+    cerr << clean_function_name()  << ":" << msg<< "\n";
+    cout << "m: "  <<  m._to_str() << "\n";
+    throw bad_typeid();
+  }
+
+  auto table_status = m.obj_data_get(LOOSH_TABLE);
+  table_ptr_r = &table_status.second->get_node();
+  auto parent_status = m.obj_data_get(LOOSH_PARENT);
+  parent_ptr_r = parent_status.second->_get_ptr_r();
+
+  cout << clean_function_name << ": _to_str() "  << _to_str() << "\n";
+
+
+
 
 }
 
@@ -100,6 +121,7 @@ Node::ptr_U Scope::meta_create(Node *parent) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
   auto meta_scope = Node::create(Type::MetaObject);
+  cout << clean_function_name <<  ": 1meta_create() : *meta_scope: " << meta_scope->_to_str() << "\n";
 
   auto ltable_ptr_u  = Node::create(Type::Map);
   ltable_ptr_u->set({LOOSH_IMMUTE}, Node::create(Type::Map), true);
@@ -111,11 +133,13 @@ Node::ptr_U Scope::meta_create(Node *parent) {
   meta_scope->obj_info_add(LOOSH_CC_OBJ_TYPE, Node::create(Lang::Atom::scope, Type::Atom) );
 
 
+  //cout << "meta_create() : *meta_scope: " << *meta_scope << "\n";
+  cout << clean_function_name <<  ": 2meta_create() : *meta_scope: " << meta_scope->_to_str() << "\n";
   return meta_scope;
 
 
 }
-//Scope& Scope::meta_map_obj(Node* meta_obj) { }
+Scope& Scope::meta_map_obj(Node* meta_obj) { }
 
 Node::OpStatusRef Scope::lookup(const string&name) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)

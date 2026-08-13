@@ -42,6 +42,8 @@ TEST_CASE("check scope 1") {
   auto s3_ptr_u = Scope::meta_create();
   cout << "scope s3_ptr_u: " << s3_ptr_u->_to_str() << "\n\n";
 
+  //Scope s4(s3_ptr_u.get(), true);
+  //cout << "scope s4._to_str(): " << s4._to_str() << "\n\n";
 
 
 

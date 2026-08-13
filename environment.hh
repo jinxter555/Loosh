@@ -48,7 +48,7 @@ public:
   Node::OpStatus meta_obj_get();
 
   static ptr_U meta_create(Node* parent=nullptr);
-  //Scope& meta_map_obj(Node* meta_obj);
+  Scope& meta_map_obj(Node* meta_obj);
   void print();
 };
 

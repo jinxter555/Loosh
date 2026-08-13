@@ -11,9 +11,8 @@ namespace Loosh {
 //------------------------------ meta add,set 
 Node::OpStatus Node::obj_meta_add(const string&meta_key, const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::ObjectMeta) 
+  if(type_ != Type::MetaObject) 
     return {false, Node::create_error(Node::Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
-
 
   auto map_ptr_r = &_get_map_ref();
   auto &meta_ptr_u  = (*map_ptr_r)[meta_key];
@@ -30,7 +29,7 @@ Node::OpStatus Node::obj_meta_add(const string&meta_key, const string&key, uniqu
 
 Node::OpStatus Node::obj_meta_set(const string&meta_key, const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::ObjectMeta) 
+  if(type_ != Type::MetaObject) 
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
 
   auto map_ptr_r = &_get_map_ref();
@@ -45,7 +44,7 @@ Node::OpStatus Node::obj_meta_set(const string&meta_key, const string&key, uniqu
 
 Node::OpStatus Node::obj_meta_get(const string&meta_key, const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::ObjectMeta)  {
+  if(type_ != Type::MetaObject)  {
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
   }
 
@@ -85,7 +84,6 @@ Node::OpStatus Node::obj_info_get(const string&key) {
   return obj_meta_get(LOOSH_OBJ_INFO, key);
 }
 
-
 //------------------------------ data add,set 
 Node::OpStatus Node::obj_data_add(const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -102,11 +100,6 @@ Node::OpStatus Node::obj_data_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   return obj_meta_get(LOOSH_OBJ_DATA, key);
 }
-
-
-
-
-
 
 
 }

@@ -52,7 +52,7 @@ Node::Node(Type t)
     nm[LOOSH_OBJ_INFO] = Node::create(Node::Type::Map);
     nm[LOOSH_OBJ_DATA] = Node::create(Node::Type::Map);
     value_ = move(nm);
-    //cout << "Node::Node(ObjectMeta)" << _to_str() << "\n";
+    cout << clean_function_name() << ": Node::Node(MetaObject)" << _to_str() << "\n";
     break;
   }
 
@@ -97,6 +97,11 @@ unique_ptr<Node> Node::create(Type t) {
   case Type::IMap: {
     Node::IMap im;
     return make_unique<Node>(move(im));}
+  case Type::MetaObject: {
+    Map nm={};
+    nm[LOOSH_OBJ_INFO] = Node::create(Node::Type::Map);
+    nm[LOOSH_OBJ_DATA] = Node::create(Node::Type::Map);
+    return make_unique<Node>(move(nm)); }
   case Type::Map: {
     Node::Map m;
     return make_unique<Node>(move(m)); }

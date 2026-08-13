@@ -90,7 +90,9 @@ string Node::_to_str() const {
   case Type::IMap: {
       auto& imap = get<IMap>(value_);
   return _to_str(imap);}
-  case Type::MetaPtr: return "Meta Ptr";
+  case Type::MetaPtr: {
+      auto ptr_r = get<ptr_R>(value_);
+      return "MetaPtr: " + ptr_r->_to_str();}
   case Type::MetaObject: 
   case Type::Map: {
       auto& map = get<Map>(value_);
