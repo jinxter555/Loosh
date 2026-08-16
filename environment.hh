@@ -6,7 +6,11 @@ namespace Loosh
 
 class Environment : public Node {
 public:
+  Environment();
   Environment(Node::Type t) ;
+  enum class Type { Parent, Scope, Frame, Process, Universe };
+
+
   virtual ~Environment() = default;
   virtual Node::OpStatusRef lookup(const string&name) = 0;
 //  virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
@@ -19,6 +23,9 @@ public:
   Node::OpStatus arg_set(const string&name, Node::ptr_U) ;
 
   virtual Environment& meta_map_obj(Node* meta_obj)=0;
+
+  static Node::Atom _get_type(Node* env_ptr);
+  static Node::OpStatus get_type(Node* env_ptr);
 
   //virtual Node::OpStatus meta_obj_get();
 };
@@ -33,7 +40,8 @@ private:
 public:
   Scope(Node* parent);
   Scope();
-  Scope(Node* meta_obj, bool use_meta);
+  Scope(Node* node_ptr_r, Node::Type );
+  //Scope(Node* node_ptr_r, Environment::Type );
 
   OpStatus move_ptr_u();
 
@@ -47,7 +55,7 @@ public:
   Node::OpStatus arg_add(const string&name, Node::ptr_U) ;
   Node::OpStatus meta_obj_get();
 
-  static ptr_U meta_create(Node* parent=nullptr);
+  static ptr_U create(Node* parent=nullptr);
   Scope& meta_map_obj(Node* meta_obj);
   void print();
 };

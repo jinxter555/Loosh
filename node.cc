@@ -447,6 +447,7 @@ bool Node::_get_bool() const { return get<bool>(value_); }
 Lisp::Op Node::_get_lisp_op() const { return get<Lisp::Op>(value_); }
 
 Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
+Node::Atom  Node::_get_atom() const { return get<Atom>(value_); }
 
 Node::Float Node::_get_float() const { return get<Float>(value_); }
 

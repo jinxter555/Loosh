@@ -68,6 +68,7 @@ public:
     ControlFlow, Atom, ObjectId, MetaObject, MetaPtr, Raw, Unique, Fun }; // shadow object for meta that is in tree, or vector
 
   using Integer = LOOSH_T_LONG; 
+  using Atom = LOOSH_T_LONG; 
   using Float = double;
 
   using List = list<unique_ptr<Node>>;
@@ -171,6 +172,7 @@ public:
 
   // _get
   Integer _get_integer() const;
+  Atom _get_atom() const;
   Float _get_float() const;
   Lisp::Op _get_lisp_op() const;
   bool _get_bool() const;
@@ -228,15 +230,7 @@ public:
 
 
 
-//------------------------------ node object
-
-
-protected:
-  Value value_;
-  Type type_;
-  bool isMarked = false;
-
-//------------------------------ node object
+//------------------------------ node object, aka meta object
   Node::OpStatus obj_meta_add(const string& meta_key, const string&key, unique_ptr<Node> child);
   Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
   Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
@@ -250,6 +244,17 @@ protected:
   Node::OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
   Node::OpStatus obj_data_get(const string&key);
 
+
+  static Node::Atom _get_meta_type(Node* env_ptr);
+  static Node::OpStatus get_Meta_type(Node* env_ptr);
+
+
+protected:
+  Value value_;
+  Type type_;
+  bool isMarked = false;
+
+//------------------------------ node object
 
 //------------------------------ 
   

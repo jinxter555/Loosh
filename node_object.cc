@@ -1,5 +1,7 @@
 #include "node.hh"
 
+#include "trace_guard.hh"
+
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
@@ -99,6 +101,27 @@ Node::OpStatus Node::obj_data_set(const string&key, unique_ptr<Node> child) {
 Node::OpStatus Node::obj_data_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   return obj_meta_get(LOOSH_OBJ_DATA, key);
+}
+
+//------------------------------ meta object  info
+Node::Atom Node::_get_meta_type(Node* env_ptr) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  auto &env_node = env_ptr->get_node();
+  if(env_node.type_ != Node::Type::MetaObject) {
+    string msg =  "Env: "  + env_ptr->_to_str() + "Not a Meta Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    throw system_error();
+  }
+  auto meta_node_type = env_node.obj_info_get(LOOSH_CC_OBJ_TYPE);
+  cout << clean_function_name() +  ": env_node " <<  env_node << "\n\n";
+  cout << clean_function_name() +  ": meta node_type .second " <<  meta_node_type.second->get_node() << "\n";
+  return meta_node_type.second->get_node()._get_atom();
+
+  //cout << clean_function_name() +  ": obj info status second " <<  obj_info_status.second->get_node(LOOSH_CC_OBJ_TYPE).second._to_str() << "\n";
+
 }
 
 

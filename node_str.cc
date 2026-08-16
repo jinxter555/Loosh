@@ -101,6 +101,7 @@ string Node::_to_str() const {
   case Type::Raw: {
     //cout << "\nraw to_str()\n";
     auto ptr_r = get<ptr_R>(value_);
+    if(ptr_r==nullptr) return "nullptr";
     return "--*ptr_r["  +  addressToHexString( ptr_r ) + "]--";
   }
   case Type::Unique: {

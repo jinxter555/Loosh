@@ -34,18 +34,25 @@ TEST_CASE("check scope 1") {
   s1_node_obj.var_add("k1", Node::create("hello, world"));
   cout << "scope s1_node_obj: " << s1_node_obj << "\n";
   cout << "scope s1_node_obj  k1: " << s1_node_obj.lookup("k1") << "\n\n";
+  //cout << "scope s1_node_obj get_type: " << s1_node_obj._get_type() << "\n\n";
+  cout << "scope s1_node_obj _get_type:\n" ;
+  auto scope_atom_value = Node::_get_meta_type(&s1_node_obj);
+  CHECK(scope_atom_value == Lang::Atom::scope);
 
+
+  /*
   Node n1(12345l);
   Scope s2_node_obj(&n1);
   cout << "scope s2_node_obj  : " << s2_node_obj << "\n\n";
 
-  auto s3_ptr_u = Scope::meta_create();
+  auto s3_ptr_u = Scope::create();
   cout << "scope s3_ptr_u: " << s3_ptr_u->_to_str() << "\n\n";
 
   //Scope s4(s3_ptr_u.get(), true);
-  //cout << "scope s4._to_str(): " << s4._to_str() << "\n\n";
+  Scope s4(&s1_node_obj, true);
+  cout << "scope s4._to_str(): " << s4._to_str() << "\n\n";
 
-
+*/
 
 //  s1_node_obj.print();
 
