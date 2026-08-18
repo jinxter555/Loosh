@@ -14,27 +14,7 @@ Environment::Environment()  : Node(Node::Type::MetaObject) {}
 
 Environment::Environment(Node::Type t)  : Node(t) {}
 
-Node::Atom Environment::_get_type(Node* env_ptr) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  AUTO_TRACE();
 
-  auto &env_node = env_ptr->get_node();
-  if(env_node.type_ != Node::Type::MetaObject) {
-    string msg =  "Env: "  + env_ptr->_to_str() + "Not a Meta Object" ;
-    cerr << clean_function_name() <<  ":" + msg << "\n";
-    spdlog::error(msg);
-    throw system_error();
-  }
-  auto meta_node_type = env_node.obj_info_get(LOOSH_CC_OBJ_TYPE);
-  cout << clean_function_name() +  ": env_node " <<  env_node << "\n\n";
-  cout << clean_function_name() +  ": meta node_type .second " <<  meta_node_type.second->get_node() << "\n";
-  return meta_node_type.second->get_node()._get_atom();
-
-  //cout << clean_function_name() +  ": obj info status second " <<  obj_info_status.second->get_node(LOOSH_CC_OBJ_TYPE).second._to_str() << "\n";
-
-
-
-}
 
 Node::OpStatusRef  Environment::lookup(Map &table, const string& name) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -89,6 +69,7 @@ Scope::Scope(Node* parent) : Environment(Node::Type::MetaObject), parent_ptr_r(p
   AUTO_TRACE();
 
   auto ltable_ptr_u  = Node::create(Node::Type::Map);
+  table_ptr_r = ltable_ptr_u.get();
   ltable_ptr_u->set({LOOSH_IMMUTE}, Node::create(Node::Type::Map), true);
   ltable_ptr_u->set({LOOSH_VAR}, Node::create(Node::Type::Map), true);
   ltable_ptr_u->set({LOOSH_ARG}, Node::create(Node::Type::Map), true);
@@ -99,22 +80,21 @@ Scope::Scope(Node* parent) : Environment(Node::Type::MetaObject), parent_ptr_r(p
 
   scope_map_ptr_r = &_get_map_ref();
 
+  /*
   auto table_status = obj_data_get(LOOSH_TABLE);
-  table_ptr_r = &table_status.second->get_node();
-
+  //table_ptr_r = &table_status.second->get_node();
   //cout  << clean_function_name() <<": table_ptr_r "  << table_ptr_r->_to_str() << "\n";
-
   if(table_ptr_r==nullptr) { 
     string msg =  "table_ptr_r is nullptr";
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(msg);
     throw system_error();
   }
-
+*/
 }
 
-// MetaPtr is a pointer to a meta object for initializing existing 
-// MetaObject 
+// type: MetaPtr , 'node_ptr_r' is used to init as the existing object
+// type: MetaObject, 'node_ptr_r' is used as parent ptr
 Scope::Scope(Node* node_ptr_r,  Node::Type nt) : Environment(nt) {
 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -122,37 +102,63 @@ Scope::Scope(Node* node_ptr_r,  Node::Type nt) : Environment(nt) {
 
   // make sure when type is MetaPtr and node_ptr_r != nullptr
   // existing MetaPtr or MetaNode can't not be nullptr
-  if(node_ptr_r==nullptr && nt == Node::Type::MetaPtr) {
-    string msg =  "node_ptr is nullptr. You can't initialize an existent scope(MetaPtr) with nullptr";
-    cerr << clean_function_name() <<  ":" + msg << "\n";
-    spdlog::error(msg);
-    throw system_error();
+  switch(nt) {
+  case Node::Type::MetaPtr: {
+    if(node_ptr_r==nullptr ) {
+      string msg =  "node_ptr is nullptr. You can't initialize an existent scope(MetaPtr) with nullptr";
+      cerr << clean_function_name() <<  ":" + msg << "\n";
+      spdlog::error(msg);
+      throw system_error();
+
+    } else { // node_ptr_r now an existing object
+
+      value_ = node_ptr_r; is_moved=true;
+      auto &meta_node = node_ptr_r->get_node();
+      cout << "meta_node " << meta_node << "\n";
+      if(meta_node.type_ != Node::Type::MetaObject)  {
+        string msg =  "Not a meta_object!";
+        cerr << clean_function_name()  << ":" << msg<< "\n";
+        cout << "meta_node: "  <<  meta_node._to_str() << "\n";
+        spdlog::error(msg);
+        throw bad_typeid();
+      }
+    
+      auto table_status = meta_node.obj_data_get(LOOSH_TABLE);
+      table_ptr_r = &table_status.second->get_node();
+      auto parent_status = meta_node.obj_data_get(LOOSH_PARENT);
+      parent_ptr_r = parent_status.second->_get_ptr_r();
+    
+      cout << clean_function_name() << ": _to_str() "  << _to_str() << "\n";
+      
+    }
+    break;
   }
 
-  value_ = node_ptr_r;
-  auto &meta_node = node_ptr_r->get_node();
-  cout << "meta_node " << meta_node << "\n";
-  if(meta_node.type_ != Node::Type::MetaObject)  {
-    string msg =  "Not a meta_object!";
-    cerr << clean_function_name()  << ":" << msg<< "\n";
-    cout << "meta_node: "  <<  meta_node._to_str() << "\n";
-    throw bad_typeid();
+  case Node::Type::MetaObject: {
+
   }
-
-  auto table_status = meta_node.obj_data_get(LOOSH_TABLE);
-  table_ptr_r = &table_status.second->get_node();
-  auto parent_status = meta_node.obj_data_get(LOOSH_PARENT);
-  parent_ptr_r = parent_status.second->_get_ptr_r();
-
-  cout << clean_function_name << ": _to_str() "  << _to_str() << "\n";
-
-
-
+  default: {}}
+  throw runtime_error(clean_function_name() +  "Unknown Meta type");
 
 }
 
 
-//Node::OpStatus Scope::move_ptr_u() { }
+Node::OpStatus Scope::move_obj() { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  if(is_moved) {
+    string msg =  "Error: Attempted to use an object that has been moved!"; 
+    cerr << clean_function_name()  << ":" << msg<< "\n";
+    spdlog::error(msg);
+    throw std::runtime_error(msg);
+  }
+  auto ret_obj = Node::create(move(_get_map_ref()));
+  is_moved=true;
+  type_ = Node::Type::MetaPtr;
+  value_ = ret_obj.get();
+  return {true, move(ret_obj)};
+
+}
 
 //
 Node::ptr_U Scope::create(Node *parent) {
@@ -175,10 +181,11 @@ Node::ptr_U Scope::create(Node *parent) {
   //cout << "meta_create() : *meta_scope: " << *meta_scope << "\n";
   //cout << clean_function_name() <<  ": 2meta_create() : *meta_scope: " << meta_scope->_to_str() << "\n";
   return meta_scope;
-
-
 }
-Scope& Scope::meta_map_obj(Node* meta_obj) { }
+Node::ptr_U Scope::create_child() {
+}
+
+
 
 Node::OpStatusRef Scope::lookup(const string&name) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)

@@ -40,11 +40,15 @@ TEST_CASE("check scope 1") {
   CHECK(scope_atom_value == Lang::Atom::scope);
 
 
-  /*
-  Node n1(12345l);
-  Scope s2_node_obj(&n1);
+  Scope s2_node_obj;
+  s2_node_obj.var_add("k2", Node::create("hola, mundo"));
   cout << "scope s2_node_obj  : " << s2_node_obj << "\n\n";
+  auto s2_obj_ptr_status = s2_node_obj.move_obj();
+  cout << "scope s2_obj_ptr  : " << s2_obj_ptr_status << "\n\n";
+  REQUIRE_THROWS( s2_node_obj.move_obj());
 
+
+  /*
   auto s3_ptr_u = Scope::create();
   cout << "scope s3_ptr_u: " << s3_ptr_u->_to_str() << "\n\n";
 
