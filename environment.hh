@@ -38,6 +38,9 @@ private:
   Node* table_ptr_r=nullptr;
   Node* parent_ptr_r=nullptr;
   bool is_moved=false;
+
+  void scope_meta_create(Node* node_ptr); // 
+  void scope_meta_set(Node* node_ptr);
 public:
   Scope(Node* parent);
   Scope();
