@@ -109,10 +109,11 @@ void Scope::scope_meta_set(Node* node_ptr_r) {
     value_ = node_ptr_r; is_moved=true;
     auto &meta_node = node_ptr_r->get_node();
     cout << "meta_node " << meta_node << "\n";
-    if(meta_node.type_ != Node::Type::MetaObject)  {
+    if(meta_node.type_ != Node::Type::MetaObject || meta_node.type_!= Node::Type::MetaPtr) {
       string msg =  "Not a meta_object!";
-      cerr << clean_function_name()  << ":" << msg<< "\n";
+      cerr << clean_function_name()  << ": " << msg<< "\n";
       cout << "meta_node: "  <<  meta_node._to_str() << "\n";
+      cout << "meta_node.type_: "  <<  meta_node.type_ << "\n";
       spdlog::error(msg);
       throw bad_typeid();
     }

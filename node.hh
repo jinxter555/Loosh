@@ -24,6 +24,8 @@ friend class Tree;
 friend class Environment;
 friend class Scope;
 friend class Frame;
+friend class ostream;
+
 public:
 
 //----------------------------------

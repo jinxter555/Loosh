@@ -162,7 +162,13 @@ Node::Type Node::_get_value_type() const {
 
   return type_;
 }
-Node Node::get_type() const { return type_; }
+Node Node::get_type() const { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  //AUTO_TRACE();
+  MYLOGGER_MSG(trace_function, "hello:get_type() ", SLOG_FUNC_INFO);
+  cout << "Node::get_type()\n";
+  return type_; 
+}
 
 
 //------------------------------------------------------------------------ _get
