@@ -325,8 +325,11 @@ Node::List& Node::_get_list_ref() {
 
 //------------------------------------------------------------------------
 //------------------------------ _get_rptr_ref
-Node::ptr_R Node::_get_ptr_r() const {
+
+//------------------------------ _get_ptr_r
+Node::ptr_R Node::_get_ptr_r() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
 
   switch(type_) {
   case Type::Raw: {
@@ -340,7 +343,7 @@ Node::ptr_R Node::_get_ptr_r() const {
   }
   default: {}}
 
-  auto msg = "Node::_get_rptr_r() Error! not a Node::ptr_R: Node::type_ " 
+  auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::type_ " 
   + _to_str(type_) + ", Node::value_ " +  _to_str() ;
 
   spdlog::error(clean_function_name() + ": " + msg);
@@ -348,6 +351,34 @@ Node::ptr_R Node::_get_ptr_r() const {
   throw std::bad_typeid();
   
 }
+
+/*
+Node::ptr_R Node::_get_meta_ptr_r() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  switch(type_) {
+  case Type::MetaPtr: {
+    auto meta_ptr_r = get<ptr_R>(value_);
+    if(meta_ptr_r->type_ == Type::Map) {
+      string msg = "Raw, meta_ptr_w is not a Map!";
+      spdlog::warn(clean_function_name() + ": " + msg);
+      MYLOGGER_MSG(trace_function, "Warning: "  + msg, SLOG_NODE_OP)
+    }
+    return meta_ptr_r;
+  }
+  default: {}}
+
+  auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::type_ " 
+  + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+
+  spdlog::error(clean_function_name() + ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
+  throw std::bad_typeid();
+}
+  
+*/
+
 
 Node::ptr_U Node::_get_ptr_u() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -437,12 +468,19 @@ Node& Node::get_node() {
   switch(type_) {
   case Node::Type::Unique: {
     auto& ptr = get<ptr_U>(value_);
+    if(ptr ==nullptr ) return node_null; 
     return ptr->get_node();
   }
   case Node::Type::Raw:  {
     auto& ptr = get<ptr_R>(value_);
+    if(ptr ==nullptr ) return node_null; 
     return ptr->get_node();
   }
+  /*
+  case Node::Type::MetaPtr:  {
+    auto& meta_ptr_r = get<ptr_R>(value_);
+    return meta_ptr_r->get_node();
+  }*/
   default:  {}
   }
   return *this;

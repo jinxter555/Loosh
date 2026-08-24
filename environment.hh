@@ -17,6 +17,7 @@ public:
   static OpStatusRef lookup(Map& table, const string& name);
   //virtual ptr_U create()=0;
   virtual ptr_U create_child()=0;
+  virtual ptr_R get_ptr_r()=0;
 
 
   Node::OpStatus var_add(Map& table, const string&name, Node::ptr_U) ;
@@ -50,6 +51,7 @@ public:
   OpStatus move_obj();
 
   ptr_U create_child() override;
+  ptr_R get_ptr_r() override;
 
   Node::OpStatusRef lookup(const string&name) ;
   //Node::OpStatus add(const string&name, Node::ptr_U) ;

@@ -67,7 +67,7 @@ public:
   enum class Type { 
     Null, Bool, Error, Size, Integer, Float, String, 
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
-    ControlFlow, Atom, ObjectId, MetaObject, MetaPtr, Raw, Unique, Fun }; // shadow object for meta that is in tree, or vector
+    ControlFlow, Atom, ObjectId, MetaObject, Raw, Unique, Fun }; // shadow object for meta that is in tree, or vector
 
   using Integer = LOOSH_T_LONG; 
   using Atom = LOOSH_T_LONG; 
@@ -185,8 +185,9 @@ public:
   Vector& _get_vector_ref() ;
   DeQue& _get_deque_ref() ;
   List& _get_list_ref() ;
-  ptr_R _get_ptr_r() const;
+  ptr_R _get_ptr_r() ;
   ptr_U _get_ptr_u() ;
+  //ptr_R _get_meta_ptr_r() ;
 
   //
   OpStatus add(unique_ptr<Node> child);

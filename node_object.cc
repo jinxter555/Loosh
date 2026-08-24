@@ -46,6 +46,8 @@ Node::OpStatus Node::obj_meta_set(const string&meta_key, const string&key, uniqu
 
 Node::OpStatus Node::obj_meta_get(const string&meta_key, const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER_MSG(trace_function, "meta_key: " + meta_key, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "key: " + key, SLOG_FUNC_INFO);
   if(type_ != Type::MetaObject)  {
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
   }
@@ -100,6 +102,7 @@ Node::OpStatus Node::obj_data_set(const string&key, unique_ptr<Node> child) {
 
 Node::OpStatus Node::obj_data_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER_MSG(trace_function, "key: " + key, SLOG_FUNC_INFO);
   return obj_meta_get(LOOSH_OBJ_DATA, key);
 }
 

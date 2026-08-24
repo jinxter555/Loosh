@@ -80,12 +80,14 @@ Scope::Scope(Node* node_ptr_r,  Node::Type node_type) : Environment(node_type) {
   AUTO_TRACE();
 
   switch(node_type) {
-  case Node::Type::MetaPtr: {
+  case Node::Type::Raw: {
     scope_meta_set(node_ptr_r);
-    break; }
+    return; 
+  }
   case Node::Type::MetaObject: {
     scope_meta_create(node_ptr_r);
-    break; }
+    return; 
+  }
 
   default: {}}
 
@@ -99,27 +101,43 @@ Scope::Scope(Node* node_ptr_r,  Node::Type node_type) : Environment(node_type) {
 //------------------------------------------------------------ 
 void Scope::scope_meta_set(Node* node_ptr_r) {
   if(node_ptr_r==nullptr ) {
-    string msg =  "node_ptr is nullptr. You can't initialize an existent scope(MetaPtr) with nullptr";
+    string msg =  "node_ptr is nullptr. You can't initialize an existent scope(Raw) with nullptr";
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(msg);
     throw system_error();
 
   } else { // node_ptr_r now an existing object
 
-    value_ = node_ptr_r; is_moved=true;
+    value_ = node_ptr_r; type_ = Node::Type::Raw; is_moved=true;
+
     auto &meta_node = node_ptr_r->get_node();
     cout << "meta_node " << meta_node << "\n";
-    if(meta_node.type_ != Node::Type::MetaObject || meta_node.type_!= Node::Type::MetaPtr) {
+    cout << "meta_node.type_: "  <<  Node::_to_str( meta_node.type_) << "\n\n";
+
+    if(meta_node.type_ != Node::Type::MetaObject ) {
       string msg =  "Not a meta_object!";
       cerr << clean_function_name()  << ": " << msg<< "\n";
-      cout << "meta_node: "  <<  meta_node._to_str() << "\n";
-      cout << "meta_node.type_: "  <<  meta_node.type_ << "\n";
       spdlog::error(msg);
       throw bad_typeid();
     }
+
+
     auto table_status = meta_node.obj_data_get(LOOSH_TABLE);
+    cout << clean_function_name() << ": table_status: " << table_status << "\n";
+    cout << clean_function_name() << ": table_status.get_node(): " << table_status.second->get_node() << "\n";
+
     table_ptr_r = &table_status.second->get_node();
     auto parent_status = meta_node.obj_data_get(LOOSH_PARENT);
+    cout << clean_function_name() << ": parent_status: " << parent_status << "\n";
+    if(parent_status.second == nullptr) {
+      cout << "parent is nullptr!\n";
+      return;
+
+    }
+    cout << "parent.tostr()" << parent_status.second->_to_str() << " "  <<  parent_status.second->get_node()  << "\n";
+    return;
+    cout << clean_function_name() << ": parent_status.get_node(): " << parent_status.second->get_node() << "\n";
+
     parent_ptr_r = parent_status.second->_get_ptr_r();
   
     cout << clean_function_name() << ": _to_str() "  << _to_str() << "\n";
@@ -155,9 +173,9 @@ Node::OpStatus Scope::move_obj() {
     spdlog::error(msg);
     throw std::runtime_error(msg);
   }
-  auto ret_obj = Node::create(move(_get_map_ref()));
+  auto ret_obj = Node::create(move(_get_map_ref()), Node::Type::MetaObject);
   is_moved=true;
-  type_ = Node::Type::MetaPtr;
+  type_ = Node::Type::Raw;
   value_ = ret_obj.get();
   return {true, move(ret_obj)};
 
@@ -223,8 +241,25 @@ Node::OpStatus Scope::add(const string&name, Node::ptr_U val) {
 
 //------------------------------ ptr 
 void Scope::print() {
-  //scope_map_ptr_r->print();
+  //scope_ptr_r->print();
 }
+Node::ptr_R Scope::get_ptr_r() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  AUTO_TRACE();
+
+  if(is_moved)  {
+    cout << "has been moved!\n";
+    return Node::_get_ptr_r();
+  }
+  auto msg =  "scope is an object and hasn't been moved to have a raw pointer";
+  cerr << msg << "\n";
+  spdlog::error(msg);
+  throw system_error();
+
+  //scope_ptr_r->print();
+  //return scope_ptr_r;
+}
+//------------------------------ ptr 
 //------------------------------ ptr 
 
 Node::OpStatus Scope::var_add(const string&name, Node::ptr_U val) {
