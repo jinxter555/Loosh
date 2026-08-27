@@ -202,6 +202,8 @@ public:
   //
   OpStatus has_key(const string&key);
   bool m_has_key(const string&key);
+  bool is_nil(); 
+
 
 
   uintptr_t GetObjectId(Node* obj) { return reinterpret_cast<uintptr_t>(obj); }

@@ -30,8 +30,9 @@ TEST_CASE("check scope 1") {
   trace_function.open("trace.log", std::ios::out);
   ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
 
-  Scope s1_node_obj;
-  s1_node_obj.var_add("k1", Node::create("hello, world"));
+  auto s1_node_obj = Scope::create();
+  s1_node_obj->var_add("k1", Node::create("hello, world"));
+  /*
   cout << "scope s1_node_obj: " << s1_node_obj << "\n";
   cout << "scope s1_node_obj  k1: " << s1_node_obj.lookup("k1") << "\n\n";
   //cout << "scope s1_node_obj get_type: " << s1_node_obj._get_type() << "\n\n";
@@ -44,16 +45,16 @@ TEST_CASE("check scope 1") {
   s2_node_obj.var_add("k2", Node::create("hola, mundo"));
   cout << "scope s2_node_obj  : " << s2_node_obj << "\n\n";
   cout << " before move_obj s2_node_obj.type ---: " << Node::_to_str( s2_node_obj._get_type()) << "---\n\n";
-  auto s2_obj_ptr_status = s2_node_obj.move_obj();
-  cout << "after move_obj s2_node_obj.type ---: " << Node::_to_str( s2_node_obj._get_type()) << "---\n\n";
-  cout << "after move_obj scope s2_node_obj  : " << s2_node_obj << "\n\n";
+  auto s2_obj_ptr_u = s2_node_obj.move_obj();
+  cout << "after move_obj() scope s2_node_obj  : " << s2_node_obj << "\n\n";
+  cout << "after move_obj() s2_node_obj.type ---: " << Node::_to_str( s2_node_obj._get_type()) << "---\n\n";
+  cout << " s2_node_obj.get_node(): " <<  s2_node_obj.get_node() << "\n";
   //cout << "scope s2_obj_ptr  : " << s2_obj_ptr_status << "\n\n";
   //REQUIRE_THROWS( s2_node_obj.move_obj());
 
-  auto s2_meta_ptr = s2_obj_ptr_status.second.get();
-
+*/
   cout << "init s2b_node_obj as an meta ptr\n";
-  Scope s2b_node_obj(s2_meta_ptr, Node::Type::Raw);
+ // Scope s2b_node_obj(s2_node_obj.get_meta_ptr_r(), Node::Type::Raw);
 
   //Scope s3_node_ptr(s2_node_obj._get_meta_ptr_r(), Node::Type::MetaPtr);
   //cout << "scope s3_node_ptr  : " << s3_node_ptr<< "\n\n";

@@ -600,7 +600,10 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 void Node::set(const Integer v, Type t) { value_ = v; type_ = t; } // could be regular Integer or Atom
 void Node::set(const string&v, Type t) { value_ = v; type_ = t; } // could be reuglar string or identifer
 
-
+  
+//------------------------------ 
+ 
+bool Node::is_nil() { return type_ == Type::Null ? true : false; }
 
 
 } 

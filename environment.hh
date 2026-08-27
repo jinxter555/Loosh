@@ -17,7 +17,7 @@ public:
   static OpStatusRef lookup(Map& table, const string& name);
   //virtual ptr_U create()=0;
   virtual ptr_U create_child()=0;
-  virtual ptr_R get_ptr_r()=0;
+  virtual ptr_R get_meta_ptr_r()=0;
 
 
   Node::OpStatus var_add(Map& table, const string&name, Node::ptr_U) ;
@@ -42,16 +42,20 @@ private:
 
   void scope_meta_create(Node* node_ptr); // 
   void scope_meta_set(Node* node_ptr);
+
+  // 
 public:
   Scope(Node* parent);
   Scope();
   Scope(Node* node_ptr_r, Node::Type );
+
+
   //Scope(Node* node_ptr_r, Environment::Type );
 
-  OpStatus move_obj();
+  ptr_U move_obj();
 
   ptr_U create_child() override;
-  ptr_R get_ptr_r() override;
+  ptr_R get_meta_ptr_r() override;
 
   Node::OpStatusRef lookup(const string&name) ;
   //Node::OpStatus add(const string&name, Node::ptr_U) ;
@@ -60,7 +64,11 @@ public:
   Node::OpStatus arg_add(const string&name, Node::ptr_U) ;
   Node::OpStatus meta_obj_get();
 
-  static ptr_U create(Node* parent=nullptr);
+  static unique_ptr<Scope> create(Node* parent=nullptr);
+  static Scope init_existing(Node* meta_node_ptr_r);
+
+  static ptr_U create_node(Node* parent=nullptr);
+
   //Scope& meta_map_obj(Node* meta_obj);
   void print();
 };
