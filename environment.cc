@@ -162,6 +162,7 @@ void Scope::scope_meta_create(Node* node_ptr_r) {
 
   obj_data_add(LOOSH_TABLE, move(table_ptr_u));
   obj_data_add(LOOSH_PARENT, Node::create(node_ptr_r));
+
   obj_info_add(LOOSH_CC_OBJ_TYPE, Node::create(Lang::Atom::scope, Node::Type::Atom) );
   scope_map_ptr_r = &_get_map_ref();
 }
@@ -227,6 +228,7 @@ Node::ptr_U Scope::create_node(Node* parent) {
 }
 
 Node::ptr_U Scope::create_child() {
+  return create(this);
 }
 
 

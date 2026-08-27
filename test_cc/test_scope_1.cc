@@ -39,46 +39,6 @@ TEST_CASE("check scope 1") {
   s1b_obj.var_add("k2", Node::create(55555l));
   cout << "scope existing s1b_obj.get_node()  " << s1b_obj.get_node() << "\n\n";
 
-  //cout << "scope s1_node_obj get_type: " << s1_node_obj._get_type() << "\n\n";
-  /*
-  cout << "scope s1_node_obj _get_type:\n" ;
-  auto scope_atom_value = Node::_get_meta_type(&s1_node_obj);
-  CHECK(scope_atom_value == Lang::Atom::scope);
-
-
-  Scope s2_node_obj;
-  s2_node_obj.var_add("k2", Node::create("hola, mundo"));
-  cout << "scope s2_node_obj  : " << s2_node_obj << "\n\n";
-  cout << " before move_obj s2_node_obj.type ---: " << Node::_to_str( s2_node_obj._get_type()) << "---\n\n";
-  auto s2_obj_ptr_u = s2_node_obj.move_obj();
-  cout << "after move_obj() scope s2_node_obj  : " << s2_node_obj << "\n\n";
-  cout << "after move_obj() s2_node_obj.type ---: " << Node::_to_str( s2_node_obj._get_type()) << "---\n\n";
-  cout << " s2_node_obj.get_node(): " <<  s2_node_obj.get_node() << "\n";
-  //cout << "scope s2_obj_ptr  : " << s2_obj_ptr_status << "\n\n";
-  //REQUIRE_THROWS( s2_node_obj.move_obj());
-
-*/
-  cout << "init s2b_node_obj as an meta ptr\n";
- // Scope s2b_node_obj(s2_node_obj.get_meta_ptr_r(), Node::Type::Raw);
-
-  //Scope s3_node_ptr(s2_node_obj._get_meta_ptr_r(), Node::Type::MetaPtr);
-  //cout << "scope s3_node_ptr  : " << s3_node_ptr<< "\n\n";
-
-
-
-
-
-  /*
-  auto s3_ptr_u = Scope::create();
-  cout << "scope s3_ptr_u: " << s3_ptr_u->_to_str() << "\n\n";
-
-  //Scope s4(s3_ptr_u.get(), true);
-  Scope s4(&s1_node_obj, true);
-  cout << "scope s4._to_str(): " << s4._to_str() << "\n\n";
-
-*/
-
-//  s1_node_obj.print();
 
 
   
@@ -87,5 +47,4 @@ TEST_CASE("check scope 1") {
 
 
 
-//  tm2.extend(p, true);
 }

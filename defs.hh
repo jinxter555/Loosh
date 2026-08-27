@@ -10,6 +10,7 @@
 #define LOOSH_DQ_WORKER "dq_worker"
 #define LOOSH_STATE "state"
 
+#define LOOSH_CACHE "cache"
 #define LOOSH_TABLE "table"
 #define LOOSH_VAR "var"
 #define LOOSH_IMMUTE "immute"

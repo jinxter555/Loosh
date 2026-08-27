@@ -45,6 +45,7 @@ private:
 
   // 
 public:
+
   Scope(Node* parent);
   Scope();
   Scope(Node* node_ptr_r, Node::Type );
