@@ -49,6 +49,7 @@
 #define LOOSH_CURRENT_PROCESS_PTR "current_process_ptr"
 
 #define LOOSH_PARENT "parent"
+#define LOOSH_CHILDREN "children"
 #define LOOSH_CODE "code"
 #define LOOSH_PARAMS "params"
 #define LOOSH_SCOPES "scopes"
