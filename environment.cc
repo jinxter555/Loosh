@@ -212,8 +212,11 @@ Node::ptr_U Scope::create_meta_obj(Node* parent) {
   return meta_scope;
 }
 */
-unique_ptr<Scope> Scope::create(Node* parent) {
-  return make_unique<Scope>(parent, Node::Type::MetaObject);
+unique_ptr<Scope> Scope::create(Node* parent) { 
+  return make_unique<Scope>(parent, Node::Type::MetaObject); 
+}
+Scope Scope::init_existing(Node* node_ptr_r) { 
+  return Scope(node_ptr_r, Node::Type::Raw); 
 }
 
 Node::ptr_U Scope::create_node(Node* parent) {
@@ -229,10 +232,6 @@ Node::ptr_U Scope::create_child() {
 
 
 
-Scope Scope::init_existing(Node* node_ptr_r) {
-  return Scope(node_ptr_r, Node::Type::Raw);
-
-}
 
 
 Node::OpStatusRef Scope::lookup(const string&name) {

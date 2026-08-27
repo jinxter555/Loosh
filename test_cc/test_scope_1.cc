@@ -30,12 +30,17 @@ TEST_CASE("check scope 1") {
   trace_function.open("trace.log", std::ios::out);
   ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
 
-  auto s1_node_obj = Scope::create();
-  s1_node_obj->var_add("k1", Node::create("hello, world"));
-  /*
-  cout << "scope s1_node_obj: " << s1_node_obj << "\n";
-  cout << "scope s1_node_obj  k1: " << s1_node_obj.lookup("k1") << "\n\n";
+  auto s1_obj = Scope::create();
+  s1_obj->var_add("k1", Node::create("hello, world"));
+  cout << "scope s1_obj: " << s1_obj->_to_str() << "\n";
+  cout << "scope s1_obj  k1: " << s1_obj->lookup("k1") << "\n\n";
+
+  auto s1b_obj = Scope::init_existing(s1_obj.get());
+  s1b_obj.var_add("k2", Node::create(55555l));
+  cout << "scope existing s1b_obj.get_node()  " << s1b_obj.get_node() << "\n\n";
+
   //cout << "scope s1_node_obj get_type: " << s1_node_obj._get_type() << "\n\n";
+  /*
   cout << "scope s1_node_obj _get_type:\n" ;
   auto scope_atom_value = Node::_get_meta_type(&s1_node_obj);
   CHECK(scope_atom_value == Lang::Atom::scope);
