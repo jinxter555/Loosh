@@ -78,6 +78,7 @@ public:
 
   using List = list<unique_ptr<Node>>;
   using Vector = vector<unique_ptr<Node>>;
+  using MetaObject = Vector;
   using DeQue = deque<unique_ptr<Node>>;
   using ptr_R = Node *;
   using ptr_U = unique_ptr<Node>;
@@ -86,6 +87,7 @@ public:
 
   using IMap = unordered_map<Integer, unique_ptr<Node>>;
   using Map = unordered_map<string, unique_ptr<Node>>;
+  using SimpleObject = Map;
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
 
   using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun>;
@@ -200,6 +202,8 @@ template <typename T> T& get_value() {
 
   template <typename T> const T& unwrap_value() const;
   template <typename T> T& unwrap_value() ;
+
+  template <typename T> Type get_tmpl_type() const ;
 //------------------------------------------------------------------------
 
   // _get
@@ -283,7 +287,7 @@ template <typename T> T& get_value() {
 
 
   static Node::Atom _get_meta_type(Node* env_ptr);
-  static Node::OpStatus get_Meta_type(Node* env_ptr);
+  static Node::OpStatus get_meta_type(Node* env_ptr);
 
 
 protected:

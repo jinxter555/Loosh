@@ -1,4 +1,5 @@
 #include "node.hh"
+#include "node_tmpl_cc.hh"
 
 
 #include "trace_guard.hh"

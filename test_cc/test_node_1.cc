@@ -31,7 +31,7 @@ TEST_CASE("check node 2") {
   auto n1 = Node::create(&v1);
   cout << "n1->to_str()" <<  n1->_to_str()<< "\n";
   cout << "n1->unwrap_value<Node>()" <<  n1->unwrap_value<Node>()<< "\n";
-  cout << "n1->unwrap_value<Int>()" <<  n1->unwrap_value<Node::Integer>()<< "\n";
+  cout << "n1->unwrap_value<Int>()" <<  n1->unwrap_value<Node::Float>()<< "\n";
 
 /*
   Node tm4(Node::Type::Map);

@@ -28,7 +28,7 @@ string Node::_to_str(Type type) {
     case Type::Vector: return "Vector";
     case Type::DeQue: return "DeQue";
     case Type::MetaObject: return "Meta Object";
-    //case Type::MetaPtr: return "MetaPtr";
+    case Type::SimpleObject: return "Simple Object";
     case Type::Map: return "Map";
     case Type::IMap: return "IMap";
     case Type::Atom: return "Atom";
@@ -67,7 +67,7 @@ string Node::_to_str() const {
       oss << fixed << setprecision(2) << num;
       return oss.str(); }
   case Type::Identifier_g:  {
-    string str = "$" + get<string>(m_value);
+    string str = get<string>(m_value);
     return str; }
   case Type::Identifier: 
   case Type::String: {
