@@ -20,7 +20,8 @@ node_o := $(wildcard ../*.o)
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
 
-all:  test_scope_1.out # test_node_1.out test_node_2.out  
+# all:  test_scope_1.out # test_node_1.out test_node_2.out  
+all:  test_node_1.out 
 
 #main.out : main.o $(node_o)
 #       $^ -o $@ -lreadline

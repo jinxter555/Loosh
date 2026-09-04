@@ -67,7 +67,10 @@ public:
   enum class Type { 
     Null, Bool, Error, Size, Integer, Float, String, 
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
-    ControlFlow, Atom, ObjectId, MetaObject, Raw, Unique, Fun }; // shadow object for meta that is in tree, or vector
+    ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun }; 
+
+  //enum MetaIndex { Self, Parent, Children, Members, count }; // count is last element hack for counting size of this
+  enum MetaIndex { Info, Parent, Children, Table, count }; // count is last element hack for counting size of this
 
   using Integer = LOOSH_T_LONG; 
   using Atom = LOOSH_T_LONG; 
@@ -106,6 +109,7 @@ public:
   //static ptr_U create(ValueSimple v);
   static ptr_U create(Value v, Type t);
   static ptr_U create(Type t);
+
 
 
 
@@ -149,7 +153,7 @@ public:
 
   // map
   OpStatus set(const string&key, unique_ptr<Node> child);
-  OpStatus set(const string& key, Value v);
+  OpStatus set(const string&key, Value v);
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
   static Node* extend_map_by_key(Map& map, const string&key, bool create=true); // for map
   bool extend(const vector<string>&path, bool create=true);
@@ -168,9 +172,35 @@ public:
   OpStatus delete_key(Integer key);
 
   //
+  //template <typename T> const T& as() const;
+  template <typename T> T& as() ;
+  //template <typename T> const T& as() const;
+  //template <typename T> const T* try_as() const;
+  //template <typename T> T* try_as();
+  //
+
+
   Type _get_type() const;
   Type _get_value_type() const;
   Node get_type() const;
+//------------------------------------------------------------------------
+/*
+template <typename T> const T& get_value() const {
+  return  get<T>(m_value);
+}
+
+template <typename T> T& get_value() {
+  return const_cast<T&>(
+    static_cast<const Node*>(this)->get_value<T>()
+  );
+}*/
+//------------------------------------------------------------------------
+  template <typename T> const T& get_value() const;
+  template <typename T> T& get_value() ;
+
+  template <typename T> const T& unwrap_value() const;
+  template <typename T> T& unwrap_value() ;
+//------------------------------------------------------------------------
 
   // _get
   Integer _get_integer() const;
@@ -197,6 +227,8 @@ public:
   OpStatus pop_front();
   OpStatus push_front(unique_ptr<Node>node);
   OpStatus push_back(unique_ptr<Node>node);
+  OpStatusRef front();
+  OpStatusRef back();
 
 
   //
@@ -240,9 +272,9 @@ public:
   Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
   Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
 
-  Node::OpStatus obj_info_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_info_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_info_get(const string&key);
+  Node::OpStatus meta_info_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus meta_info_set(const string&key, unique_ptr<Node> child);
+  Node::OpStatus meta_info_get(const string&key);
 
 
   Node::OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
@@ -255,9 +287,9 @@ public:
 
 
 protected:
-  Value value_;
-  Type type_;
-  bool isMarked = false;
+  Value m_value;
+  Type m_type;
+  bool m_is_marked = false;
 
 //------------------------------ node object
 
@@ -269,14 +301,24 @@ private:
   bool type_set_atom();
   bool type_set_object_id();
 
+  static Vector create_meta_vec();
+
 
 };
+
 
 
 extern Node node_null;
 
 
+
+
+
 };
+
+
+//#include "node_tmpl_cc.hh"
+
 
 ostream& operator<<(ostream& os, const Loosh::Node& v) ;
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatus& s) ;

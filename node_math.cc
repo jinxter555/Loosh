@@ -26,10 +26,10 @@ Node Node::operator+(const Node &other) const {
         return Node(lhs + rhs);
       } else {
         return Node(Error{Error::Type::InvalidOperation, 
-            "Unsupported types for addition! " + _to_str(type_) + 
-            " : " + _to_str(other.type_)});
+            "Unsupported types for addition! " + _to_str(m_type) + 
+            " : " + _to_str(other.m_type)});
       }
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 
@@ -47,7 +47,7 @@ Node Node::operator-(const Node &other) const {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for subtraction"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 Node Node::operator*(const Node &other) const {
@@ -64,7 +64,7 @@ Node Node::operator*(const Node &other) const {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for multiplication"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 
@@ -82,7 +82,7 @@ Node Node::operator/(const Node &other) const {
     } else {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for Division"});
     }
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 //------------------------------------------------------------------------
@@ -101,7 +101,7 @@ Node Node::operator>(const Node &other) const {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for > op"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 Node Node::operator<(const Node &other) const {
@@ -119,22 +119,22 @@ Node Node::operator<(const Node &other) const {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for < op"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 Node Node::operator==(const Node &other) const {
 
   /*
-  switch(type_) {
+  switch(m_type) {
   case Type::Shared: {
     cout << "shared type ==!";
-    auto sptr = get<ptr_S>(value_);
+    auto sptr = get<ptr_S>(m_value);
     return *sptr == other;}
   case Type::Raw: {
-    auto sptr = get<ptr_R>(value_);
+    auto sptr = get<ptr_R>(m_value);
     return *sptr == other;}
   case Type::Unique:  {
-    auto &sptr = get<ptr_U>(value_);
+    auto &sptr = get<ptr_U>(m_value);
     return *sptr == other; }}
 */
 
@@ -155,11 +155,11 @@ Node Node::operator==(const Node &other) const {
       return Node::create(false);
 
       cerr << "this: " << _to_str() << ", other: " << other._to_str() << "\n";
-      cerr << "this.type: " << Node::_to_str(type_) << ", other.type: " << Node::_to_str(other.type_) << "\n";
+      cerr << "this.type: " << Node::_to_str(m_type) << ", other.type: " << Node::_to_str(other.m_type) << "\n";
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for == op"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 Node Node::operator!=(const Node &other) const {
@@ -178,7 +178,7 @@ Node Node::operator!=(const Node &other) const {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for != op"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 */
 }
 
@@ -202,7 +202,7 @@ Node Node::operator<=(const Node &other) const {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for <= op"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 Node Node::operator>=(const Node &other) const {
@@ -220,29 +220,29 @@ Node Node::operator>=(const Node &other) const {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for >= op"});
     }
 
-  }, value_, other.value_);
+  }, m_value, other.m_value);
 }
 
 
 // bools 
 
 Node Node::operator&&(const Node &other) const {
-  if(type_!= Type::Bool || other.type_ != Type::Bool)
+  if(m_type!= Type::Bool || other.m_type != Type::Bool)
     return Node(Error{Error::Type::InvalidOperation, "not Bool type for && op"});
-  bool r = get<bool>(value_) && get<bool>(other.value_);
+  bool r = get<bool>(m_value) && get<bool>(other.m_value);
   return Node(r, Type::Bool);
 }
 
 Node Node::operator||(const Node &other) const {
-  if(type_!= Type::Bool || other.type_ != Type::Bool)
+  if(m_type!= Type::Bool || other.m_type != Type::Bool)
    return Node(Error{Error::Type::InvalidOperation, "not Bool type for || op"});
-  bool r = get<bool>(value_) || get<bool>(other.value_);
+  bool r = get<bool>(m_value) || get<bool>(other.m_value);
   return Node(r, Type::Bool);
 }
 Node Node::operator!() const {
-  if(type_!= Type::Bool )
+  if(m_type!= Type::Bool )
    return Node(Error{Error::Type::InvalidOperation, "not Bool type for !(op)"});
-  bool r = get<bool>(value_) ;
+  bool r = get<bool>(m_value) ;
   return Node(!r, Type::Bool);
 }
 }

@@ -35,7 +35,7 @@ bool Node::extend(const vector<string>&path, bool create) {
   Node* node_ptr=this;
   for(auto key : path) {
     try { 
-      auto &map = get<Map>(node_ptr->value_);
+      auto &map = get<Map>(node_ptr->m_value);
       node_ptr = extend_map_by_key(map, key, create);
       if(node_ptr==nullptr && !create) return false;
     } catch (...) {
@@ -56,7 +56,7 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
   Node* node_ptr=this;
   for(auto key : path) {
     try { 
-      auto &map = get<Map>(node_ptr->value_);
+      auto &map = get<Map>(node_ptr->m_value);
       node_ptr = extend_map_by_key(map, key, override);
     } catch (...) {
       if(!override) return {true, Node::create(false)};
@@ -91,21 +91,21 @@ Node::OpStatusRef Node::get_node(const string&key) {
   MYLOGGER_MSG(trace_function, "key: " + key, SLOG_NODE_OP)
   AUTO_TRACE();
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto sptr = get<ptr_R>(value_);
+    auto sptr = get<ptr_R>(m_value);
     return sptr->get_node(key); }
   case Type::Unique:  {
-    auto &sptr = get<ptr_U>(value_);
+    auto &sptr = get<ptr_U>(m_value);
     return sptr->get_node(key); }
   default: {}
   }
 
-  if(type_ != Type::Map){
+  if(m_type != Type::Map){
     return {false, Error::ref(Error::Type::IndexWrongType, 
-    "get_node(string&key) only works Map nodes. Current type: " + _to_str(type_))};
+    "get_node(string&key) only works Map nodes. Current type: " + _to_str(m_type))};
   }
-  Node::Map& map = get<Node::Map>(value_);
+  Node::Map& map = get<Node::Map>(m_value);
   auto it = map.find(key);
   if(it==map.end()) {
     string msg = clean_function_name() + ": key '" + key + "' not found in map.";
@@ -120,12 +120,12 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "path: " + _to_str_ext(path), SLOG_NODE_OP)
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto sptr = get<ptr_R>(value_);
+    auto sptr = get<ptr_R>(m_value);
     return sptr->get_node(path); }
   case Type::Unique:  {
-    auto &sptr = get<ptr_U>(value_);
+    auto &sptr = get<ptr_U>(m_value);
     return sptr->get_node(path); }
   default: {}
   }
@@ -148,12 +148,12 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
       current = &current_node_ref.second;
 
     } catch(...) {
-      if(type_ != Type::Map){
+      if(m_type != Type::Map){
         auto msg = "Node::get_node(path) not Type::Map!"; 
         cerr << msg << "\n";
         MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP);
         return {false, Error::ref(Error::Type::IndexWrongType, 
-        "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(type_))};
+        "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(m_type))};
       }
 
       auto current_node_ref = current->get_node(key);
@@ -174,18 +174,18 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
 //------------------------------------------------------------------------
 Node::OpStatus Node::has_key(const string&key) {
-  if(type_ != Node::Type::Map) {
+  if(m_type != Node::Type::Map) {
     return {false, create_error(Error::Type::InvalidOperation, 
-      "Can't lookup key '" + key + "' for non map type: type: " + _to_str(type_)
+      "Can't lookup key '" + key + "' for non map type: type: " + _to_str(m_type)
  )};
   }
-  auto &map = get<Map>(value_);
+  auto &map = get<Map>(m_value);
   if (map.find(key) != map.end())  return {true, Node::create(true)};
   return {true, Node::create(false)};
 }
 
 bool Node::m_has_key(const string&key) {
-  auto &map = get<Map>(value_);
+  auto &map = get<Map>(m_value);
   if (map.find(key) != map.end())  return true;
   return false;
 }

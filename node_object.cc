@@ -73,17 +73,17 @@ Node::OpStatus Node::obj_meta_get(const string&meta_key, const string&key) {
 
 
 //------------------------------ info add,set 
-Node::OpStatus Node::obj_info_add(const string&key, unique_ptr<Node> child) { 
+Node::OpStatus Node::meta_info_add(const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   return obj_meta_add(LOOSH_OBJ_INFO, key, move(child));
 }
 
-Node::OpStatus Node::obj_info_set(const string&key, unique_ptr<Node> child) {
+Node::OpStatus Node::meta_info_set(const string&key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   return obj_meta_set(LOOSH_OBJ_INFO, key, move(child));
 }
 
-Node::OpStatus Node::obj_info_get(const string&key) {
+Node::OpStatus Node::meta_info_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   return obj_meta_get(LOOSH_OBJ_INFO, key);
 }

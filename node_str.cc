@@ -47,69 +47,69 @@ string Node::_to_str(Type type) {
 string Node::_to_str() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Null: return "nil";
   case Type::Bool: {
-    bool b = get<bool>(value_);
+    bool b = get<bool>(m_value);
     if(b== true) return "true";
     return "false";}
 
   case Type::Atom: {
-    Integer num = get<Integer>(value_);
+    Integer num = get<Integer>(m_value);
     return ":" + Lang::atom_to_str(num); 
   }
   case Type::Integer: {
-      Integer num = get<Integer>(value_);
+      Integer num = get<Integer>(m_value);
       return to_string(num); }
   case Type::Float:  {
       ostringstream oss;
-      Float num = get<Float>(value_);
+      Float num = get<Float>(m_value);
       oss << fixed << setprecision(2) << num;
       return oss.str(); }
   case Type::Identifier_g:  {
-    string str = "$" + get<string>(value_);
+    string str = "$" + get<string>(m_value);
     return str; }
   case Type::Identifier: 
   case Type::String: {
-    string str = get<string>(value_);
+    string str = get<string>(m_value);
     return str; }
 
   
   case Type::List: {
       //cout << "_to_str() List\n";
-      auto& cc_list = get<List>(value_);
+      auto& cc_list = get<List>(m_value);
       return _to_str(cc_list);}
   case Type::DeQue: {
-      auto&  cc_dq= get<DeQue>(value_);
+      auto&  cc_dq= get<DeQue>(m_value);
       return _to_str(cc_dq);}
   case Type::Vector: {
       //cout << "_to_str() vector\n";
-      auto& cc_vec = get<Vector>(value_);
+      auto& cc_vec = get<Vector>(m_value);
       return _to_str(cc_vec);}
 
   case Type::IMap: {
-      auto& imap = get<IMap>(value_);
+      auto& imap = get<IMap>(m_value);
   return _to_str(imap);}
 
 /*
   case Type::MetaPtr: {
-      auto ptr_r = get<ptr_R>(value_);
+      auto ptr_r = get<ptr_R>(m_value);
       return "MetaPtr: " + ptr_r->_to_str();}
 */
   case Type::MetaObject: 
   case Type::Map: {
-      auto& map = get<Map>(value_);
+      auto& map = get<Map>(m_value);
       return _to_str(map);}
 
   case Type::Raw: {
     //cout << "\nraw to_str()\n";
-    auto ptr_r = get<ptr_R>(value_);
+    auto ptr_r = get<ptr_R>(m_value);
     if(ptr_r==nullptr) return "nullptr";
     return "--*ptr_r["  +  addressToHexString( ptr_r ) + "]--";
   }
   case Type::Unique: {
     //cout << "uniqur_ptr to_str()";
-    auto& ptr_u = get<ptr_U>(value_);
+    auto& ptr_u = get<ptr_U>(m_value);
     return ptr_u->_to_str();
   }
 

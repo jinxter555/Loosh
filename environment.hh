@@ -8,7 +8,7 @@ class Environment : public Node {
 public:
   Environment();
   Environment(Node::Type t) ;
-  enum class Type { Parent, Scope, Frame, Process, Universe };
+  enum class Type { Parent, Scope, Frame, Process, Program };
 
 
   virtual ~Environment() = default;
@@ -16,7 +16,7 @@ public:
 //  virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
   static OpStatusRef lookup(Map& table, const string& name);
   //virtual ptr_U create()=0;
-  virtual ptr_R create_child()=0;
+  virtual Environment* create_child()=0;
   virtual ptr_R get_meta_ptr_r()=0;
 
 
@@ -37,6 +37,7 @@ class Scope : public Environment {
 private:
   Node::Map* scope_map_ptr_r=nullptr;
   Node* table_ptr_r=nullptr;
+  Node* children_ptr_r=nullptr;
   Node* parent_ptr_r=nullptr;
   bool is_moved=false;
 
@@ -55,7 +56,7 @@ public:
 
   ptr_U move_obj();
 
-  ptr_R create_child() override;
+  Scope* create_child() override;
   ptr_R get_meta_ptr_r() override;
 
   Node::OpStatusRef lookup(const string&name) ;
@@ -68,7 +69,7 @@ public:
   static unique_ptr<Scope> create(Node* parent=nullptr);
   static Scope init_existing(Node* meta_node_ptr_r);
 
-  static ptr_U create_node(Node* parent=nullptr);
+  //static ptr_U create_node(Node* parent=nullptr);
 
   //Scope& meta_map_obj(Node* meta_obj);
   void print();
@@ -83,7 +84,7 @@ public:
   Frame();
   Frame& meta_map_obj(Node* meta_obj);
 
-  ptr_R create_child() override;
+  Frame* create_child() override;
 
 };
 
@@ -91,7 +92,7 @@ class Process : public Environment {
 private:
   Node::Integer pid;
   Node* call_stack;
-  ptr_R create_child() override;
+  Process* create_child() override;
 
 };
 

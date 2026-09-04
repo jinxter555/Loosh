@@ -6,76 +6,102 @@
 #include "scope_logger.hh"
 
 
+//#include "node_tmpl_cc.hh"
+
 using namespace std;
 namespace Loosh 
 {
+
+
 
 Node node_null(Node::Type::Null);
 
   
 
-Node::Node() : type_(Type::Null) {
-  value_ = {};
+Node::Node() : m_type(Type::Null) {
+  m_value = {};
 }
 
-Node::Node(ptr_U ptr) : value_(move(ptr)), type_(Type::Unique) {};
-Node::Node(ptr_R ptr) : value_(ptr), type_(Type::Raw) {};
+Node::Node(ptr_U ptr) : m_value(move(ptr)), m_type(Type::Unique) {};
+Node::Node(ptr_R ptr) : m_value(ptr), m_type(Type::Raw) {};
 
 Loosh::Node::Node(Value val) 
-: value_(move(val)) 
-, type_(value_variant_type())
+: m_value(move(val)) 
+, m_type(value_variant_type())
 {}
 
 Loosh::Node::Node(Value v, Type t) 
-: value_(move(v))
-, type_(t) {}
+: m_value(move(v))
+, m_type(t) {}
 
 //Node::Node(Map v, Type t)  { }
 
 Node::Node(Type t)
-  : type_(t) {
+  : m_type(t) {
   switch(t) {
-  case Type::Null: value_= {}; break;
-  case Type::Bool: value_=true; break;
-  case Type::Size: value_=0; break;
-  case Type::Integer: value_=0; break;
-  case Type::Float: value_=0.0; break;
-  case Type::String: value_=""; break;
-  //case Type::Error: value_ = {} ; break;
-  case Type::Error: value_ = Error{Error::Type::Unknown, "Unknown Init"} ; break;
+  case Type::Null: m_value= {}; break;
+  case Type::Bool: m_value=true; break;
+  case Type::Size: m_value=0; break;
+  case Type::Integer: m_value=0; break;
+  case Type::Float: m_value=0.0; break;
+  case Type::String: m_value=""; break;
+  //case Type::Error: m_value = {} ; break;
+  case Type::Error: m_value = Error{Error::Type::Unknown, "Unknown Init"} ; break;
   case Type::Map: { 
     Map nm={};
-    value_ = move(nm);
+    m_value = move(nm);
     break;}
-  case Type::MetaObject: {
+
+/*
+  case Type::Info: {
     Map nm={};
     nm[LOOSH_OBJ_INFO] = Node::create(Node::Type::Map);
     nm[LOOSH_OBJ_DATA] = Node::create(Node::Type::Map);
-    value_ = move(nm);
+    m_value = move(nm);
     cout << clean_function_name() << ": Node::Node(MetaObject)" << _to_str() << "\n";
+    break;
+  }
+*/
+  case Type::MetaObject: {
+    /*
+    Vector cc_vec(MetaIndex::count);
+
+    auto obj_info_ptr_u = Node::create(Node::Type::Map);
+    cc_vec[MetaIndex::Info] = Node::create(obj_info_ptr_u.get()); // create pointer to object information
+
+    auto table_ptr_u = Node::create(Node::Type::Map);
+    table_ptr_u->add(LOOSH_D_OBJ_INFO,  move(obj_info_ptr_u));
+
+    cc_vec[MetaIndex::Parent] = nullptr;
+    cc_vec[MetaIndex::Table] = move(table_ptr_u);
+    cc_vec[MetaIndex::Children] = Node::create(Node::Type::Vector);
+*/
+    m_value = move(create_meta_vec());
+    //cout << clean_function_name() << ": Node::Node(MetaObject)" << _to_str() << "\n";
+
     break;
   }
 
   case Type::IMap: { 
     IMap nm={};
-    value_ = move(nm);
+    m_value = move(nm);
     break;}
 
   case Type::List: { 
     List l={};
-    value_ = move(l);
+    m_value = move(l);
     break;}
   case Type::Vector: { 
     Vector l={};
-    value_ = move(l);
+    m_value = move(l);
     break;}
   case Type::DeQue: { 
     DeQue l={};
-    value_ = move(l);
+    m_value = move(l);
     break;}
   default: {
-    value_ = monostate{};
-    type_ = Type::Null;
+    m_value = monostate{};
+    m_type = Type::Null;
 
   }}
 }
@@ -98,10 +124,7 @@ unique_ptr<Node> Node::create(Type t) {
     Node::IMap im;
     return make_unique<Node>(move(im));}
   case Type::MetaObject: {
-    Map nm={};
-    nm[LOOSH_OBJ_INFO] = Node::create(Node::Type::Map);
-    nm[LOOSH_OBJ_DATA] = Node::create(Node::Type::Map);
-    return make_unique<Node>(move(nm)); }
+    return make_unique<Node>(create_meta_vec()); }
   case Type::Map: {
     Node::Map m;
     return make_unique<Node>(move(m)); }
@@ -129,45 +152,45 @@ unique_ptr<Node> Node::create(Type t) {
 
 Node::Type Node::value_variant_type() {
   return visit([](auto&& inner_arg) -> Type {
-    using U = decay_t<decltype(inner_arg)>;
-    if constexpr (is_same_v<U, monostate>) return Type::Null;
-    else if constexpr (is_same_v<U, bool>) return Type::Bool;
-    else if constexpr (is_same_v<U, Error>) return Type::Error;
-    else if constexpr (is_same_v<U, Integer>) return Type::Integer;
-    else if constexpr (is_same_v<U, Float>) return Type::Float;
-    else if constexpr (is_same_v<U, string>) return Type::String;
-    else if constexpr (is_same_v<U, List>) return Type::List;
-    else if constexpr (is_same_v<U, Vector>) return Type::Vector;
-    else if constexpr (is_same_v<U, DeQue>) return Type::DeQue;
-    else if constexpr (is_same_v<U, Map>) return Type::Map;
-    else if constexpr (is_same_v<U, IMap>) return Type::IMap;
-    else if constexpr (is_same_v<U, ptr_R>) return Type::Raw;
-    else if constexpr (is_same_v<U, ptr_U>) return Type::Unique;
-    else if constexpr (is_same_v<U, Fun>) return Type::Fun;
+    using T = decay_t<decltype(inner_arg)>;
+    if constexpr (is_same_v<T, monostate>) return Type::Null;
+    else if constexpr (is_same_v<T, bool>) return Type::Bool;
+    else if constexpr (is_same_v<T, Error>) return Type::Error;
+    else if constexpr (is_same_v<T, Integer>) return Type::Integer;
+    else if constexpr (is_same_v<T, Float>) return Type::Float;
+    else if constexpr (is_same_v<T, string>) return Type::String;
+    else if constexpr (is_same_v<T, List>) return Type::List;
+    else if constexpr (is_same_v<T, Vector>) return Type::Vector;
+    else if constexpr (is_same_v<T, DeQue>) return Type::DeQue;
+    else if constexpr (is_same_v<T, Map>) return Type::Map;
+    else if constexpr (is_same_v<T, IMap>) return Type::IMap;
+    else if constexpr (is_same_v<T, ptr_R>) return Type::Raw;
+    else if constexpr (is_same_v<T, ptr_U>) return Type::Unique;
+    else if constexpr (is_same_v<T, Fun>) return Type::Fun;
     return Type::Null;
-  }, value_);
+  }, m_value);
 }
 
 //------------------------------------------------------------------------
-Node::Type Node::_get_type() const { return type_; }
+Node::Type Node::_get_type() const { return m_type; }
 Node::Type Node::_get_value_type() const { 
-  switch(type_) {
+  switch(m_type) {
   case Node::Type::Unique: {
-    auto& ptr = get<ptr_U>(value_);
+    auto& ptr = get<ptr_U>(m_value);
     return ptr->_get_value_type();}
   case Node::Type::Raw:  {
-    auto& ptr = get<ptr_R>(value_);
+    auto& ptr = get<ptr_R>(m_value);
     return ptr->_get_value_type();}
   default:  {}}
 
-  return type_;
+  return m_type;
 }
 Node Node::get_type() const { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   //AUTO_TRACE();
   MYLOGGER_MSG(trace_function, "hello:get_type() ", SLOG_FUNC_INFO);
   cout << "Node::get_type()\n";
-  return type_; 
+  return m_type; 
 }
 
 
@@ -177,19 +200,19 @@ Node::Map& Node::_get_map_ref() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto rptr = get<ptr_R>(value_);
+    auto rptr = get<ptr_R>(m_value);
     return rptr->_get_map_ref(); }
   case Type::Unique:  {
-    auto &uptr = get<ptr_U>(value_);
+    auto &uptr = get<ptr_U>(m_value);
     return uptr->_get_map_ref(); }
-  case Type::MetaObject:
+  case Type::SimpleObject:
   case Type::Map:  {
-    return get<Map>(value_);}
+    return get<Map>(m_value);}
   default: {}}
 
-  auto msg =  "Not a Node::Map, Node::type_ " + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  auto msg =  "Not a Node::Map, Node::m_type " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
   spdlog::error(clean_function_name() + ": " +  msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
   throw std::bad_typeid();
@@ -199,19 +222,19 @@ Node::Map& Node::_get_map_ref() {
 Node::Map& Node::_get_map_ref(const string& key) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto rptr = get<ptr_R>(value_);
+    auto rptr = get<ptr_R>(m_value);
     return rptr->_get_map_ref(key); }
   case Type::Unique:  {
-    auto &uptr = get<ptr_U>(value_);
+    auto &uptr = get<ptr_U>(m_value);
     return uptr->_get_map_ref(key); }
   case Type::Map:  {
-    return get<Map>(value_);}
+    return get<Map>(m_value);}
   default: {}}
 
-  auto msg =  "Not a Node::Map, Node::type_ " 
-    + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  auto msg =  "Not a Node::Map, Node::m_type " 
+    + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
 
   spdlog::error(clean_function_name() + ": " +  msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
@@ -226,19 +249,19 @@ Node::Map& Node::_get_map_ref(const string& key) {
 Node::IMap& Node::_get_imap_ref() { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto sptr = get<ptr_R>(value_);
+    auto sptr = get<ptr_R>(m_value);
     return sptr->_get_imap_ref(); }
   case Type::Unique:  {
-    auto &sptr = get<ptr_U>(value_);
+    auto &sptr = get<ptr_U>(m_value);
     return sptr->_get_imap_ref(); }
   case Type::IMap:  {
-    return get<IMap>(value_);}
+    return get<IMap>(m_value);}
   default: {}}
 
-  auto msg = "Not a Node::IMap, Node::type_ " 
-      +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  auto msg = "Not a Node::IMap, Node::m_type " 
+      +  _to_str(m_type) + ", Node::m_value " +  _to_str() ;
   spdlog::error(clean_function_name() + ": " +  msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
   throw std::bad_typeid();
@@ -250,21 +273,21 @@ Node::IMap& Node::_get_imap_ref() {
 Node::Vector& Node::_get_vector_ref() { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto rptr = get<ptr_R>(value_);
+    auto rptr = get<ptr_R>(m_value);
     cout << "get_vector_ref() " << rptr->_get_str() << "\n";
     return rptr->_get_vector_ref(); }
   case Type::Unique:  {
-    auto &sptr = get<ptr_U>(value_);
+    auto &sptr = get<ptr_U>(m_value);
     return sptr->_get_vector_ref(); }
   case Type::Vector:  {
-    return get<Vector>(value_); 
+    return get<Vector>(m_value); 
   }
   default: {}}
 
-  auto msg ="Node::_get_vector_ref(): not a Node::Vector: Node::type_ " 
-    + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  auto msg ="Node::_get_vector_ref(): not a Node::Vector: Node::m_type " 
+    + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
   spdlog::error(msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
   throw std::bad_typeid();
@@ -274,20 +297,20 @@ Node::Vector& Node::_get_vector_ref() {
 //------------------------------ _get_deque_ref
 Node::DeQue& Node::_get_deque_ref() { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto rptr = get<ptr_R>(value_);
+    auto rptr = get<ptr_R>(m_value);
     return rptr->_get_deque_ref(); }
   case Type::Unique:  {
-    auto &uptr = get<ptr_U>(value_);
+    auto &uptr = get<ptr_U>(m_value);
     return uptr->_get_deque_ref(); }
   case Type::DeQue:  {
-    return get<DeQue>(value_); 
+    return get<DeQue>(m_value); 
   }
   default: {}}
 
-  auto msg = "Not a Node::DeQue: Node::type_ " 
-    +  _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  auto msg = "Not a Node::DeQue: Node::m_type " 
+    +  _to_str(m_type) + ", Node::m_value " +  _to_str() ;
   spdlog::error(clean_function_name() + ": " + msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
   throw std::bad_typeid(); 
@@ -303,20 +326,20 @@ Node::DeQue& Node::_get_deque_ref() {
 Node::List& Node::_get_list_ref() { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto rptr = get<ptr_R>(value_);
+    auto rptr = get<ptr_R>(m_value);
     return rptr->_get_list_ref(); }
   case Type::Unique:  {
-    auto &uptr = get<ptr_U>(value_);
+    auto &uptr = get<ptr_U>(m_value);
     return uptr->_get_list_ref(); }
   case Type::List:  {
-    return get<List>(value_); 
+    return get<List>(m_value); 
   }
   default: {}}
 
-  auto msg =  "Not a Node::List: Node::type_ " 
-      +  _to_str(type_) + ", Node::value_ " +  _to_str();
+  auto msg =  "Not a Node::List: Node::m_type " 
+      +  _to_str(m_type) + ", Node::m_value " +  _to_str();
   spdlog::error(clean_function_name() + ": " + msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
   throw std::bad_typeid();
@@ -331,10 +354,10 @@ Node::ptr_R Node::_get_ptr_r() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  switch(type_) {
+  switch(m_type) {
   case Type::Raw: {
-    auto rptr = get<ptr_R>(value_);
-    if(rptr->type_ == Node::Type::Raw) {
+    auto rptr = get<ptr_R>(m_value);
+    if(rptr->m_type == Node::Type::Raw) {
       string msg = "Raw, ptr_R is pointing to another RAW pointer!";
       spdlog::warn(clean_function_name() + ": " + msg);
       MYLOGGER_MSG(trace_function, "Warning: "  + msg, SLOG_NODE_OP)
@@ -343,8 +366,8 @@ Node::ptr_R Node::_get_ptr_r() {
   }
   default: {}}
 
-  auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::type_ " 
-  + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::m_type " 
+  + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
 
   spdlog::error(clean_function_name() + ": " + msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
@@ -357,10 +380,10 @@ Node::ptr_R Node::_get_meta_ptr_r() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  switch(type_) {
+  switch(m_type) {
   case Type::MetaPtr: {
-    auto meta_ptr_r = get<ptr_R>(value_);
-    if(meta_ptr_r->type_ == Type::Map) {
+    auto meta_ptr_r = get<ptr_R>(m_value);
+    if(meta_ptr_r->m_type == Type::Map) {
       string msg = "Raw, meta_ptr_w is not a Map!";
       spdlog::warn(clean_function_name() + ": " + msg);
       MYLOGGER_MSG(trace_function, "Warning: "  + msg, SLOG_NODE_OP)
@@ -369,8 +392,8 @@ Node::ptr_R Node::_get_meta_ptr_r() {
   }
   default: {}}
 
-  auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::type_ " 
-  + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::m_type " 
+  + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
 
   spdlog::error(clean_function_name() + ": " + msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
@@ -382,14 +405,14 @@ Node::ptr_R Node::_get_meta_ptr_r() {
 
 Node::ptr_U Node::_get_ptr_u() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::Unique)  {
-    auto msg = "Not a Node::ptr_U, Node::type_ " + _to_str(type_) + ", Node::value_ " +  _to_str() ;
+  if(m_type != Type::Unique)  {
+    auto msg = "Not a Node::ptr_U, Node::m_type " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
     cerr << clean_function_name() << ": " << msg << "\n";
     spdlog::error(clean_function_name() + ": " + msg);
     MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
     throw std::bad_typeid();
   }
-  return move(get<ptr_U>(value_));
+  return move(get<ptr_U>(m_value));
 
 }
 
@@ -397,15 +420,15 @@ Node::ptr_U Node::_get_ptr_u() {
 
 //------------------------------------------------------------------------
 
-void  Node::nil() { value_ = monostate{};  type_ = Node::Type::Null; }
-void  Node::operator=(bool v) { value_ = v; type_ = Node::Type::Bool; }
-void  Node::operator=(Integer v) { value_ = v; type_ = Node::Type::Integer; }
-void  Node::operator=(Float v) { value_ = v; type_ = Node::Type::Float; }
-void  Node::operator=(string v) { value_ = v; type_ = Node::Type::String; }
-void  Node::operator=(ptr_U v) { value_ = move(v); type_ = Node::Type::Unique; }
-void  Node::operator=(Error v) { value_ = move(v); type_ = Node::Type::Error; }
+void  Node::nil() { m_value = monostate{};  m_type = Node::Type::Null; }
+void  Node::operator=(bool v) { m_value = v; m_type = Node::Type::Bool; }
+void  Node::operator=(Integer v) { m_value = v; m_type = Node::Type::Integer; }
+void  Node::operator=(Float v) { m_value = v; m_type = Node::Type::Float; }
+void  Node::operator=(string v) { m_value = v; m_type = Node::Type::String; }
+void  Node::operator=(ptr_U v) { m_value = move(v); m_type = Node::Type::Unique; }
+void  Node::operator=(Error v) { m_value = move(v); m_type = Node::Type::Error; }
 
-//void  Node::operator = (ValueSimple & v) { value_ = v; }
+//void  Node::operator = (ValueSimple & v) { m_value = v; }
 
 //------------------------------------------------------------------------
 void Node::set(unique_ptr<Node> new_node) {
@@ -413,8 +436,8 @@ void Node::set(unique_ptr<Node> new_node) {
   if(!new_node) {
     nil();
   } else {
-    this->value_ = move(new_node->value_);
-    this->type_ = new_node->type_;
+    this->m_value = move(new_node->m_value);
+    this->m_type = new_node->m_type;
   }
 }
 
@@ -426,10 +449,10 @@ Node::OpStatus Node::set(const string& key, Value v) { return set(key, create(mo
 
 Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if (type_ != Type::Map) {
+  if (m_type != Type::Map) {
     return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
   }        
-  Map& map= get<Map>(value_);
+  Map& map= get<Map>(m_value);
   map[key] = move(child);
   return {true, create(true)};
 }
@@ -439,10 +462,10 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
 
 Node::OpStatus Node::delete_key(const string &key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::Map)
+  if(m_type != Type::Map)
     return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
 
-  Map& map = get<Map>(value_);
+  Map& map = get<Map>(m_value);
   if(map.erase(key)==0)
     return {false, create_error(Error::Type::InvalidOperation,  "Key '" + key + "' not found in map.")};
   return {true, Node::create()};
@@ -450,10 +473,10 @@ Node::OpStatus Node::delete_key(const string &key) {
 
 Node::OpStatus Node::delete_key(Integer key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::IMap)
+  if(m_type != Type::IMap)
     return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
 
-  IMap& map = get<IMap>(value_);
+  IMap& map = get<IMap>(m_value);
   if(map.erase(key)==0)
     return {false, create_error(Error::Type::InvalidOperation,  "Key '" + to_string( key) + "' not found in map.")};
   return {true, Node::create()};
@@ -465,20 +488,20 @@ Node::OpStatus Node::delete_key(Integer key) {
 Node& Node::get_node() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
-  switch(type_) {
+  switch(m_type) {
   case Node::Type::Unique: {
-    auto& ptr = get<ptr_U>(value_);
+    auto& ptr = get<ptr_U>(m_value);
     if(ptr ==nullptr ) return node_null; 
     return ptr->get_node();
   }
   case Node::Type::Raw:  {
-    auto& ptr = get<ptr_R>(value_);
+    auto& ptr = get<ptr_R>(m_value);
     if(ptr ==nullptr ) return node_null; 
     return ptr->get_node();
   }
   /*
   case Node::Type::MetaPtr:  {
-    auto& meta_ptr_r = get<ptr_R>(value_);
+    auto& meta_ptr_r = get<ptr_R>(m_value);
     return meta_ptr_r->get_node();
   }*/
   default:  {}
@@ -486,14 +509,14 @@ Node& Node::get_node() {
   return *this;
 }
 //------------------------------ _get
-bool Node::_get_bool() const { return get<bool>(value_); }
+bool Node::_get_bool() const { return get<bool>(m_value); }
 
-Lisp::Op Node::_get_lisp_op() const { return get<Lisp::Op>(value_); }
+Lisp::Op Node::_get_lisp_op() const { return get<Lisp::Op>(m_value); }
 
-Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
-Node::Atom  Node::_get_atom() const { return get<Atom>(value_); }
+Node::Integer Node::_get_integer() const { return get<Integer>(m_value); }
+Node::Atom  Node::_get_atom() const { return get<Atom>(m_value); }
 
-Node::Float Node::_get_float() const { return get<Float>(value_); }
+Node::Float Node::_get_float() const { return get<Float>(m_value); }
 
 string Node::_get_str() const { return _to_str(); }
 
@@ -501,9 +524,9 @@ string Node::_get_str() const { return _to_str(); }
 
 Node::OpStatusRef Node::operator[](Integer index) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  switch(type_) {
+  switch(m_type) {
   case Type::Vector: {
-    Vector& cc_vec = get<Vector>(value_);
+    Vector& cc_vec = get<Vector>(m_value);
     const Integer cc_vec_size =  static_cast<Integer>(cc_vec.size());
     if(index < 0 || index >= cc_vec_size){
       string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(cc_vec_size) + ".";
@@ -512,12 +535,12 @@ Node::OpStatusRef Node::operator[](Integer index) {
     return {true, *cc_vec[index]};}
 
   case Type::IMap: {
-    IMap& imap = get<IMap>(value_);
+    IMap& imap = get<IMap>(m_value);
     if (auto it = imap.find(index); it != imap.end())  return {true, *imap[index]};
 
     return {false,
       Error::ref(Error::Type::KeyNotFound,
-        "IMap::Operator[] (key) " + to_string(index) +" not found: " + _to_str(type_)
+        "IMap::Operator[] (key) " + to_string(index) +" not found: " + _to_str(m_type)
     )};}
 
   default: {}
@@ -525,7 +548,7 @@ Node::OpStatusRef Node::operator[](Integer index) {
 
   return {false,
     Error::ref( Error::Type::InvalidOperation,
-      "Operator[] (index) can only be used on vector/IMap nodes. Current type: " + _to_str(type_)
+      "Operator[] (index) can only be used on vector/IMap nodes. Current type: " + _to_str(m_type)
   )};
 
 }
@@ -536,11 +559,11 @@ Node::OpStatusRef Node::operator[](Integer index) {
 Node::OpStatusRef Node::operator[](const string& key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-  if(type_ != Type::Map){
+  if(m_type != Type::Map){
     return {false, Error::ref(Error::Type::InvalidOperation, 
-    "Operator[] (key: " + key +  ") can only be used on Map nodes. Current type: " + _to_str(type_))};
+    "Operator[] (key: " + key +  ") can only be used on Map nodes. Current type: " + _to_str(m_type))};
   }
-  const Map& map = get<Map>(value_);
+  const Map& map = get<Map>(m_value);
   auto it=map.find(key);
 
   if(it==map.end()) {
@@ -555,22 +578,22 @@ Node::OpStatusRef Node::operator[](const string& key) {
 
 Node::OpStatus Node::add(unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  switch(type_) {
+  switch(m_type) {
   case Type::List: {
-    List& cc_list = get<List>(value_);
+    List& cc_list = get<List>(m_value);
     cc_list.push_back(move(child)); 
     break; }
 
   case Type::DeQue: {
-    DeQue& cc_dq = get<DeQue>(value_);
+    DeQue& cc_dq = get<DeQue>(m_value);
     cc_dq.push_back(move(child));
     break; }
   case Type::Vector: {
-    Vector& cc_vec= get<Vector>(value_);
+    Vector& cc_vec= get<Vector>(m_value);
     cc_vec.push_back(move(child));
     break; }
   default: {
-    auto msg =  "Cannot add element to a non-Node::__Sequence__, type: " + _to_str(type_)  + ", Node::value_: " +  _to_str();
+    auto msg =  "Cannot add element to a non-Node::__Sequence__, type: " + _to_str(m_type)  + ", Node::m_value: " +  _to_str();
     spdlog::error(clean_function_name() + ": " + msg);
     MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
@@ -583,10 +606,10 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
 // only when no existing key is present
 Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if (type_ != Type::Map) {
+  if (m_type != Type::Map) {
     return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
   }        
-  Map& map = get<Map>(value_);
+  Map& map = get<Map>(m_value);
 
   if(!map.try_emplace(key, move(child)).second) {
     return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
@@ -597,13 +620,31 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 //------------------------------ add
 
 
-void Node::set(const Integer v, Type t) { value_ = v; type_ = t; } // could be regular Integer or Atom
-void Node::set(const string&v, Type t) { value_ = v; type_ = t; } // could be reuglar string or identifer
+void Node::set(const Integer v, Type t) { m_value = v; m_type = t; } // could be regular Integer or Atom
+void Node::set(const string&v, Type t) { m_value = v; m_type = t; } // could be reuglar string or identifer
 
   
 //------------------------------ 
  
-bool Node::is_nil() { return type_ == Type::Null ? true : false; }
+bool Node::is_nil() { return m_type == Type::Null ? true : false; }
 
+
+
+
+Node::Vector Node::create_meta_vec() {
+  Vector cc_vec(MetaIndex::count);
+
+  auto obj_info_ptr_u = Node::create(Node::Type::Map);
+  cc_vec[MetaIndex::Info] = Node::create(obj_info_ptr_u.get()); // create pointer to object information
+
+  auto table_ptr_u = Node::create(Node::Type::Map);
+  table_ptr_u->add(LOOSH_D_OBJ_INFO,  move(obj_info_ptr_u));
+
+  cc_vec[MetaIndex::Parent] = nullptr;
+  cc_vec[MetaIndex::Table] = move(table_ptr_u);
+  cc_vec[MetaIndex::Children] = Node::create(Node::Type::Vector);
+
+  return cc_vec;
+}
 
 } 

@@ -13,9 +13,9 @@
 namespace Loosh
 {
 
-bool Node::type_set_identifier() { type_ = Node::Type::Identifier; return true;}
-bool Node::type_set_atom() { type_ = Node::Type::Atom; return true; };
-bool Node::type_set_object_id() { type_ = Node::Type::ObjectId; return true;};
+bool Node::type_set_identifier() { m_type = Node::Type::Identifier; return true;}
+bool Node::type_set_atom() { m_type = Node::Type::Atom; return true; };
+bool Node::type_set_object_id() { m_type = Node::Type::ObjectId; return true;};
 
 //-----------------------------------
 unique_ptr<Node> Node::clone() const {
@@ -26,14 +26,14 @@ unique_ptr<Node> Node::clone() const {
 
     else if constexpr (is_same_v<U, Integer>) {
       auto uptr = create(arg); // create a new objec with same value
-      if(type_ == Type::Atom) uptr->type_set_atom();
-      if(type_ == Type::ObjectId) uptr->type_set_object_id();
+      if(m_type == Type::Atom) uptr->type_set_atom();
+      if(m_type == Type::ObjectId) uptr->type_set_object_id();
       return uptr; }
 
     else if constexpr (is_same_v<U, string>) {
       auto uptr = create(arg); // create a new objec with same value
-      uptr->type_ = type_;
-      if(type_ == Type::Identifier) uptr->type_set_identifier();
+      uptr->m_type = m_type;
+      if(m_type == Type::Identifier) uptr->type_set_identifier();
       return uptr; }
 
     else if constexpr(
@@ -42,7 +42,7 @@ unique_ptr<Node> Node::clone() const {
       is_same_v<U, ptr_R> ||  
       is_same_v<U, Error >) {
       auto uptr = create(arg); 
-      uptr->type_ = type_;
+      uptr->m_type = m_type;
       return  uptr; }
 
     else if constexpr (is_same_v<U, List>) return clone(arg);
@@ -54,7 +54,7 @@ unique_ptr<Node> Node::clone() const {
     //else if constexpr (is_same_v<U, ptr_U>) return create();
     else if constexpr (is_same_v<U, Fun>) return clone(arg);
     else return nullptr;
-  }, value_);
+  }, m_value);
 
 }
 //----------------------------------- cc list

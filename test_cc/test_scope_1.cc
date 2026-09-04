@@ -29,6 +29,7 @@ TEST_CASE("check scope 1") {
 
   trace_function.open("trace.log", std::ios::out);
   ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
+  //ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO);
 
   auto s1_obj = Scope::create();
   s1_obj->var_add("k1", Node::create("hello, world"));
@@ -36,8 +37,17 @@ TEST_CASE("check scope 1") {
   cout << "scope s1_obj  k1: " << s1_obj->lookup("k1") << "\n\n";
 
   auto s1b_obj = Scope::init_existing(s1_obj.get());
-  s1b_obj.var_add("k2", Node::create(55555l));
-  cout << "scope existing s1b_obj.get_node()  " << s1b_obj.get_node() << "\n\n";
+ // s1b_obj.var_add("k2", Node::create(55555l));
+ // cout << "scope existing s1b_obj.get_node()  " << s1b_obj.get_node() << "\n\n";
+
+
+
+  //auto s1_child_ptr  = s1b_obj.create_child();
+  //auto s1_child_ptr  = s1_obj->create_child();
+  s1_obj->create_child();
+//  auto s1_child_ptr  = Scope::create(s1_obj.get());
+  //s1_child_ptr->var_add("ck1", Node::create("hola mundo"));
+  //cout << "s1_child.get_node()  " << s1_child_ptr->_to_str() << "\n\n";
 
 
 

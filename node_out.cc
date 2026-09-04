@@ -87,7 +87,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
       cout << "Vector[(size=" << arg.size() << ") " << endl;
       for(size_t i=0; i<arg.size(); ++i) {
         indent();
-        cout  << "  - [" << i << ", Type: " << Node::_to_str(arg[i]->type_) << "]: ";
+        cout  << "  - [" << i << ", Type: " << Node::_to_str(arg[i]->m_type) << "]: ";
         print_value_recursive(*arg[i].get(), depth+1);
         cout << "\n";
       }
@@ -98,7 +98,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
       for(const auto&[key, child_ptr] : arg) {
 
         indent(); 
-        cout << "  - " << key << " (Type: " << Node::_to_str(child_ptr->type_) << "): ";
+        cout << "  - " << key << " (Type: " << Node::_to_str(child_ptr->m_type) << "): ";
         //if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr[" << &child_ptr->value_ << "]==\n"; continue; }
         if(key == LOOSH_MODULE_PTR || key == LOOSH_CLASS_PTR) { cout << "==*ptr[" << &child_ptr->get_node() << "]==\n"; continue; }
         //if(key == CURRENT_MODULE_PTR || key == CURRENT_CLASS_PTR) { cout << "###*ptr["<< &child_ptr->value_ << "]##\n"; continue; }
@@ -118,7 +118,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
     }
 
 
-  }, node.value_);
+  }, node.m_value);
 }
 
 //------------------------------------------------------------------------
