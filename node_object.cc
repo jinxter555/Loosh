@@ -10,17 +10,35 @@ using namespace std;
 namespace Loosh {
 
 
-//------------------------------ meta add,set 
-Node::OpStatus Node::obj_meta_add(const string&meta_key, const string&key, unique_ptr<Node> child) { 
+//------------------------------ meta info add, set, get
+Node::OpStatus Node::meta_info_add(const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::MetaObject) 
+  AUTO_TRACE();
+
+  if(m_type != Type::MetaObject) 
     return {false, Node::create_error(Node::Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
 
-  auto map_ptr_r = &_get_map_ref();
-  auto &meta_ptr_u  = (*map_ptr_r)[meta_key];
+  auto &meta_obj = get<MetaObject>(m_value);
+  auto &meta_obj_info = meta_obj[MetaIndex::Info];
 
+  if(!meta_obj_info->add(key, move(child)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  }
 
-  if(!meta_ptr_u->add(key, move(child)).second) {
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+  return {true, Node::create(true)};
+}
+
+Node::OpStatus Node::meta_info_set(const string&key, unique_ptr<Node> child) { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  if(m_type != Type::MetaObject) 
+    return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
+
+  auto &meta_obj = get<MetaObject>(m_value);
+  auto &meta_obj_info = meta_obj[MetaIndex::Info];
+
+  if(!meta_obj_info->add(key, move(child)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
 
@@ -29,26 +47,52 @@ Node::OpStatus Node::obj_meta_add(const string&meta_key, const string&key, uniqu
   return {true, Node::create(true)};
 }
 
-Node::OpStatus Node::obj_meta_set(const string&meta_key, const string&key, unique_ptr<Node> child) { 
+Node::OpStatusRef Node::meta_info_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(type_ != Type::MetaObject) 
-    return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
+  AUTO_TRACE();
 
-  auto map_ptr_r = &_get_map_ref();
-  auto &meta_ptr_u  = (*map_ptr_r)[meta_key];
+  auto &meta_obj = get<MetaObject>(m_value);
+  auto &meta_obj_info = meta_obj[MetaIndex::Info];
+  auto info_status = meta_obj_info->get_node(key);
 
-
-  if(!meta_ptr_u->set(key, move(child)).second) {
-    return {false, Node::create_error(Error::Type::Unknown, "Can't set in object info")};
-  }
-  return {true, Node::create(true)};
+ // if(!meta_obj_info->add(key, move(child)).second) {
+ //   return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  //}
 }
 
+//------------------------------ meta info add, set, get
+
+Node::OpStatusRef Node::meta_data_get(const string&key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+}
+
+//------------------------------ 
+Node::Vector Node::create_meta_vec() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  MetaObject cc_vec(MetaIndex::count);
+
+  auto info_ptr_u = Node::create(Node::Type::Map);
+  cc_vec[MetaIndex::Info] = Node::create(info_ptr_u.get()); // create pointer to object information
+
+  auto data_ptr_u = Node::create(Node::Type::Map);
+  data_ptr_u->add(LOOSH_D_OBJ_INFO,  move(info_ptr_u));
+
+  cc_vec[MetaIndex::Parent] = nullptr;
+  cc_vec[MetaIndex::Data] = move(data_ptr_u);
+  cc_vec[MetaIndex::Children] = Node::create(Node::Type::Vector);
+
+  return cc_vec;
+}
+
+  /*
 Node::OpStatus Node::obj_meta_get(const string&meta_key, const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   MYLOGGER_MSG(trace_function, "meta_key: " + meta_key, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "key: " + key, SLOG_FUNC_INFO);
-  if(type_ != Type::MetaObject)  {
+  if(m_type != Type::MetaObject)  {
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
   }
 
@@ -112,7 +156,7 @@ Node::Atom Node::_get_meta_type(Node* env_ptr) {
   AUTO_TRACE();
 
   auto &env_node = env_ptr->get_node();
-  if(env_node.type_ != Node::Type::MetaObject) {
+  if(env_node.m_type != Node::Type::MetaObject) {
     string msg =  "Env: "  + env_ptr->_to_str() + "Not a Meta Object" ;
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(msg);
@@ -126,6 +170,6 @@ Node::Atom Node::_get_meta_type(Node* env_ptr) {
   //cout << clean_function_name() +  ": obj info status second " <<  obj_info_status.second->get_node(LOOSH_CC_OBJ_TYPE).second._to_str() << "\n";
 
 }
-
+*/
 
 }

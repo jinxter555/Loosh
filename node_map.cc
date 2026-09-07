@@ -172,25 +172,6 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
   return {true, *current};
 }
 
-//------------------------------------------------------------------------
-Node::OpStatus Node::has_key(const string&key) {
-  if(m_type != Node::Type::Map) {
-    return {false, create_error(Error::Type::InvalidOperation, 
-      "Can't lookup key '" + key + "' for non map type: type: " + _to_str(m_type)
- )};
-  }
-  auto &map = get<Map>(m_value);
-  if (map.find(key) != map.end())  return {true, Node::create(true)};
-  return {true, Node::create(false)};
-}
-
-bool Node::m_has_key(const string&key) {
-  auto &map = get<Map>(m_value);
-  if (map.find(key) != map.end())  return true;
-  return false;
-}
-
-
 
 
 }

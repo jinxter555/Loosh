@@ -29,7 +29,7 @@ friend class ostream;
 public:
 
 //----------------------------------
-  class Error {  public: enum class Type {
+  struct Error {  enum class Type {
     DivideByZero, 
     InvalidOperation, // e.g., calling 'add' on an Integer node
     KeyAlreadyExists, // e.g., calling 'add' with a duplicate map key
@@ -61,6 +61,7 @@ public:
     string message_;
   };
 
+
 //----------------------------------
 // GCObjectId: for Garbage collection
 // MapObjectId: 
@@ -69,8 +70,8 @@ public:
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun }; 
 
-  //enum MetaIndex { Self, Parent, Children, Members, count }; // count is last element hack for counting size of this
-  enum MetaIndex { Info, Parent, Children, Table, count }; // count is last element hack for counting size of this
+  //enum MetaIndex { Parent, Children, Info, Data, count }; // count is last element hack for counting size of this
+  enum MetaIndex { Parent, Children, Info, Data, count }; // count is last element hack for counting size of this
 
   using Integer = LOOSH_T_LONG; 
   using Atom = LOOSH_T_LONG; 
@@ -164,9 +165,15 @@ public:
 
   OpStatusRef operator[](Integer index) ;
   OpStatusRef operator[](const string& key) ;
+  // get leaf should be
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(Integer index);
+
+
+  OpStatusRef get_subtree(const std::vector<std::string>& path);
+
+  OpStatusRef traverse(const vector<string>&path);
 
   bool has_node(const vector<string>&path);
 
@@ -203,7 +210,13 @@ template <typename T> T& get_value() {
   template <typename T> const T& unwrap_value() const;
   template <typename T> T& unwrap_value() ;
 
+  template <typename T> const T& unwrap_value(Integer index) const;
+  template <typename T> T& unwrap_value(Integer index) ;
+
   template <typename T> Type get_tmpl_type() const ;
+
+
+
 //------------------------------------------------------------------------
 
   // _get
@@ -235,9 +248,15 @@ template <typename T> T& get_value() {
   OpStatusRef back();
 
 
+  Integer _size() const ;
+  OpStatus size() const ;
   //
   OpStatus has_key(const string&key);
-  bool m_has_key(const string&key);
+  OpStatus has_key(const Integer &key);
+  bool _has_key(const string&key);
+  bool _has_key(const Integer &key);
+  //template <typename T>  bool _has_key(const T& key) const;
+  //
   bool is_nil(); 
 
 
@@ -272,18 +291,18 @@ template <typename T> T& get_value() {
 
 
 //------------------------------ node object, aka meta object
-  Node::OpStatus obj_meta_add(const string& meta_key, const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
+//  Node::OpStatus obj_meta_add(const string& meta_key, const string&key, unique_ptr<Node> child);
+//  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
+//  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
 
   Node::OpStatus meta_info_add(const string&key, unique_ptr<Node> child);
   Node::OpStatus meta_info_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatus meta_info_get(const string&key);
+  Node::OpStatusRef meta_info_get(const string&key);
 
 
-  Node::OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_data_get(const string&key);
+  Node::OpStatus meta_data_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus meta_data_set(const string&key, unique_ptr<Node> child);
+  Node::OpStatusRef meta_data_get(const string&key);
 
 
   static Node::Atom _get_meta_type(Node* env_ptr);

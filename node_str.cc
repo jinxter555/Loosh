@@ -66,9 +66,7 @@ string Node::_to_str() const {
       Float num = get<Float>(m_value);
       oss << fixed << setprecision(2) << num;
       return oss.str(); }
-  case Type::Identifier_g:  {
-    string str = get<string>(m_value);
-    return str; }
+  case Type::Identifier_g:  
   case Type::Identifier: 
   case Type::String: {
     string str = get<string>(m_value);

@@ -632,20 +632,115 @@ bool Node::is_nil() { return m_type == Type::Null ? true : false; }
 
 
 
-Node::Vector Node::create_meta_vec() {
-  Vector cc_vec(MetaIndex::count);
 
-  auto obj_info_ptr_u = Node::create(Node::Type::Map);
-  cc_vec[MetaIndex::Info] = Node::create(obj_info_ptr_u.get()); // create pointer to object information
-
-  auto table_ptr_u = Node::create(Node::Type::Map);
-  table_ptr_u->add(LOOSH_D_OBJ_INFO,  move(obj_info_ptr_u));
-
-  cc_vec[MetaIndex::Parent] = nullptr;
-  cc_vec[MetaIndex::Table] = move(table_ptr_u);
-  cc_vec[MetaIndex::Children] = Node::create(Node::Type::Vector);
-
-  return cc_vec;
+//------------------------------------------------------------------------ has key
+Node::OpStatus Node::has_key(const string&key) {
+  switch(m_type) {
+  case Node::Type::Map: {
+    auto &map = get<Map>(m_value);
+    if (map.find(key) != map.end())  return {true, Node::create(true)};
+    return {true, Node::create(false)};
+  }
+  case Node::Type::MetaObject: {
+    auto &meta = get<MetaObject>(m_value);
+    auto &map = meta[MetaIndex::Data]->unwrap_value<Map>();
+    if (map.find(key) != map.end())  return {true, Node::create(true)};
+    return {true, Node::create(false)};
+  }
+  default: {} }
+  return {false, create_error(Error::Type::InvalidOperation, 
+      "Can't lookup key '" + key + "' for non map type: type: " + _to_str(m_type)
+  )};
 }
+
+//------------------------------ 
+bool Node::_has_key(const string&key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  switch(m_type) {
+  case Node::Type::Map: {
+    auto &map = get<Map>(m_value);
+    if (map.find(key) != map.end())  true;
+    return false;
+  }
+  case Node::Type::MetaObject: {
+    auto &meta = get<MetaObject>(m_value);
+    auto &map = meta[MetaIndex::Data]->unwrap_value<Map>();
+    if (map.find(key) != map.end())  return true;
+    return false;
+  }
+  default: {} }
+
+  auto msg =  "Not a Node::__Map__, type: " + _to_str(m_type)  + ", Node::m_value: " +  _to_str();
+  spdlog::error(clean_function_name() + ": " + msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
+}
+
+//------------------------------ 
+
+
+
+//------------------------------ 
+
+
+
+bool Node::_has_key(const Integer &key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  switch(m_type) {
+  case Type::Vector:
+  case Type::DeQue:
+  case Type::List: {
+    //if(key>0 && key  << size() ) { }
+
+  }
+  case Type::IMap:{
+
+  }
+  default:{}}
+
+  auto msg =  "Not a Node::(Sequence) m_type " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
+  spdlog::error(clean_function_name() + ": " +  msg);
+  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+  throw std::bad_typeid();
+}
+
+//------------------------------------------------------------------------ has key
+//Node::OpStatus Node::size() const {}
+Node::OpStatus Node::size() const  {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  return visit([&](auto&& arg) -> OpStatus {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
+      is_same_v<T, Vector> || is_same_v<T, Map> || is_same_v<T, IMap>) {
+      Integer s = arg.size();
+      return {true, create(s)};
+    } else {
+      return {false, create(-1)};
+    }
+  }, m_value);
+  return {false, create(-1)};
+}
+
+//Node::OpStatus Node::size() const {}
+Node::Integer Node::_size() const  {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  return visit([&](auto&& arg) -> Integer {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
+      is_same_v<T, Vector> || is_same_v<T, Map> || is_same_v<T, IMap>) {
+      return arg.size();
+    } 
+    auto msg =  "Not a Node::(container) m_type " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
+    spdlog::error(clean_function_name() + ": " +  msg);
+    MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+    throw std::bad_typeid();
+  }, m_value);
+}
+
 
 } 
