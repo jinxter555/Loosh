@@ -8,6 +8,7 @@
 #include <unordered_map>                                                                        
 #include <functional>
 #include <spdlog/spdlog.h>
+#include <mutex>
 
 
 #include "defs.hh"
@@ -27,6 +28,11 @@ friend class Frame;
 friend class ostream;
 
 public:
+
+  class Mutex { friend class Node; public:
+    unique_ptr<Node> m_node;
+    unique_ptr<mutex> m_mtx;
+  };
 
 //----------------------------------
   struct Error {  enum class Type {
@@ -66,7 +72,7 @@ public:
 // GCObjectId: for Garbage collection
 // MapObjectId: 
   enum class Type { 
-    Null, Bool, Error, Size, Integer, Float, String, 
+    Null, Bool, Error, Size, Integer, Float, String, Mutex,
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun }; 
 
@@ -91,8 +97,8 @@ public:
   using SimpleObject = Map;
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
 
-  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun>;
-  //using ValueSimple = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op>;
+  //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun >;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Mutex>;
 
 //----------------------------------
   
@@ -123,6 +129,7 @@ public:
   static ptr_U clone(const Map& map) ;
   static ptr_U clone(const IMap& imap) ;
   static ptr_U clone(const Fun& fun) ;
+  static ptr_U clone(const Mutex& mtx) ;
 
   //clone_ptr_r() ;
 

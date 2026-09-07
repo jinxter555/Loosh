@@ -92,6 +92,7 @@ template <typename T> Node::Type Node::get_tmpl_type() const  {
   else if constexpr (is_same_v<T, ptr_R>) return Type::Raw;
   else if constexpr (is_same_v<T, ptr_U>) return Type::Unique;
   else if constexpr (is_same_v<T, Fun>) return Type::Fun;
+  else if constexpr (is_same_v<T, Mutex>) return Type::Mutex;
 }
 
 

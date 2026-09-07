@@ -168,6 +168,7 @@ Node::Type Node::value_variant_type() {
     else if constexpr (is_same_v<T, ptr_R>) return Type::Raw;
     else if constexpr (is_same_v<T, ptr_U>) return Type::Unique;
     else if constexpr (is_same_v<T, Fun>) return Type::Fun;
+    else if constexpr (is_same_v<T, Mutex>) return Type::Mutex;
     return Type::Null;
   }, m_value);
 }
@@ -659,7 +660,7 @@ bool Node::_has_key(const string&key) {
   switch(m_type) {
   case Node::Type::Map: {
     auto &map = get<Map>(m_value);
-    if (map.find(key) != map.end())  true;
+    if (map.find(key) != map.end()) return true;
     return false;
   }
   case Node::Type::MetaObject: {
@@ -692,8 +693,8 @@ bool Node::_has_key(const Integer &key) {
   case Type::Vector:
   case Type::DeQue:
   case Type::List: {
-    //if(key>0 && key  << size() ) { }
-
+    auto s = _size();
+    if(s  >=0 && key < s ) return true;
   }
   case Type::IMap:{
 

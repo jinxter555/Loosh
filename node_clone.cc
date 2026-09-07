@@ -53,6 +53,7 @@ unique_ptr<Node> Node::clone() const {
     else if constexpr (is_same_v<U, ptr_R>) return create(*arg);
     //else if constexpr (is_same_v<U, ptr_U>) return create();
     else if constexpr (is_same_v<U, Fun>) return clone(arg);
+    else if constexpr (is_same_v<U, Fun>) return clone(arg);
     else return nullptr;
   }, m_value);
 
@@ -93,6 +94,15 @@ unique_ptr<Node> Node::clone(const Vector& cc_vec) {
 unique_ptr<Node> Node::clone(const Fun& f) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   return make_unique<Node>(f);
+}
+
+//----------------------------------- Mutex
+unique_ptr<Node> Node::clone(const Mutex& m) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  //auto mtx = make_unique<Mutex>();
+  //mtx->m_node = m.m_node->clone();
+  //mtx->m_mtx = make_unique<mutex>();
+  return create(Mutex{m.m_node->clone(), make_unique<mutex>()}, Type::Mutex);
 }
 
 //-----------------------------------
