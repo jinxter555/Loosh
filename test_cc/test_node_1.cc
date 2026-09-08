@@ -33,6 +33,9 @@ TEST_CASE("check node 2") {
   cout << "n1->unwrap_value<Node>()" <<  n1->unwrap_value<Node>()<< "\n";
   cout << "n1->unwrap_value<Int>()" <<  n1->unwrap_value<Node::Integer>()<< "\n";
 
+  auto &nv = n1->unwrap_value<Node::Integer>();
+  cout << "n1->unwrap_value<Int>(): nv: " <<  nv << "\n";
+
 /*
   Node tm4(Node::Type::Map);
 

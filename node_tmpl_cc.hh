@@ -74,7 +74,48 @@ T& Node::unwrap_value() {
     static_cast<const Node*>(this)->unwrap_value<T>()
   );
 }
+//------------------------------------------------------------------------ unwrap value(string K)
+template <typename T> const T& Node::unwrap_value(const string& key) const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  AUTO_TRACE();
 
+  switch(m_type) {
+    case Type::Raw: {
+      auto ptr_r = get<ptr_R>(m_value);
+      if (!ptr_r) throw runtime_error("Null raw pointer during unwrap");
+      return ptr_r->template unwrap_value<T>(key); // 'template' keyword required for nested templates
+    }
+    case Type::Unique: {
+      const auto &ptr_u = get<ptr_U>(m_value);
+      if (!ptr_u) throw std::runtime_error("Null unique pointer during unwrap");
+      return ptr_u->template unwrap_value<T>(key);
+    }
+    case Type::Map: {
+      auto &map = get<Map>(m_value);
+      auto &vn = map.at(key);
+      break;
+    }
+    default: {}
+  }
+
+  // 2. Base Fallback Case: Check the target type only once at the end
+  if constexpr (is_same_v<T, Node>) {
+    cout << "node::unwrap_value<Node>\n";
+    return *this; 
+  } else {
+    auto tmpl_type = get_tmpl_type<T>();
+    if( tmpl_type != m_type) {
+      string msg =  "Runtime error: template type: " +  Node::_to_str(tmpl_type)  + " != " + Node::_to_str(m_type);
+      throw runtime_error(clean_function_name() + ":" + msg );
+    }
+    return get<T>(m_value); 
+  }
+}
+template <typename T> T& Node::unwrap_value(const string& key)  {
+
+}
+
+//------------------------------------------------------------------------
 template <typename T> Node::Type Node::get_tmpl_type() const  {
   if constexpr (is_same_v<T, monostate>) return Type::Null;
   else if constexpr (is_same_v<T, bool>) return Type::Bool;

@@ -2,14 +2,10 @@
     "configurations": [
         {
             "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/g++",
+            "compilerPath": "/usr/bin/clang++-21",
+            "intelliSenseMode": "linux-clang-x64",
             "cStandard": "c17",
-            "cppStandard": "c++23",
-            "intelliSenseMode": "linux-gcc-x64"
+            "cppStandard": "c++23" // Updated here
         }
     ],
     "version": 4

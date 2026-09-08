@@ -77,7 +77,7 @@ public:
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun }; 
 
   //enum MetaIndex { Parent, Children, Info, Data, count }; // count is last element hack for counting size of this
-  enum MetaIndex { Parent, Children, Info, Data, count }; // count is last element hack for counting size of this
+  enum ObjectIndex {Info, Data, Parent, Children, count }; // count is last element hack for counting size of this
 
   using Integer = LOOSH_T_LONG; 
   using Atom = LOOSH_T_LONG; 
@@ -86,6 +86,7 @@ public:
   using List = list<unique_ptr<Node>>;
   using Vector = vector<unique_ptr<Node>>;
   using MetaObject = Vector;
+  using SimpleObject = Vector;
   using DeQue = deque<unique_ptr<Node>>;
   using ptr_R = Node *;
   using ptr_U = unique_ptr<Node>;
@@ -94,7 +95,6 @@ public:
 
   using IMap = unordered_map<Integer, unique_ptr<Node>>;
   using Map = unordered_map<string, unique_ptr<Node>>;
-  using SimpleObject = Map;
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
 
   //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun >;
@@ -167,8 +167,9 @@ public:
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
   static Node* extend_map_by_key(Map& map, const string&key, bool create=true); // for map
   bool extend(const vector<string>&path, bool create=true);
+
   //
-  Node& get_node(); // returns node if it's ptrs shared raw unique
+  Node& get_node(); // returns node,  if it's raw unique ptr unwrap
 
   OpStatusRef operator[](Integer index) ;
   OpStatusRef operator[](const string& key) ;
@@ -219,6 +220,9 @@ template <typename T> T& get_value() {
 
   template <typename T> const T& unwrap_value(Integer index) const;
   template <typename T> T& unwrap_value(Integer index) ;
+
+  template <typename T=Node> const T& unwrap_value(const string& key) const;
+  template <typename T=Node> T& unwrap_value(const string& key) ;
 
   template <typename T> Type get_tmpl_type() const ;
 
@@ -302,14 +306,14 @@ template <typename T> T& get_value() {
 //  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
 //  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
 
-  Node::OpStatus meta_info_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus meta_info_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatusRef meta_info_get(const string&key);
+  Node::OpStatus obj_info_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_info_set(const string&key, unique_ptr<Node> child);
+  Node::OpStatusRef obj_info_get(const string&key);
 
 
-  Node::OpStatus meta_data_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus meta_data_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatusRef meta_data_get(const string&key);
+  Node::OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
+  Node::OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
+  Node::OpStatusRef obj_data_get(const string&key);
 
 
   static Node::Atom _get_meta_type(Node* env_ptr);
@@ -331,7 +335,8 @@ private:
   bool type_set_atom();
   bool type_set_object_id();
 
-  static Vector create_meta_vec();
+  static MetaObject create_meta_vec();
+  static SimpleObject create_simple_vec();
 
 
 };

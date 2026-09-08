@@ -95,24 +95,28 @@ Node::OpStatusRef Node::get_node(const string&key) {
   case Type::Raw: {
     auto sptr = get<ptr_R>(m_value);
     return sptr->get_node(key); }
+
   case Type::Unique:  {
     auto &sptr = get<ptr_U>(m_value);
     return sptr->get_node(key); }
+
+  case Type::Map:  {
+    Node::Map& map = get<Node::Map>(m_value);
+    auto it = map.find(key);
+    if(it==map.end()) {
+      string msg = clean_function_name() + ": key '" + key + "' not found in map.";
+      return {false, Error::ref_log(Error::Type::KeyNotFound, msg)};
+    }
+    return {true, *it->second}; }
+
+  case Type::MetaObject:  {
+  }
   default: {}
   }
 
-  if(m_type != Type::Map){
-    return {false, Error::ref(Error::Type::IndexWrongType, 
-    "get_node(string&key) only works Map nodes. Current type: " + _to_str(m_type))};
-  }
-  Node::Map& map = get<Node::Map>(m_value);
-  auto it = map.find(key);
-  if(it==map.end()) {
-    string msg = clean_function_name() + ": key '" + key + "' not found in map.";
-    return {false, Error::ref_log(Error::Type::KeyNotFound, msg)};
-  }
+  return {false, Error::ref(Error::Type::IndexWrongType, 
+  "get_node(string&key) only works Map nodes. Current type: " + _to_str(m_type))};
 
-  return {true, *it->second};
 }
 
 //----------------------------------- get_node

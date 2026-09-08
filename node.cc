@@ -697,8 +697,15 @@ bool Node::_has_key(const Integer &key) {
     if(s  >=0 && key < s ) return true;
   }
   case Type::IMap:{
-
+    auto &imap = get<IMap>(m_value);
+    if (imap.find(key) != imap.end())  return true;
   }
+  case Type::MetaObject:{
+    auto &meta = get<MetaObject>(m_value);
+    auto &imap = meta[MetaIndex::Children]->unwrap_value<IMap>();
+    if (imap.find(key) != imap.end())  return true;
+  }
+
   default:{}}
 
   auto msg =  "Not a Node::(Sequence) m_type " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;

@@ -67,5 +67,6 @@
 #define LOOSH_FINALIZE "finalize"
 
 #define LOOSH_CLOSURABLE_FILE "closurable.txt"
+#define LOOSH_D_SIMPLE_OBJECT_COUNT  2
 
 #define LOOSH_T_LONG long long

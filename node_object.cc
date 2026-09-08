@@ -11,7 +11,7 @@ namespace Loosh {
 
 
 //------------------------------ meta info add, set, get
-Node::OpStatus Node::meta_info_add(const string&key, unique_ptr<Node> child) { 
+Node::OpStatus Node::obj_info_add(const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
@@ -19,7 +19,7 @@ Node::OpStatus Node::meta_info_add(const string&key, unique_ptr<Node> child) {
     return {false, Node::create_error(Node::Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
 
   auto &meta_obj = get<MetaObject>(m_value);
-  auto &meta_obj_info = meta_obj[MetaIndex::Info];
+  auto &meta_obj_info = meta_obj[ObjectIndex::Info];
 
   if(!meta_obj_info->add(key, move(child)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
@@ -29,14 +29,14 @@ Node::OpStatus Node::meta_info_add(const string&key, unique_ptr<Node> child) {
   return {true, Node::create(true)};
 }
 
-Node::OpStatus Node::meta_info_set(const string&key, unique_ptr<Node> child) { 
+Node::OpStatus Node::obj_info_set(const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
   if(m_type != Type::MetaObject) 
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
 
   auto &meta_obj = get<MetaObject>(m_value);
-  auto &meta_obj_info = meta_obj[MetaIndex::Info];
+  auto &meta_obj_info = meta_obj[ObjectIndex::Info];
 
   if(!meta_obj_info->add(key, move(child)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
@@ -47,12 +47,12 @@ Node::OpStatus Node::meta_info_set(const string&key, unique_ptr<Node> child) {
   return {true, Node::create(true)};
 }
 
-Node::OpStatusRef Node::meta_info_get(const string&key) {
+Node::OpStatusRef Node::obj_info_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
   auto &meta_obj = get<MetaObject>(m_value);
-  auto &meta_obj_info = meta_obj[MetaIndex::Info];
+  auto &meta_obj_info = meta_obj[ObjectIndex::Info];
   auto info_status = meta_obj_info->get_node(key);
 
  // if(!meta_obj_info->add(key, move(child)).second) {
@@ -62,27 +62,43 @@ Node::OpStatusRef Node::meta_info_get(const string&key) {
 
 //------------------------------ meta info add, set, get
 
-Node::OpStatusRef Node::meta_data_get(const string&key) {
+Node::OpStatusRef Node::obj_data_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 }
 
 //------------------------------ 
-Node::Vector Node::create_meta_vec() {
+Node::MetaObject Node::create_meta_vec() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  MetaObject cc_vec(MetaIndex::count);
+  MetaObject cc_vec(ObjectIndex::count);
 
   auto info_ptr_u = Node::create(Node::Type::Map);
-  cc_vec[MetaIndex::Info] = Node::create(info_ptr_u.get()); // create pointer to object information
+  cc_vec[ObjectIndex::Info] = Node::create(info_ptr_u.get()); // create pointer to object information
 
   auto data_ptr_u = Node::create(Node::Type::Map);
   data_ptr_u->add(LOOSH_D_OBJ_INFO,  move(info_ptr_u));
 
-  cc_vec[MetaIndex::Parent] = nullptr;
-  cc_vec[MetaIndex::Data] = move(data_ptr_u);
-  cc_vec[MetaIndex::Children] = Node::create(Node::Type::Vector);
+  cc_vec[ObjectIndex::Parent] = nullptr;
+  cc_vec[ObjectIndex::Data] = move(data_ptr_u);
+  cc_vec[ObjectIndex::Children] = Node::create(Node::Type::Vector);
+
+  return cc_vec;
+}
+Node::SimpleObject Node::create_simple_vec() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  MetaObject cc_vec(LOOSH_D_SIMPLE_OBJECT_COUNT);
+
+  auto info_ptr_u = Node::create(Node::Type::Map);
+  cc_vec[ObjectIndex::Info] = Node::create(info_ptr_u.get()); // create pointer to object information
+
+  auto data_ptr_u = Node::create(Node::Type::Map);
+  data_ptr_u->add(LOOSH_D_OBJ_INFO,  move(info_ptr_u));
+
+  cc_vec[ObjectIndex::Data] = move(data_ptr_u);
 
   return cc_vec;
 }
