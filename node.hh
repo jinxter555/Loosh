@@ -87,6 +87,7 @@ public:
   using Vector = vector<unique_ptr<Node>>;
   using MetaObject = Vector;
   using SimpleObject = Vector;
+  using VecObject = Vector;
   using DeQue = deque<unique_ptr<Node>>;
   using ptr_R = Node *;
   using ptr_U = unique_ptr<Node>;

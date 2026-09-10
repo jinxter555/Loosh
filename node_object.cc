@@ -9,19 +9,28 @@
 using namespace std;
 namespace Loosh {
 
-
-//------------------------------ meta info add, set, get
+//------------------------------------------------------------------------ obj info add, set, get
+//------------------------------  add
 Node::OpStatus Node::obj_info_add(const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  if(m_type != Type::MetaObject) 
-    return {false, Node::create_error(Node::Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }}
 
-  auto &meta_obj = get<MetaObject>(m_value);
-  auto &meta_obj_info = meta_obj[ObjectIndex::Info];
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_info = obj[ObjectIndex::Info];
 
-  if(!meta_obj_info->add(key, move(child)).second) {
+  if(!obj_info->add(key, move(child)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
 
@@ -29,16 +38,27 @@ Node::OpStatus Node::obj_info_add(const string&key, unique_ptr<Node> child) {
   return {true, Node::create(true)};
 }
 
+//------------------------------  set
 Node::OpStatus Node::obj_info_set(const string&key, unique_ptr<Node> child) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
-  if(m_type != Type::MetaObject) 
-    return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Type::ObjectMeta.")};
 
-  auto &meta_obj = get<MetaObject>(m_value);
-  auto &meta_obj_info = meta_obj[ObjectIndex::Info];
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }}
 
-  if(!meta_obj_info->add(key, move(child)).second) {
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_info = obj[ObjectIndex::Info];
+
+  if(!obj_info->set(key, move(child)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
 
@@ -47,25 +67,115 @@ Node::OpStatus Node::obj_info_set(const string&key, unique_ptr<Node> child) {
   return {true, Node::create(true)};
 }
 
+
+//------------------------------ get
 Node::OpStatusRef Node::obj_info_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  auto &meta_obj = get<MetaObject>(m_value);
-  auto &meta_obj_info = meta_obj[ObjectIndex::Info];
-  auto info_status = meta_obj_info->get_node(key);
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return{false, 
+      Error::ref(Error::Type::InvalidOperation, 
+        "Unsupported types for addition! " + _to_str(m_type) + " : " + _to_str(m_type))
+    };
+  }}
 
- // if(!meta_obj_info->add(key, move(child)).second) {
- //   return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
-  //}
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_info = obj[ObjectIndex::Info];
+  return obj_info->get_node(key);
 }
 
-//------------------------------ meta info add, set, get
+//------------------------------------------------------------------------ object data add, set, get
+//------------------------------ 
+Node::OpStatus Node::obj_data_add(const string&key, unique_ptr<Node> child) { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
 
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }}
+
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_data = obj[ObjectIndex::Data];
+
+  if(!obj_data->add(key, move(child)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+  return {true, Node::create(true)};
+}
+
+
+//------------------------------  set
+Node::OpStatus Node::obj_data_set(const string&key, unique_ptr<Node> child) { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }}
+
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_data = obj[ObjectIndex::Data];
+
+  if(!obj_data->set(key, move(child)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+
+  return {true, Node::create(true)};
+}
+
+//------------------------------ 
 Node::OpStatusRef Node::obj_data_get(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
+
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return{false, 
+      Error::ref(Error::Type::InvalidOperation, 
+        "Unsupported types for addition! " + _to_str(m_type) + " : " + _to_str(m_type))
+    };
+  }}
+
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_data = obj[ObjectIndex::Data];
+  return obj_data->get_node(key);
 }
+
+//------------------------------------------------------------------------ 
 
 //------------------------------ 
 Node::MetaObject Node::create_meta_vec() {

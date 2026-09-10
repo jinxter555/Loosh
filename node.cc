@@ -644,7 +644,7 @@ Node::OpStatus Node::has_key(const string&key) {
   }
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
-    auto &map = meta[MetaIndex::Data]->unwrap_value<Map>();
+    auto &map = meta[ObjectIndex::Data]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return {true, Node::create(true)};
     return {true, Node::create(false)};
   }
@@ -665,7 +665,7 @@ bool Node::_has_key(const string&key) {
   }
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
-    auto &map = meta[MetaIndex::Data]->unwrap_value<Map>();
+    auto &map = meta[ObjectIndex::Data]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return true;
     return false;
   }
@@ -702,7 +702,7 @@ bool Node::_has_key(const Integer &key) {
   }
   case Type::MetaObject:{
     auto &meta = get<MetaObject>(m_value);
-    auto &imap = meta[MetaIndex::Children]->unwrap_value<IMap>();
+    auto &imap = meta[ObjectIndex::Children]->unwrap_value<IMap>();
     if (imap.find(key) != imap.end())  return true;
   }
 

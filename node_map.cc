@@ -109,8 +109,8 @@ Node::OpStatusRef Node::get_node(const string&key) {
     }
     return {true, *it->second}; }
 
-  case Type::MetaObject:  {
-  }
+  case Type::MetaObject:  {}
+  case Type::SimpleObject:  {}
   default: {}
   }
 
