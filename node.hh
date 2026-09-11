@@ -307,18 +307,22 @@ template <typename T> T& get_value() {
 //  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
 //  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
 
-  Node::OpStatus obj_info_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_info_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatusRef obj_info_get(const string&key);
+  OpStatus obj_info_add(const string&key, unique_ptr<Node> child);
+  OpStatus obj_info_set(const string&key, unique_ptr<Node> child);
+  OpStatusRef obj_info_get(const string&key);
 
 
-  Node::OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
-  Node::OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
-  Node::OpStatusRef obj_data_get(const string&key);
+  OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
+  OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
+  OpStatusRef obj_data_get(const string&key);
+
+  bool set_parent(ptr_R parent);
+  OpStatus get_parent();
+
+  static Node::Atom _get_obj_type(Node* env_ptr);
+  static Node::OpStatus get_obj_type(Node* env_ptr);
 
 
-  static Node::Atom _get_meta_type(Node* env_ptr);
-  static Node::OpStatus get_meta_type(Node* env_ptr);
 
 
 protected:

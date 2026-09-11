@@ -5,6 +5,8 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+#include "node_tmpl_cc.hh"
+
 
 using namespace std;
 namespace Loosh {
@@ -28,7 +30,8 @@ Node::OpStatus Node::obj_info_add(const string&key, unique_ptr<Node> value) {
 
 
   auto &obj = get<VecObject>(m_value);
-  auto &obj_info = obj[ObjectIndex::Info]->get_node();
+  //auto &obj_info = obj[ObjectIndex::Info]->get_node();
+  auto &obj_info = obj[ObjectIndex::Info]->unwrap_value<Node>();
 
 //  cout << "obj_info_add(), value: " << *value << "\n";
 
@@ -179,6 +182,48 @@ Node::OpStatusRef Node::obj_data_get(const string&key) {
 }
 
 //------------------------------------------------------------------------ 
+bool Node::set_parent(ptr_R parent) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return false;
+  }}
+  auto &obj = get<VecObject>(m_value);
+  obj[ObjectIndex::Parent] = create(parent);
+  return true;
+  
+}
+
+
+Node::OpStatus Node::get_parent() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, create(false)};
+  }}
+  auto &obj = get<VecObject>(m_value);
+  auto ptr = obj[ObjectIndex::Parent].get();
+  return {true, Node::create(ptr)};
+
+}
+
+//------------------------------------------------------------------------ 
 
 //------------------------------ 
 Node::MetaObject Node::create_meta_vec() {
@@ -209,10 +254,6 @@ Node::SimpleObject Node::create_simple_vec() {
 
   auto info_ptr_u = Node::create(Node::Type::Map);
   cc_vec[ObjectIndex::Info] = Node::create(info_ptr_u.get()); // create pointer to object information
-
-  //auto &info= cc_vec[ObjectIndex::Info]->unwrap_value<Node>();
-  //auto &info= cc_vec[ObjectIndex::Info]->get_node();
-  //info.add("hello", create("world"));
 
   auto data_ptr_u = Node::create(Node::Type::Map);
   data_ptr_u->add(LOOSH_D_OBJ_INFO,  move(info_ptr_u));

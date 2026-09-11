@@ -30,8 +30,25 @@ TEST_CASE("check node 2") {
 
   auto obj1 =  Node::create(Node::Type::SimpleObject);
   obj1->obj_info_add("type_cc_obj", Node::create(555l));
+  obj1->obj_data_add("value1", Node::create(12345l));
+  obj1->obj_data_add("value2", Node::create("this is the way"));
+  cout << "obj1: " << *obj1 << "\n\n";
 
-  cout << "obj1: " << *obj1 << "\n";
+  auto obj2 =  Node::create(Node::Type::MetaObject);
+  obj2->obj_info_add("type_cc_obj", Node::create(777));
+  obj2->obj_data_add("value1", Node::create("Meta obj way"));
+  obj2->obj_data_add("value2", Node::create(3.1415f));
+
+  Node begin("begining"); obj2->set_parent(&begin);
+
+  cout << "obj2: " << *obj2 << "\n";
+  cout << "obj2.parent: " << obj2->get_parent().second->unwrap_value<Node>() << "\n";
+
+
+  auto mt_n1 = Node(Node::Mutex(Node::create(123l), make_unique<mutex>() ));
+  cout << "mt_n1: "  << mt_n1 << "\n";
+
+
 
 
 

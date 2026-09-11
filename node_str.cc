@@ -81,8 +81,8 @@ string Node::_to_str() const {
       auto&  cc_dq= get<DeQue>(m_value);
       return _to_str(cc_dq);}
   case Type::MetaObject:  {
-      //cout << "_to_str() Meta\n";
       auto& cc_vec = get<Vector>(m_value);
+      cout << "Meta: _to_str() and size: " << cc_vec.size() <<"\n";
       return _to_str(cc_vec);}
   case Type::SimpleObject:  {
       cout << "_to_str() Simple\n";
@@ -111,6 +111,10 @@ string Node::_to_str() const {
     //cout << "uniqur_ptr to_str()";
     auto& ptr_u = get<ptr_U>(m_value);
     return ptr_u->_to_str();
+  }
+  case Type::Mutex: {
+    auto& mtv = get<Mutex>(m_value);
+    return mtv.m_node->_to_str();
   }
 
   default: return "Unknown Node()"; }
