@@ -53,35 +53,8 @@ Node::Node(Type t)
     m_value = move(nm);
     break;}
 
-/*
-  case Type::Info: {
-    Map nm={};
-    nm[LOOSH_OBJ_INFO] = Node::create(Node::Type::Map);
-    nm[LOOSH_OBJ_DATA] = Node::create(Node::Type::Map);
-    m_value = move(nm);
-    cout << clean_function_name() << ": Node::Node(MetaObject)" << _to_str() << "\n";
-    break;
-  }
-*/
-  case Type::MetaObject: {
-    /*
-    Vector cc_vec(MetaIndex::count);
-
-    auto obj_info_ptr_u = Node::create(Node::Type::Map);
-    cc_vec[MetaIndex::Info] = Node::create(obj_info_ptr_u.get()); // create pointer to object information
-
-    auto table_ptr_u = Node::create(Node::Type::Map);
-    table_ptr_u->add(LOOSH_D_OBJ_INFO,  move(obj_info_ptr_u));
-
-    cc_vec[MetaIndex::Parent] = nullptr;
-    cc_vec[MetaIndex::Table] = move(table_ptr_u);
-    cc_vec[MetaIndex::Children] = Node::create(Node::Type::Vector);
-*/
-    m_value = move(create_meta_vec());
-    //cout << clean_function_name() << ": Node::Node(MetaObject)" << _to_str() << "\n";
-
-    break;
-  }
+  case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
+  case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
 
   case Type::IMap: { 
     IMap nm={};
@@ -103,7 +76,6 @@ Node::Node(Type t)
   default: {
     m_value = monostate{};
     m_type = Type::Null;
-
   }}
 }
 
@@ -119,6 +91,9 @@ unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
 //unique_ptr<Node> Node::create(ValueSimple v) { return make_unique<Node>(move(v)); }
 unique_ptr<Node> Node::create(Value v, Type t) { return make_unique<Node>(move(v), t); }
 unique_ptr<Node> Node::create(Type t) { 
+  return make_unique<Node>(t); 
+
+/*
   switch(t) {
 
   case Type::IMap: {
@@ -141,10 +116,13 @@ unique_ptr<Node> Node::create(Type t) {
     Node::DeQue q;
     return make_unique<Node>(move(q)); 
   }
+  case Type::SimpleObject: return make_unique<Node>(t); 
 
   default: return make_unique<Node>(); }
 
   return make_unique<Node>();
+*/
+
 }
 
 

@@ -89,6 +89,7 @@ bool Node::has_node(const vector<string>&path){
 Node::OpStatusRef Node::get_node(const string&key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "key: " + key, SLOG_NODE_OP)
+  MYLOGGER_MSG(trace_function, "m_type: " + _to_str(m_type), SLOG_NODE_OP)
   AUTO_TRACE();
 
   switch(m_type) {

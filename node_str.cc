@@ -80,6 +80,14 @@ string Node::_to_str() const {
   case Type::DeQue: {
       auto&  cc_dq= get<DeQue>(m_value);
       return _to_str(cc_dq);}
+  case Type::MetaObject:  {
+      //cout << "_to_str() Meta\n";
+      auto& cc_vec = get<Vector>(m_value);
+      return _to_str(cc_vec);}
+  case Type::SimpleObject:  {
+      cout << "_to_str() Simple\n";
+      auto& cc_vec = get<Vector>(m_value);
+      return _to_str(cc_vec);}
   case Type::Vector: {
       //cout << "_to_str() vector\n";
       auto& cc_vec = get<Vector>(m_value);
@@ -87,14 +95,8 @@ string Node::_to_str() const {
 
   case Type::IMap: {
       auto& imap = get<IMap>(m_value);
-  return _to_str(imap);}
+      return _to_str(imap);}
 
-/*
-  case Type::MetaPtr: {
-      auto ptr_r = get<ptr_R>(m_value);
-      return "MetaPtr: " + ptr_r->_to_str();}
-*/
-  case Type::MetaObject: 
   case Type::Map: {
       auto& map = get<Map>(m_value);
       return _to_str(map);}
