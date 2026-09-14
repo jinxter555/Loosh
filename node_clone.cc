@@ -96,13 +96,13 @@ unique_ptr<Node> Node::clone(const Fun& f) {
   return make_unique<Node>(f);
 }
 
-//----------------------------------- Mutex
-unique_ptr<Node> Node::clone(const Mutex& m) {
+//----------------------------------- Lock
+unique_ptr<Node> Node::clone(const Lock& m) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
-  //auto mtx = make_unique<Mutex>();
+  //auto mtx = make_unique<Lock>();
   //mtx->m_node = m.m_node->clone();
   //mtx->m_mtx = make_unique<mutex>();
-  return create(Mutex{m.m_node->clone(), make_unique<mutex>()}, Type::Mutex);
+  return create(Lock{m.m_node->clone(), make_unique<shared_mutex>()}, Type::Lock);
 }
 
 //-----------------------------------

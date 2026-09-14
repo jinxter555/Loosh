@@ -8,7 +8,7 @@
 #include <unordered_map>                                                                        
 #include <functional>
 #include <spdlog/spdlog.h>
-#include <mutex>
+#include <shared_mutex>
 
 
 #include "defs.hh"
@@ -29,9 +29,11 @@ friend class ostream;
 
 public:
 
-  class Mutex { friend class Node; public:
+  class Lock { friend class Node; public:
+    Lock(unique_ptr<Node>);
+    Lock();
     unique_ptr<Node> m_node;
-    unique_ptr<mutex> m_mtx;
+    unique_ptr<shared_mutex> m_mtx;
   };
 
 //----------------------------------
@@ -72,7 +74,7 @@ public:
 // GCObjectId: for Garbage collection
 // MapObjectId: 
   enum class Type { 
-    Null, Bool, Error, Size, Integer, Float, String, Mutex,
+    Null, Bool, Error, Size, Integer, Float, String, Lock,
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun }; 
 
@@ -96,10 +98,10 @@ public:
 
   using IMap = unordered_map<Integer, unique_ptr<Node>>;
   using Map = unordered_map<string, unique_ptr<Node>>;
-  using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
+  using Fun = function<OpStatus(Node&env, Node&lisp_object, const Vector& list)>; // process, this, arguments
 
   //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun >;
-  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Mutex>;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Lock>;
 
 //----------------------------------
   
@@ -114,6 +116,7 @@ public:
   ~Node() = default; 
 
   static ptr_U create_error(Error::Type err_type, const string& msg);
+  static ptr_U create_lock(ptr_U node);
   static ptr_U create();
   static ptr_U create(Value v);
   //static ptr_U create(ValueSimple v);
@@ -130,7 +133,7 @@ public:
   static ptr_U clone(const Map& map) ;
   static ptr_U clone(const IMap& imap) ;
   static ptr_U clone(const Fun& fun) ;
-  static ptr_U clone(const Mutex& mtx) ;
+  static ptr_U clone(const Lock& mtx) ;
 
   //clone_ptr_r() ;
 
@@ -188,6 +191,10 @@ public:
 
   OpStatus delete_key(const string &key);
   OpStatus delete_key(Integer key);
+
+  enum class LockMode { Read, Write };
+  bool traverse_and_execute(const vector<string>&path, LockMode, Fun &operation);
+  bool traverse_and_execute2(const vector<string>&path, LockMode, Fun &operation);
 
   //
   //template <typename T> const T& as() const;
@@ -314,6 +321,11 @@ template <typename T> T& get_value() {
 
   OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
   OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
+
+  OpStatus lock_shared() const;
+  OpStatus lock_exclusive() const;
+  OpStatus lock_release() const;
+
   OpStatusRef obj_data_get(const string&key);
 
   bool set_parent(ptr_R parent);

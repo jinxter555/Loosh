@@ -112,8 +112,8 @@ string Node::_to_str() const {
     auto& ptr_u = get<ptr_U>(m_value);
     return ptr_u->_to_str();
   }
-  case Type::Mutex: {
-    auto& mtv = get<Mutex>(m_value);
+  case Type::Lock: {
+    auto& mtv = get<Lock>(m_value);
     return mtv.m_node->_to_str();
   }
 
@@ -166,7 +166,10 @@ string Node::_to_str(const Vector&cc_vec) {
 
   for(i=0; i<s-1; i++) {
     auto &e = cc_vec[i];
-    if(e==nullptr) continue;
+    if(e==nullptr) {
+      outstr = outstr + "nullptr, ";
+      continue;
+    }
     outstr = outstr + e->_to_str() + ", ";
   }
   if(cc_vec[i]) 

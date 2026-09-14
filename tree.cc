@@ -4,14 +4,14 @@ using namespace std;
 namespace Loosh 
 {
 //------------------------------------------------------------------------
-Tree::Tree() { root = Node::create(Node::Value(Node::Map{})); }
+Tree::Tree() { root = Node::create(Node::Type::MetaObject); }
 
 Tree::Tree(unique_ptr<Node> root_node) 
 : root(move(root_node)) { 
-  if(!root || root->type_ == Node::Type::Null) {
+  if(!root || root->m_type == Node::Type::Null) {
     root = Node::create(Node::Value(Node::Map{}));
   }
-  else if(root->type_ != Node::Type::Map) {
+  else if(root->m_type != Node::Type::Map) {
     root = Node::create(Node::Value(Node::Map{}));
   }
 }
@@ -22,10 +22,10 @@ Node* Tree::get_branch(const vector<string>&path ) const {
 
   Node* current = root.get();
   for(const auto&key : path) {
-    if(!current || current->type_ != Node::Type::Map) {
+    if(!current || current->m_type != Node::Type::Map) {
       return nullptr;
     }
-    Node::Map& map = get<Node::Map>(current->value_);
+    Node::Map& map = get<Node::Map>(current->m_value);
     auto it = map.find(key);
     if(it == map.end()) return nullptr;
     current = it->second.get();
@@ -43,18 +43,18 @@ Node::OpStatus Tree::set_branch(const vector<string>&path, unique_ptr<Node> chil
   for(size_t i=0; i<last_index; ++i) {
     const string& key = path[i];
 
-    if(current_node->type_ != Node::Type::Map ){
-      string msg = "Cannot navigate path: '" + key + "' parent is not a Map (Type: " + Node::_to_str(current_node->type_) + ")";
+    if(current_node->m_type != Node::Type::Map ){
+      string msg = "Cannot navigate path: '" + key + "' parent is not a Map (Type: " + Node::_to_str(current_node->m_type) + ")";
       return {false, Node::create_error(Node::Error::Type::InvalidOperation, msg)};
     }
-    Node::Map& map = get<Node::Map>(current_node->value_);
+    Node::Map& map = get<Node::Map>(current_node->m_value);
     auto it = map.find(key);
 
     if(it == map.end()) {
       auto new_map_node = Node::create(Node::Value(Node::Map{}));
       Node::OpStatus status = current_node->set(key, move(new_map_node));
       if(!status.first) return status;
-      current_node = get<Node::Map>(current_node->value_).at(key).get();
+      current_node = get<Node::Map>(current_node->m_value).at(key).get();
     } else {
       current_node = it->second.get();
     }
@@ -73,7 +73,7 @@ Node::OpStatus Tree::delete_branch(const vector<string>&path) {
 
   Node* parent_node = get_branch(parent_path);
 
-  if(!parent_node || parent_node->type_ != Node::Type::Map){
+  if(!parent_node || parent_node->m_type != Node::Type::Map){
     return { false
       , Node::create_error(Node::Error::Type::InvalidOperation, 
         "Invalid path: parent node is not a Map or doesn't exist.")}; 

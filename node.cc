@@ -73,6 +73,10 @@ Node::Node(Type t)
     DeQue l={};
     m_value = move(l);
     break;}
+  case Type::Lock: { 
+    Lock lck;
+    m_value = move(lck);
+    break;}
   default: {
     m_value = monostate{};
     m_type = Type::Null;
@@ -80,49 +84,27 @@ Node::Node(Type t)
 }
 
 
+//------------------------------------------------------------------------ lock
+Node::Lock::Lock() { m_mtx = make_unique<shared_mutex>(); m_node = nullptr; }
+Node::Lock::Lock(unique_ptr<Node> node) {
+  m_mtx = make_unique<shared_mutex>(); 
+  m_node = move(node); 
+}
 
 
+
+//------------------------------------------------------------------------ create
 unique_ptr<Node> Node::create_error(Error::Type t, const string& msg) {
   return make_unique<Node>(Value(Error{t, msg}));
 }
-
 unique_ptr<Node> Node::create() { return make_unique<Node>(); }
 unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
-//unique_ptr<Node> Node::create(ValueSimple v) { return make_unique<Node>(move(v)); }
 unique_ptr<Node> Node::create(Value v, Type t) { return make_unique<Node>(move(v), t); }
-unique_ptr<Node> Node::create(Type t) { 
-  return make_unique<Node>(t); 
-
-/*
-  switch(t) {
-
-  case Type::IMap: {
-    Node::IMap im;
-    return make_unique<Node>(move(im));}
-  case Type::MetaObject: {
-    return make_unique<Node>(create_meta_vec()); }
-  case Type::Map: {
-    Node::Map m;
-    return make_unique<Node>(move(m)); }
-  case Type::List: {
-    Node::List l;
-    return make_unique<Node>(move(l)); }
-  case Type::Vector: {
-    Node::Vector v;
-    v.reserve(10);
-    return make_unique<Node>(move(v)); }
-
-  case Type::DeQue: {
-    Node::DeQue q;
-    return make_unique<Node>(move(q)); 
-  }
-  case Type::SimpleObject: return make_unique<Node>(t); 
-
-  default: return make_unique<Node>(); }
-
-  return make_unique<Node>();
-*/
-
+unique_ptr<Node> Node::create(Type t) { return make_unique<Node>(t); }
+unique_ptr<Node> Node::create_lock(ptr_U arg_node) {
+  auto node = make_unique<Node>(Type::Lock);
+  node->m_value = move(arg_node);
+  return node;
 }
 
 
@@ -146,7 +128,7 @@ Node::Type Node::value_variant_type() {
     else if constexpr (is_same_v<T, ptr_R>) return Type::Raw;
     else if constexpr (is_same_v<T, ptr_U>) return Type::Unique;
     else if constexpr (is_same_v<T, Fun>) return Type::Fun;
-    else if constexpr (is_same_v<T, Mutex>) return Type::Mutex;
+    else if constexpr (is_same_v<T, Lock>) return Type::Lock;
     return Type::Null;
   }, m_value);
 }
@@ -726,6 +708,85 @@ Node::Integer Node::_size() const  {
     MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }, m_value);
+}
+
+
+//------------------------------------------------------------------------ locks
+Node::OpStatus Node::lock_shared() const {
+  if(m_type!=Type::Lock) 
+    return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Lock Node")};
+  auto &mtx = get<Lock>(m_value);
+  mtx.m_mtx->lock_shared();
+  return {true, Node::create(true)};
+}
+Node::OpStatus Node::lock_exclusive() const {
+  if(m_type!=Type::Lock) 
+    return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Lock Node")};
+  auto &mtx = get<Lock>(m_value);
+  mtx.m_mtx->lock();
+  return {true, Node::create(true)};
+}
+
+Node::OpStatus Node::lock_release() const {
+  if(m_type!=Type::Lock) 
+    return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Lock Node")};
+  auto &mtx = get<Lock>(m_value);
+  mtx.m_mtx->unlock();
+  return {true, Node::create(true)};
+}
+
+bool Node::traverse_and_execute(const vector<string>&path, LockMode mode, Fun &operation) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+
+  auto current_status = get_node(path[0]);
+  if(!current_status.first) return false;
+  auto current =  &current_status.second;
+  current->lock_shared();
+
+  for(size_t i=1; i<path.size(); i++) {
+    auto it_status = current->get_node(path[i]);
+    if(! it_status.first) {
+      current->lock_release();
+      return false;
+    }
+    Node *next_node = &it_status.second;
+
+    if(i == path.size() -1 && mode == LockMode::Write) {
+      next_node->lock_exclusive();
+    } else {
+      next_node->lock_shared();
+    }
+    current->lock_release();
+    current = next_node;
+  }
+  operation(*current, node_null, {});
+  current->lock_release();
+  return true;
+
+}
+
+
+bool Node::traverse_and_execute2(const vector<string>&path, LockMode mode, Fun &operation) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  auto current_status = get_node(path[0]);
+  if(!current_status.first) return false;
+  auto current =  &current_status.second;
+  current->lock_shared();
+  Node* active_lock_holder = current;
+
+
+  for(size_t i=1; i< path.size(); ++i) {
+
+  }
+
+  return false;
+
+
+
 }
 
 
