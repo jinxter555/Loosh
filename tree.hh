@@ -32,4 +32,15 @@ public:
   void print() const;
 };
 
+class TreeWalker {
+private:
+  Tree *root;
+  Node *current;
+  const Node *start_branch;
+
+public:
+
+
+};
+
 }

@@ -110,12 +110,18 @@ Node::OpStatusRef Node::get_node(const string&key) {
     }
     return {true, *it->second}; }
 
+    /*
+  case Type::Lock: {
+    Node::Lock& lock = get<Node::Lock>(m_value);
+    return lock.m_node->get_node(key);
+  }
+*/
+
   case Type::MetaObject:  {
-    return obj_data_get(key);
-  }
+    return obj_data_get(key); }
+
   case Type::SimpleObject:  {
-    return obj_data_get(key);
-  }
+    return obj_data_get(key); }
   default: {}
   }
 

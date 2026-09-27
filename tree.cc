@@ -4,7 +4,12 @@ using namespace std;
 namespace Loosh 
 {
 //------------------------------------------------------------------------
-Tree::Tree() { root = Node::create(Node::Type::MetaObject); }
+Tree::Tree() { 
+  root = Node::create(
+    Node::create(Node::Type::MetaObject), 
+    Node::Type::Lock
+  );
+}
 
 Tree::Tree(unique_ptr<Node> root_node) 
 : root(move(root_node)) { 

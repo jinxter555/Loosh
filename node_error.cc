@@ -21,6 +21,7 @@ void Node::Error::init() {
   list[size_t(Type::KeyNotFound)] = Node::create_error(Type::KeyNotFound, "");
   list[size_t(Type::IndexOutOfBounds)] = Node::create_error(Type::IndexOutOfBounds, "");
   list[size_t(Type::EmptyContainer)] = Node::create_error(Type::EmptyContainer, "");
+  list[size_t(Type::Lock)] = Node::create_error(Type::Lock, "");
   list[size_t(Type::ModuleNotFound)] = Node::create_error(Type::ModuleNotFound, "");
   list[size_t(Type::SymbolNotFound)] = Node::create_error(Type::SymbolNotFound, "");
   list[size_t(Type::FunctionNotFound)] = Node::create_error(Type::FunctionNotFound, "");
@@ -62,6 +63,7 @@ string Node::Error::_to_str(Type type) {
     case Type::IndexOutOfBounds: return "IndexOutOfBounds";
     case Type::IndexWrongType: return "IndexWrongType";
     case Type::EmptyContainer: return "EmptyContainer";
+    case Type::Lock: return "Lock";
     case Type::ModuleNotFound: return "ModuleNotfound";
     case Type::FunctionNotFound: return "FunctionNotFound";
     case Type::SymbolNotFound: return "SymbolNotFound";

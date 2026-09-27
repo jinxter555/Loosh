@@ -1,10 +1,13 @@
 #include "node.hh"
+#include "tree.hh"
 
 using namespace  std;
 namespace Loosh 
 {
 
-class Environment : public Node {
+class Environment {
+private:
+  Tree universal;
 public:
   Environment();
   Environment(Node::Type t) ;
@@ -14,10 +17,10 @@ public:
   virtual ~Environment() = default;
   virtual Node::OpStatusRef lookup(const string&name) = 0;
 //  virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
-  static OpStatusRef lookup(Map& table, const string& name);
+  static Node::OpStatusRef lookup(Map& table, const string& name);
   //virtual ptr_U create()=0;
   virtual Environment* create_child()=0;
-  virtual ptr_R get_meta_ptr_r()=0;
+  virtual Node::ptr_R get_meta_ptr_r()=0;
 
 
   Node::OpStatus var_add(Map& table, const string&name, Node::ptr_U) ;

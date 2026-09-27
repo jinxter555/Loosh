@@ -230,6 +230,7 @@ Node::MetaObject Node::create_meta_vec() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
+  //MetaObject cc_vec(ObjectIndex::count);
   MetaObject cc_vec(ObjectIndex::count);
 
   auto info_ptr_u = Node::create(Node::Type::Map);
@@ -240,7 +241,8 @@ Node::MetaObject Node::create_meta_vec() {
 
   cc_vec[ObjectIndex::Parent] = nullptr;
   cc_vec[ObjectIndex::Data] = move(data_ptr_u);
-  cc_vec[ObjectIndex::Children] = Node::create(Node::Type::Vector);
+  cc_vec[ObjectIndex::Array] = Node::create(Node::Type::Vector);
+  cc_vec[ObjectIndex::LockIndex] = Node::create(Node::Type::Lock);
 
   return cc_vec;
 }

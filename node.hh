@@ -9,6 +9,7 @@
 #include <functional>
 #include <spdlog/spdlog.h>
 #include <shared_mutex>
+#include <atomic>
 
 
 #include "defs.hh"
@@ -29,13 +30,6 @@ friend class ostream;
 
 public:
 
-  class Lock { friend class Node; public:
-    Lock(unique_ptr<Node>);
-    Lock();
-    unique_ptr<Node> m_node;
-    unique_ptr<shared_mutex> m_mtx;
-  };
-
 //----------------------------------
   struct Error {  enum class Type {
     DivideByZero, 
@@ -45,6 +39,7 @@ public:
     IndexOutOfBounds,  // e.g., calling 'set' with an invalid list index
     IndexWrongType,  // e.g., calling 'set' with an invalid list index
     EmptyContainer,  // get front() or back() when list,queu,vector is empty
+    Lock,
     ModuleNotFound,  //  module
     FunctionNotFound,  // function not found
     SymbolNotFound,  // var, immute, arg not found
@@ -74,12 +69,14 @@ public:
 // GCObjectId: for Garbage collection
 // MapObjectId: 
   enum class Type { 
-    Null, Bool, Error, Size, Integer, Float, String, Lock,
+    Null, Bool, Error, Size, Integer, Float, String,
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
-    ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun }; 
+    ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
-  //enum MetaIndex { Parent, Children, Info, Data, count }; // count is last element hack for counting size of this
-  enum ObjectIndex {Info, Data, Parent, Children, count }; // count is last element hack for counting size of this
+    // simple object: only Info and data
+  enum ObjectIndex {Info, Data, Array, Parent, LockIndex, count}; // count is last element hack for counting size of this
+  enum class LockMode { Unlocked, Read, Write };
+
 
   using Integer = LOOSH_T_LONG; 
   using Atom = LOOSH_T_LONG; 
@@ -98,7 +95,28 @@ public:
 
   using IMap = unordered_map<Integer, unique_ptr<Node>>;
   using Map = unordered_map<string, unique_ptr<Node>>;
-  using Fun = function<OpStatus(Node&env, Node&lisp_object, const Vector& list)>; // process, this, arguments
+  using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process env, current node, this, arguments
+  using LockFun = function<OpStatus(Node*, Node*, const Vector& list)>; // locked current node , interacting node, arguments
+  using AtomicInteger = atomic<Integer>;
+  using Lock = unique_ptr<shared_mutex>;
+
+  
+//----------------------------------
+
+/*
+  class Lock { friend class Node; public:
+    using Fun = function<OpStatus(Node*, Node*, const Vector& list)>; // process, this, arguments
+    enum class Mode { Read, Write };
+    Lock(unique_ptr<Node>);
+   // Lock(unique_ptr<Node>, unique_ptr<shared_mutex>);
+    Lock();
+    unique_ptr<Node> m_node;
+    unique_ptr<shared_mutex> m_mtx;
+    unique_ptr<atomic<int>> count_lock_path; // if a thread has gone through this
+    Node* parent; // parent lock
+    
+  };
+*/
 
   //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun >;
   using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Lock>;
@@ -192,9 +210,10 @@ public:
   OpStatus delete_key(const string &key);
   OpStatus delete_key(Integer key);
 
-  enum class LockMode { Read, Write };
-  bool traverse_and_execute(const vector<string>&path, LockMode, Fun &operation);
-  bool traverse_and_execute2(const vector<string>&path, LockMode, Fun &operation);
+  //bool traverse_and_execute(const vector<string>&path, Lock::Mode, Fun &operation);
+  OpStatus traverse_and_execute(const vector<string>&path, LockMode, LockFun&operation, Node* other, const Vector& list);
+  static OpStatusRef get_node_lockable(ptr_R& node_from, const vector<string>& path, int &start);
+  inline bool is_lockable() ;
 
   //
   //template <typename T> const T& as() const;
@@ -326,6 +345,10 @@ template <typename T> T& get_value() {
   OpStatus lock_exclusive() const;
   OpStatus lock_release() const;
 
+  LockMode lock_get_state(const Lock &);
+  //LockMode lock_get_state( const unique_ptr<shared_mutex>  &mtx );
+
+
   OpStatusRef obj_data_get(const string&key);
 
   bool set_parent(ptr_R parent);
@@ -338,6 +361,7 @@ template <typename T> T& get_value() {
 
 
 protected:
+  //mutable Value m_value;
   Value m_value;
   Type m_type;
   bool m_is_marked = false;

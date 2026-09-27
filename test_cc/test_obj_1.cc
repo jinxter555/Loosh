@@ -45,8 +45,8 @@ TEST_CASE("check node 2") {
   //cout << "obj2.parent: " << obj2->get_parent().second->unwrap_value<Node>() << "\n";
 
 
-  auto mt_n1 = Node(Node::Lock(Node::create(123l), make_unique<shared_mutex>() ));
-  cout << "mt_n1: "  << mt_n1 << "\n";
+  //auto mt_n1 = Node(Node::Lock(Node::create(123l), make_unique<shared_mutex>() ));
+  //cout << "mt_n1: "  << mt_n1 << "\n";
 
 
 

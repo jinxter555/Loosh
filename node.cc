@@ -74,8 +74,10 @@ Node::Node(Type t)
     m_value = move(l);
     break;}
   case Type::Lock: { 
-    Lock lck;
-    m_value = move(lck);
+
+    //Lock lck = make_unique<shared_mutex>();
+    //m_value = move(lck);
+    m_value = make_unique<shared_mutex>();
     break;}
   default: {
     m_value = monostate{};
@@ -85,12 +87,18 @@ Node::Node(Type t)
 
 
 //------------------------------------------------------------------------ lock
+/*
 Node::Lock::Lock() { m_mtx = make_unique<shared_mutex>(); m_node = nullptr; }
 Node::Lock::Lock(unique_ptr<Node> node) {
   m_mtx = make_unique<shared_mutex>(); 
+  count_lock_path= make_unique<atomic<int>>(0); 
   m_node = move(node); 
 }
-
+Node::Lock::Lock(unique_ptr<Node> n, unique_ptr<shared_mutex> m) {
+  m_node = move(n);
+  m_mtx = move(m);
+}
+*/
 
 
 //------------------------------------------------------------------------ create
@@ -662,7 +670,7 @@ bool Node::_has_key(const Integer &key) {
   }
   case Type::MetaObject:{
     auto &meta = get<MetaObject>(m_value);
-    auto &imap = meta[ObjectIndex::Children]->unwrap_value<IMap>();
+    auto &imap = meta[ObjectIndex::Array]->unwrap_value<IMap>();
     if (imap.find(key) != imap.end())  return true;
   }
 
@@ -716,14 +724,14 @@ Node::OpStatus Node::lock_shared() const {
   if(m_type!=Type::Lock) 
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Lock Node")};
   auto &mtx = get<Lock>(m_value);
-  mtx.m_mtx->lock_shared();
+  mtx->lock_shared();
   return {true, Node::create(true)};
 }
 Node::OpStatus Node::lock_exclusive() const {
   if(m_type!=Type::Lock) 
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Lock Node")};
   auto &mtx = get<Lock>(m_value);
-  mtx.m_mtx->lock();
+  mtx->lock();
   return {true, Node::create(true)};
 }
 
@@ -731,10 +739,133 @@ Node::OpStatus Node::lock_release() const {
   if(m_type!=Type::Lock) 
     return {false, Node::create_error(Error::Type::IndexWrongType, "Not a Lock Node")};
   auto &mtx = get<Lock>(m_value);
-  mtx.m_mtx->unlock();
+  mtx->unlock();
   return {true, Node::create(true)};
 }
 
+
+
+Node::OpStatus Node::traverse_and_execute(const vector<string>&path, LockMode mode, LockFun &operation, Node* other, const Vector& list) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  string key=path[0];
+  auto current_node_status_ref = get_node(key);
+  
+  if(!current_node_status_ref.first) {
+    string msg = clean_function_name() + ": key: " + key + ": not found in current. not an object Node?";
+    return { false, Node::create_error(Error::Type::Lock, msg)};
+  }
+      
+  Node* current = &current_node_status_ref.second;
+
+  if(!current->lock_shared().first)  {
+    string msg = clean_function_name() + ": key: " + key + ": Not a locakble Node?";
+    return { false, Node::create_error(Error::Type::Lock, "Not a lockable node!") };
+  }
+
+  Node* active_lock_holder = current;
+
+  for(size_t i=1; i<path.size(); i++)  {
+    key = path[i];
+
+    auto it_status_ref = current->get_node(key);
+    if(!it_status_ref.first) {
+      string msg = clean_function_name() + ": key: " + key + ": not found in current. not an object Node?";
+      active_lock_holder->lock_release();
+      return {false, Node::create_error(Error::Type::Lock, msg)};
+    }
+
+    Node* next_node = &it_status_ref.second;
+    bool is_last_step = (i == path.size() -1 );
+
+    if(next_node->is_lockable() || is_last_step ) {
+      if(is_last_step && mode == LockMode::Write) {
+        next_node->lock_exclusive();
+      } else {
+        next_node->lock_shared();
+      }
+      active_lock_holder->lock_release();
+      active_lock_holder = next_node;
+    }
+    current = next_node;
+  }
+  
+  auto ret_val_status = operation(current, other, list);
+  active_lock_holder->lock_release();
+  return ret_val_status;
+
+}
+
+
+  
+
+
+//Node::LockMode Node::lock_get_state(const Lock& mtx) {
+Node::LockMode Node::lock_get_state( const unique_ptr<shared_mutex>  &mtx ) {
+  // 1. Try to get a shared (read) lock
+  if (mtx->try_lock_shared()) {
+     // We successfully got a shared lock! 
+     // Now try to get an exclusive (write) lock while holding the shared lock.
+     if (mtx->try_lock()) {
+       // We got both! It means the mutex was completely unlocked before we started.
+       mtx->unlock();
+       mtx->unlock_shared();
+       return LockMode::Unlocked;
+     } else {
+       // We could get a shared lock, but NOT an exclusive lock. 
+       // This means other threads are currently holding shared locks.
+       mtx->unlock_shared();
+       return LockMode::Read;
+     }
+  } else {
+    // We couldn't even get a shared lock.
+    // This means another thread holds an Exclusive (write) lock.
+    return LockMode::Write;
+  }
+}
+
+
+
+
+
+
+
+//  return false;
+
+
+Node::OpStatusRef Node::get_node_lockable(ptr_R& current, const vector<string> &path, int &start) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  int s=path.size();
+  while(start < s ) {
+    const auto key = path[start];
+    auto next_node_status_ref = current->get_node(key);
+    if(!next_node_status_ref.first) 
+      return next_node_status_ref;
+
+    if(next_node_status_ref.second.is_lockable()) {
+      return next_node_status_ref;
+    }
+
+    current = &next_node_status_ref.second;
+    start++;
+  }
+  return {false, Error::ref(Error::Type::KeyNotFound, 
+  "Not found! no lockable node  : ")};
+
+}
+
+bool Node::is_lockable() {
+  if(m_type == Type::Lock) return true;
+  return false;
+}
+
+
+} 
+
+/*
 bool Node::traverse_and_execute(const vector<string>&path, LockMode mode, Fun &operation) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -766,28 +897,4 @@ bool Node::traverse_and_execute(const vector<string>&path, LockMode mode, Fun &o
   return true;
 
 }
-
-
-bool Node::traverse_and_execute2(const vector<string>&path, LockMode mode, Fun &operation) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  AUTO_TRACE();
-
-  auto current_status = get_node(path[0]);
-  if(!current_status.first) return false;
-  auto current =  &current_status.second;
-  current->lock_shared();
-  Node* active_lock_holder = current;
-
-
-  for(size_t i=1; i< path.size(); ++i) {
-
-  }
-
-  return false;
-
-
-
-}
-
-
-} 
+  */

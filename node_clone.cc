@@ -102,7 +102,8 @@ unique_ptr<Node> Node::clone(const Lock& m) {
   //auto mtx = make_unique<Lock>();
   //mtx->m_node = m.m_node->clone();
   //mtx->m_mtx = make_unique<mutex>();
-  return create(Lock{m.m_node->clone(), make_unique<shared_mutex>()}, Type::Lock);
+//  return create(Lock{m.m_node->clone(), make_unique<shared_mutex>()}, Type::Lock);
+  return make_unique<Node>(Type::Lock);
 }
 
 //-----------------------------------

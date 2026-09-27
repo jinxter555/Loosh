@@ -113,8 +113,19 @@ string Node::_to_str() const {
     return ptr_u->_to_str();
   }
   case Type::Lock: {
-    auto& mtv = get<Lock>(m_value);
-    return mtv.m_node->_to_str();
+    auto &mtx = get<Lock>(m_value);
+    if (mtx->try_lock_shared()) {
+      if (mtx->try_lock()) {
+        mtx->unlock();
+        mtx->unlock_shared();
+        return "Unlocked";
+     } else {
+        mtx->unlock_shared();
+        return "Shared Lock";
+     }
+    } else {
+        return "Exclusive Lock";
+    }
   }
 
   default: return "Unknown Node()"; }
