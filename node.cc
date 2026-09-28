@@ -74,11 +74,12 @@ Node::Node(Type t)
     m_value = move(l);
     break;}
   case Type::Lock: { 
-
-    //Lock lck = make_unique<shared_mutex>();
-    //m_value = move(lck);
     m_value = make_unique<shared_mutex>();
     break;}
+  case Type::AtomicInteger: { 
+    m_value = make_unique<atomic<Integer>>(0);
+    break;}
+
   default: {
     m_value = monostate{};
     m_type = Type::Null;
@@ -802,7 +803,7 @@ Node::OpStatus Node::traverse_and_execute(const vector<string>&path, LockMode mo
 
 
 //Node::LockMode Node::lock_get_state(const Lock& mtx) {
-Node::LockMode Node::lock_get_state( const unique_ptr<shared_mutex>  &mtx ) {
+Node::LockMode Node::lock_get_state( const Lock &mtx ) {
   // 1. Try to get a shared (read) lock
   if (mtx->try_lock_shared()) {
      // We successfully got a shared lock! 

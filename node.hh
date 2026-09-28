@@ -74,7 +74,9 @@ public:
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
-  enum ObjectIndex {Info, Data, Array, Parent, LockIndex, count}; // count is last element hack for counting size of this
+  enum ObjectIndex {Info, Data, Array, Parent, LockIndex, 
+    walker_count,  // number of tree traverse walkers. if > 0, do not delete node
+    count}; // count is last element hack for counting size of this
   enum class LockMode { Unlocked, Read, Write };
 
 
@@ -97,7 +99,7 @@ public:
   using Map = unordered_map<string, unique_ptr<Node>>;
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process env, current node, this, arguments
   using LockFun = function<OpStatus(Node*, Node*, const Vector& list)>; // locked current node , interacting node, arguments
-  using AtomicInteger = atomic<Integer>;
+  using AtomicInteger = unique_ptr<atomic<Integer>>;
   using Lock = unique_ptr<shared_mutex>;
 
   
@@ -118,8 +120,8 @@ public:
   };
 */
 
-  //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun >;
-  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Lock>;
+  //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Lock>;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, AtomicInteger, Lock>;
 
 //----------------------------------
   
@@ -152,6 +154,7 @@ public:
   static ptr_U clone(const IMap& imap) ;
   static ptr_U clone(const Fun& fun) ;
   static ptr_U clone(const Lock& mtx) ;
+  static ptr_U clone(const AtomicInteger&) ;
 
   //clone_ptr_r() ;
 
@@ -345,7 +348,7 @@ template <typename T> T& get_value() {
   OpStatus lock_exclusive() const;
   OpStatus lock_release() const;
 
-  LockMode lock_get_state(const Lock &);
+  LockMode lock_get_state(const Lock &) ;
   //LockMode lock_get_state( const unique_ptr<shared_mutex>  &mtx );
 
 

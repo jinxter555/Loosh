@@ -127,6 +127,11 @@ string Node::_to_str() const {
         return "Exclusive Lock";
     }
   }
+  case Type::AtomicInteger: {
+    auto  &iptr  = get<AtomicInteger>(m_value);
+    Integer i = iptr->load();
+    return "Atomic Integer: "  + to_string(i);
+  }
 
   default: return "Unknown Node()"; }
 
