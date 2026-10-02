@@ -117,7 +117,7 @@ Node::OpStatus Node::obj_data_add(const string&key, unique_ptr<Node> value) {
   }}
 
   auto &obj = get<VecObject>(m_value);
-  auto &obj_data = obj[ObjectIndex::Data]->get_node();
+  auto &obj_data = obj[ObjectIndex::StringMap]->get_node();
 
   if(!obj_data.add(key, move(value)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
@@ -146,7 +146,7 @@ Node::OpStatus Node::obj_data_set(const string&key, unique_ptr<Node> value) {
   }}
 
   auto &obj = get<VecObject>(m_value);
-  auto &obj_data = obj[ObjectIndex::Data]->get_node();
+  auto &obj_data = obj[ObjectIndex::StringMap]->get_node();
 
   if(!obj_data.set(key, move(value)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
@@ -177,7 +177,7 @@ Node::OpStatusRef Node::obj_data_get(const string&key) {
   }}
 
   auto &obj = get<VecObject>(m_value);
-  auto &obj_data = obj[ObjectIndex::Data]->get_node();
+  auto &obj_data = obj[ObjectIndex::StringMap]->get_node();
   return obj_data.get_node(key);
 }
 
@@ -203,6 +203,45 @@ bool Node::set_parent(ptr_R parent) {
 }
 
 
+//------------------------------------------------------------------------ 
+Node::ptr_U Node::create_meta(ptr_R parent) {
+  auto meta = make_unique<Node>(Type::MetaObject);
+
+  if(parent != nullptr && parent->m_type != Type::MetaObject){
+    string msg = "Parent Type: " + Node::_to_str(parent->m_type) + " , is Not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    throw std::bad_typeid();
+  }
+  meta->set_parent(parent);
+  return meta;
+}
+
+Node::OpStatus Node::create_meta(const string& key) {
+  if(m_type != Type::MetaObject){
+    string msg = "this is not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, create(false)};
+  }
+
+  auto meta = make_unique<Node>(Type::MetaObject);
+  meta->set_parent(this);
+
+  obj_data_add(key, move(meta));
+
+  return {true, create(true)};
+}
+
+
+Node::OpStatus Node::create_meta() {
+  auto meta = make_unique<Node>(Type::MetaObject);
+  meta->set_parent(this);
+  return {true, create(true)};
+
+}
+
+//------------------------------------------------------------------------ 
 Node::OpStatus Node::get_parent() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -233,16 +272,23 @@ Node::MetaObject Node::create_meta_vec() {
   //MetaObject cc_vec(ObjectIndex::count);
   MetaObject cc_vec(ObjectIndex::count);
 
-  auto info_ptr_u = Node::create(Node::Type::Map);
+  auto info_ptr_u = Node::create(Node::Type::IMap);
+  auto imap_ptr_u = Node::create(Node::Type::IMap);
+  auto vector_ptr_u = Node::create(Node::Type::Vector);
+
   cc_vec[ObjectIndex::Info] = Node::create(info_ptr_u.get()); // create pointer to object information
+  cc_vec[ObjectIndex::IntegerMap] = Node::create(imap_ptr_u.get()); // create pointer to object vector
+  cc_vec[ObjectIndex::VectorArray] = Node::create(vector_ptr_u.get()); // create pointer to object vector
 
   auto data_ptr_u = Node::create(Node::Type::Map);
   data_ptr_u->add(LOOSH_D_OBJ_INFO,  move(info_ptr_u));
+  data_ptr_u->add(LOOSH_D_OBJ_IMAP,  move(imap_ptr_u));
+  data_ptr_u->add(LOOSH_D_OBJ_VECTOR,  move(vector_ptr_u));
 
   cc_vec[ObjectIndex::Parent] = nullptr;
-  cc_vec[ObjectIndex::Data] = move(data_ptr_u);
-  cc_vec[ObjectIndex::Array] = Node::create(Node::Type::Vector);
-  cc_vec[ObjectIndex::LockIndex] = Node::create(Node::Type::Lock);
+  cc_vec[ObjectIndex::StringMap] = move(data_ptr_u);
+  cc_vec[ObjectIndex::MetaLock] = Node::create(Node::Type::Lock);
+  cc_vec[ObjectIndex::WalkerCount] = Node::create(Node::Type::AtomicInteger);
 
   return cc_vec;
 }
@@ -260,10 +306,30 @@ Node::SimpleObject Node::create_simple_vec() {
   auto data_ptr_u = Node::create(Node::Type::Map);
   data_ptr_u->add(LOOSH_D_OBJ_INFO,  move(info_ptr_u));
 
-  cc_vec[ObjectIndex::Data] = move(data_ptr_u);
+  cc_vec[ObjectIndex::StringMap] = move(data_ptr_u);
 
   cout << clean_function_name() <<   ": cc_vec: " <<  _to_str( cc_vec) << "\n";
 
   return cc_vec;
 }
+
+Node::OpStatus Node::obj_array_push_back(ptr_U v) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::MetaObject) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, create(false)};
+  }
+
+  auto &obj = get<VecObject>(m_value);
+  auto &vec_array = obj[ObjectIndex::VectorArray]->get_node();
+  vec_array.push_back(move(v));
+
+
+}
+
+
 }

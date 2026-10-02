@@ -74,9 +74,14 @@ public:
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
-  enum ObjectIndex {Info, Data, Array, Parent, LockIndex, 
-    walker_count,  // number of tree traverse walkers. if > 0, do not delete node
+  enum ObjectIndex {Info, StringMap, 
+    VectorArray,
+    IntegerMap,
+    Parent,
+    MetaLock,
+    WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
     count}; // count is last element hack for counting size of this
+
   enum class LockMode { Unlocked, Read, Write };
 
 
@@ -105,20 +110,6 @@ public:
   
 //----------------------------------
 
-/*
-  class Lock { friend class Node; public:
-    using Fun = function<OpStatus(Node*, Node*, const Vector& list)>; // process, this, arguments
-    enum class Mode { Read, Write };
-    Lock(unique_ptr<Node>);
-   // Lock(unique_ptr<Node>, unique_ptr<shared_mutex>);
-    Lock();
-    unique_ptr<Node> m_node;
-    unique_ptr<shared_mutex> m_mtx;
-    unique_ptr<atomic<int>> count_lock_path; // if a thread has gone through this
-    Node* parent; // parent lock
-    
-  };
-*/
 
   //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Lock>;
   using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, AtomicInteger, Lock>;
@@ -136,6 +127,8 @@ public:
   ~Node() = default; 
 
   static ptr_U create_error(Error::Type err_type, const string& msg);
+  static ptr_U create_meta(ptr_R parent=nullptr);
+
   static ptr_U create_lock(ptr_U node);
   static ptr_U create();
   static ptr_U create(Value v);
@@ -143,6 +136,8 @@ public:
   static ptr_U create(Value v, Type t);
   static ptr_U create(Type t);
 
+  Node::OpStatus create_meta(const string& key);
+  Node::OpStatus create_meta();
 
 
 
@@ -215,6 +210,7 @@ public:
 
   //bool traverse_and_execute(const vector<string>&path, Lock::Mode, Fun &operation);
   OpStatus traverse_and_execute(const vector<string>&path, LockMode, LockFun&operation, Node* other, const Vector& list);
+  OpStatus traverse_and_execute2(const vector<string>&path, LockMode, LockFun&operation, Node* other, const Vector& list);
   static OpStatusRef get_node_lockable(ptr_R& node_from, const vector<string>& path, int &start);
   inline bool is_lockable() ;
 
@@ -292,10 +288,15 @@ template <typename T> T& get_value() {
   Integer _size() const ;
   OpStatus size() const ;
   //
+  OpStatus is_in_range(const Integer index); // if integer is in range of a sequence, vector, list or deque
   OpStatus has_key(const string&key);
-  OpStatus has_key(const Integer &key);
+  OpStatus has_atom(const Integer key);
+
+  bool _is_in_range(const Integer index);
   bool _has_key(const string&key);
-  bool _has_key(const Integer &key);
+  bool _has_atom(const Integer key);
+
+
   //template <typename T>  bool _has_key(const T& key) const;
   //
   bool is_nil(); 
@@ -344,18 +345,23 @@ template <typename T> T& get_value() {
   OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
   OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
 
-  OpStatus lock_shared() const;
-  OpStatus lock_exclusive() const;
-  OpStatus lock_release() const;
+  OpStatus obj_atoms_add(const Integer key, unique_ptr<Node> child);
+  OpStatus obj_atoms_set(const Integer key, unique_ptr<Node> child);
+  OpStatus obj_atoms_get(const Integer key);
 
-  LockMode lock_get_state(const Lock &) ;
-  //LockMode lock_get_state( const unique_ptr<shared_mutex>  &mtx );
+  OpStatus obj_array_push_back(ptr_U);
+  OpStatusRef obj_array_get(Integer);
 
 
   OpStatusRef obj_data_get(const string&key);
 
   bool set_parent(ptr_R parent);
   OpStatus get_parent();
+
+  OpStatus lock_shared() const;
+  OpStatus lock_exclusive() const;
+  OpStatus lock_release() const;
+  LockMode lock_get_state(const Lock &) ;
 
   static Node::Atom _get_obj_type(Node* env_ptr);
   static Node::OpStatus get_obj_type(Node* env_ptr);

@@ -613,7 +613,7 @@ Node::OpStatus Node::has_key(const string&key) {
   }
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
-    auto &map = meta[ObjectIndex::Data]->unwrap_value<Map>();
+    auto &map = meta[ObjectIndex::StringMap]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return {true, Node::create(true)};
     return {true, Node::create(false)};
   }
@@ -634,7 +634,7 @@ bool Node::_has_key(const string&key) {
   }
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
-    auto &map = meta[ObjectIndex::Data]->unwrap_value<Map>();
+    auto &map = meta[ObjectIndex::StringMap]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return true;
     return false;
   }
@@ -652,9 +652,23 @@ bool Node::_has_key(const string&key) {
 
 //------------------------------ 
 
+bool Node::_is_in_range(const Integer index) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
 
+  switch(m_type) {
+  case Type::Vector:
+  case Type::DeQue:
+  case Type::List: {
+    auto s = _size();
+    if(s  >=0 && index < s ) return true;
+  }
+  default: {}
+  }
+  return false;
+}
 
-bool Node::_has_key(const Integer &key) {
+bool Node::_has_atom(const Integer key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
@@ -671,7 +685,7 @@ bool Node::_has_key(const Integer &key) {
   }
   case Type::MetaObject:{
     auto &meta = get<MetaObject>(m_value);
-    auto &imap = meta[ObjectIndex::Array]->unwrap_value<IMap>();
+    auto &imap = meta[ObjectIndex::IntegerMap]->unwrap_value<IMap>();
     if (imap.find(key) != imap.end())  return true;
   }
 
@@ -745,6 +759,39 @@ Node::OpStatus Node::lock_release() const {
 }
 
 
+Node::OpStatus Node::traverse_and_execute2(const vector<string>&path, LockMode mode, LockFun &operation, Node* other, const Vector& list) {
+  Node* current_node = &get_node();
+
+  auto lock_status = current_node->lock_shared();
+  if(!lock_status.first ){
+    return lock_status;
+  }
+
+  for(size_t i=0, path_size=path.size(); i< path_size; ++i) {
+    string key = path[i];
+    auto it_status_ref = current_node->get_node(key);
+
+    if(!it_status_ref.first) {
+      string msg = clean_function_name() + ": key: " + key + ": not found in current. not a Meta Node?";
+      current_node->lock_release();
+      return {false, Node::create_error(Error::Type::Lock, msg)};
+    }
+
+    Node* next_node = &it_status_ref.second;
+
+    if(i == path_size -1 && mode == LockMode::Write) {
+      next_node->lock_exclusive();
+    } else {
+      next_node->lock_shared();
+    }
+    current_node->lock_release();
+    current_node = next_node;
+  }
+
+  auto ret_val_status = operation(current_node, other, list);
+  current_node->lock_release();
+  return ret_val_status;
+}
 
 Node::OpStatus Node::traverse_and_execute(const vector<string>&path, LockMode mode, LockFun &operation, Node* other, const Vector& list) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
