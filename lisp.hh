@@ -4,13 +4,21 @@
 #include <unordered_map>
 #include "lang.hh"
 #include "tree.hh"
+//#include "environment.hh"
 
 using namespace  std;
 namespace Loosh 
 {
 
+
+class Environment;
+
 class Lisp : public Lang {
   friend class Node;
+  friend class Environment;
+  friend class Tree;
+
+  Node* root;
 
 public:
   enum class Op  : int
@@ -29,7 +37,8 @@ public:
   , module_, def, defun, defmacro, alias, lambda, faz
   };
   using Type=Op;
-  Lisp();
+  //Lisp(Environment& env, const Node::List &code) ;
+  Lisp(Environment& env);
   static string _to_str(Lisp::Op op);
 };
 

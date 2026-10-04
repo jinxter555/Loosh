@@ -12,6 +12,7 @@ namespace Loosh
 class Node;
 
 class Tree {
+friend class Lisp;
 private:
 using OpStatus = pair<bool, unique_ptr<Node>>;
 using OpStatusRef = pair<bool, Node&>;
@@ -21,7 +22,7 @@ protected:
 public:
   Tree();
   Tree(unique_ptr<Node> root_node);
-  const Node* get_root() const ;
+  Node* get_root() ;
   OpStatus set_branch(const vector<string>&path, unique_ptr<Node>child);
   OpStatus delete_branch(const vector<string>&path);
   Node* get_branch(const vector<string>&path) const ;

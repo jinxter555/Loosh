@@ -21,6 +21,7 @@ string Node::_to_str(Type type) {
     case Type::Bool: return "Bool";
     case Type::Error: return "Error";
     case Type::Integer: return "Integer";
+    case Type::UnsignedInteger: return "Unsigned Integer";
     case Type::Float: return "Float";
     case Type::String: return "String";
     case Type::Tuple: return "Tuple";
@@ -31,6 +32,7 @@ string Node::_to_str(Type type) {
     case Type::SimpleObject: return "Simple Object";
     case Type::Map: return "Map";
     case Type::IMap: return "IMap";
+    case Type::Set: return "Set";
     case Type::Atom: return "Atom";
     case Type::ObjectId: return "ObjectId";
     case Type::LispOp: return "LispOp";

@@ -1,13 +1,21 @@
 #include "lisp.hh"
 #include "node.hh"
 #include "defs.hh"
+#include "environment.hh"
 #include <iostream>
+
 
 
 namespace Loosh 
 {
 
-Lisp::Lisp() : Lang() {}
+Lisp::Lisp(Environment&env): Lang(env.universal.get_root()) {}
+
+/*
+Lisp::Lisp(Environment&env) : Lang(nullptr) {
+  auto r = env.universal.get_root();
+}*/
+//Lisp::Lisp(Environment& env, const Node::List &code) { }
 
 string Lisp::_to_str(Lisp::Op op) {
   switch (op) {

@@ -88,7 +88,7 @@ Node::OpStatus Tree::delete_branch(const vector<string>&path) {
   return parent_node->delete_key(key_to_delete);
 }
 
-const Node* Tree::get_root() const {
+Node* Tree::get_root() {
   return root.get();
 }
 

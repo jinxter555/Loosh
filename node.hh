@@ -10,6 +10,7 @@
 #include <spdlog/spdlog.h>
 #include <shared_mutex>
 #include <atomic>
+#include <unordered_set>
 
 
 #include "defs.hh"
@@ -23,6 +24,7 @@ namespace Loosh
 
 class Node {
 friend class Tree;
+friend class Lang;
 friend class Environment;
 friend class Scope;
 friend class Frame;
@@ -69,8 +71,8 @@ public:
 // GCObjectId: for Garbage collection
 // MapObjectId: 
   enum class Type { 
-    Null, Bool, Error, Size, Integer, Float, String,
-    Identifier, Identifier_g,  Tuple, List, Map, IMap, Vector, DeQue, LispOp, 
+    Null, Bool, Error, Size, Integer, UnsignedInteger, Float, String,
+    Identifier, Identifier_g,  Tuple, List, Map, IMap, Set, Vector, DeQue, LispOp, 
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
@@ -86,7 +88,8 @@ public:
 
 
   using Integer = LOOSH_T_LONG; 
-  using Atom = LOOSH_T_LONG; 
+  using UnsignedInteger = unsigned LOOSH_T_LONG;
+  using Atom = UnsignedInteger; 
   using Float = double;
 
   using List = list<unique_ptr<Node>>;
@@ -100,8 +103,9 @@ public:
   using OpStatus = pair<bool, unique_ptr<Node>>;
   using OpStatusRef = pair<bool, Node&>;
 
-  using IMap = unordered_map<Integer, unique_ptr<Node>>;
+  using IMap = unordered_map<UnsignedInteger, unique_ptr<Node>>;
   using Map = unordered_map<string, unique_ptr<Node>>;
+  using Set = unordered_set<UnsignedInteger>;
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process env, current node, this, arguments
   using LockFun = function<OpStatus(Node*, Node*, const Vector& list)>; // locked current node , interacting node, arguments
   using AtomicInteger = unique_ptr<atomic<Integer>>;
@@ -112,7 +116,7 @@ public:
 
 
   //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Lock>;
-  using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, AtomicInteger, Lock>;
+  using Value = variant<monostate, bool, Error, Integer, UnsignedInteger, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, Set, ptr_R, ptr_U, Fun, AtomicInteger, Lock>;
 
 //----------------------------------
   
@@ -179,6 +183,7 @@ public:
   //
   void set(unique_ptr<Node> new_node);
   void set(const Integer, Type );
+  void set(const UnsignedInteger, Type );
   void set(const string&, Type );
 
   // map
@@ -276,6 +281,7 @@ template <typename T> T& get_value() {
   //
   OpStatus add(unique_ptr<Node> child);
   OpStatus add(const string&key, unique_ptr<Node> child);
+  OpStatus add(const UnsignedInteger key, unique_ptr<Node> child);
   //
   OpStatus pop_back();
   OpStatus pop_front();
@@ -345,9 +351,9 @@ template <typename T> T& get_value() {
   OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
   OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
 
-  OpStatus obj_atoms_add(const Integer key, unique_ptr<Node> child);
-  OpStatus obj_atoms_set(const Integer key, unique_ptr<Node> child);
-  OpStatus obj_atoms_get(const Integer key);
+  OpStatus obj_atoms_add(const UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus obj_atoms_set(const UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus obj_atoms_get(const UnsignedInteger key);
 
   OpStatus obj_array_push_back(ptr_U);
   OpStatusRef obj_array_get(Integer);

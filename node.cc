@@ -44,6 +44,7 @@ Node::Node(Type t)
   case Type::Bool: m_value=true; break;
   case Type::Size: m_value=0; break;
   case Type::Integer: m_value=0; break;
+  case Type::UnsignedInteger: m_value=0; break;
   case Type::Float: m_value=0.0; break;
   case Type::String: m_value=""; break;
   //case Type::Error: m_value = {} ; break;
@@ -127,6 +128,7 @@ Node::Type Node::value_variant_type() {
     else if constexpr (is_same_v<T, bool>) return Type::Bool;
     else if constexpr (is_same_v<T, Error>) return Type::Error;
     else if constexpr (is_same_v<T, Integer>) return Type::Integer;
+    else if constexpr (is_same_v<T, UnsignedInteger>) return Type::UnsignedInteger;
     else if constexpr (is_same_v<T, Float>) return Type::Float;
     else if constexpr (is_same_v<T, string>) return Type::String;
     else if constexpr (is_same_v<T, List>) return Type::List;
@@ -134,6 +136,7 @@ Node::Type Node::value_variant_type() {
     else if constexpr (is_same_v<T, DeQue>) return Type::DeQue;
     else if constexpr (is_same_v<T, Map>) return Type::Map;
     else if constexpr (is_same_v<T, IMap>) return Type::IMap;
+    else if constexpr (is_same_v<T, Set>) return Type::Set;
     else if constexpr (is_same_v<T, ptr_R>) return Type::Raw;
     else if constexpr (is_same_v<T, ptr_U>) return Type::Unique;
     else if constexpr (is_same_v<T, Fun>) return Type::Fun;
@@ -592,6 +595,7 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 
 
 void Node::set(const Integer v, Type t) { m_value = v; m_type = t; } // could be regular Integer or Atom
+void Node::set(const UnsignedInteger v, Type t) { m_value = v; m_type = t; } // could be regular Integer or Atom
 void Node::set(const string&v, Type t) { m_value = v; m_type = t; } // could be reuglar string or identifer
 
   
@@ -759,7 +763,7 @@ Node::OpStatus Node::lock_release() const {
 }
 
 
-Node::OpStatus Node::traverse_and_execute2(const vector<string>&path, LockMode mode, LockFun &operation, Node* other, const Vector& list) {
+Node::OpStatus Node::traverse_and_execute(const vector<string>&path, LockMode mode, LockFun &operation, Node* other, const Vector& list) {
   Node* current_node = &get_node();
 
   auto lock_status = current_node->lock_shared();
@@ -793,6 +797,7 @@ Node::OpStatus Node::traverse_and_execute2(const vector<string>&path, LockMode m
   return ret_val_status;
 }
 
+/*
 Node::OpStatus Node::traverse_and_execute(const vector<string>&path, LockMode mode, LockFun &operation, Node* other, const Vector& list) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -845,6 +850,7 @@ Node::OpStatus Node::traverse_and_execute(const vector<string>&path, LockMode mo
 
 }
 
+*/
 
   
 

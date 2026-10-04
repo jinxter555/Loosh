@@ -6,6 +6,7 @@ namespace Loosh
 {
 
 class Environment {
+  friend class Lisp;
 private:
   Tree universal;
 public:
@@ -17,17 +18,17 @@ public:
   virtual ~Environment() = default;
   virtual Node::OpStatusRef lookup(const string&name) = 0;
 //  virtual Node::OpStatusRef add(const string&name, Node::ptr_U) = 0;
-  static Node::OpStatusRef lookup(Map& table, const string& name);
+  static Node::OpStatusRef lookup(Node& table, const string& name);
   //virtual ptr_U create()=0;
   virtual Environment* create_child()=0;
   virtual Node::ptr_R get_meta_ptr_r()=0;
 
 
-  Node::OpStatus var_add(Map& table, const string&name, Node::ptr_U) ;
-  Node::OpStatus immute_add(const string&name, Node::ptr_U) ;
-  Node::OpStatus arg_add(const string&name, Node::ptr_U) ;
-  Node::OpStatus var_set(const string&name, Node::ptr_U) ;
-  Node::OpStatus arg_set(const string&name, Node::ptr_U) ;
+  Node::OpStatus var_add(Node& table, const string&name, Node::ptr_U) ;
+  Node::OpStatus immute_add(Node& table, const string&name, Node::ptr_U) ;
+  Node::OpStatus arg_add(Node& table, const string&name, Node::ptr_U) ;
+  Node::OpStatus var_set(Node& table, const string&name, Node::ptr_U) ;
+  Node::OpStatus arg_set(Node& table, const string&name, Node::ptr_U) ;
 
   //virtual Environment& meta_map_obj(Node* meta_obj)=0;
 
@@ -57,16 +58,16 @@ public:
 
   //Scope(Node* node_ptr_r, Environment::Type );
 
-  ptr_U move_obj();
+  Node::ptr_U move_obj();
 
   Scope* create_child() override;
-  ptr_R get_meta_ptr_r() override;
+  Node::ptr_R get_meta_ptr_r() override;
 
   Node::OpStatusRef lookup(const string&name) ;
   //Node::OpStatus add(const string&name, Node::ptr_U) ;
-  Node::OpStatus var_add(const string&name, Node::ptr_U) ;
-  Node::OpStatus immute_add(const string&name, Node::ptr_U) ;
-  Node::OpStatus arg_add(const string&name, Node::ptr_U) ;
+  Node::OpStatus var_add(Node& table, const string&name, Node::ptr_U) ;
+  Node::OpStatus immute_add(Node& table, const string&name, Node::ptr_U) ;
+  Node::OpStatus arg_add(Node& table, const string&name, Node::ptr_U) ;
   Node::OpStatus meta_obj_get();
 
   static unique_ptr<Scope> create(Node* parent=nullptr);
@@ -95,8 +96,10 @@ class Process : public Environment {
 private:
   Node::Integer pid;
   Node* call_stack;
-  Process* create_child() override;
 
+  Process* create_child() override;
+  Node::ptr_R get_meta_ptr_r() override;
+  Node::OpStatusRef lookup(const string&name) override;
 };
 
 }
