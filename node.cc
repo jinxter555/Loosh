@@ -499,11 +499,18 @@ string Node::_get_str() const { return _to_str(); }
 Node::OpStatusRef Node::operator[](Integer index) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   switch(m_type) {
+  case Type::MetaObject: {
+    Vector& cc_vec = get<Vector>(m_value);
+    if(index < 0 || index >= MetaObjectIndex::count) {
+      string msg = "Index " + to_string(index) + " is out of bound for MetaObject count " + to_string(MetaObjectIndex::count) + ".";
+      return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
+    }
+    return {true, *cc_vec[index]};}
   case Type::Vector: {
     Vector& cc_vec = get<Vector>(m_value);
     const Integer cc_vec_size =  static_cast<Integer>(cc_vec.size());
     if(index < 0 || index >= cc_vec_size){
-      string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(cc_vec_size) + ".";
+      string msg = "Index " + to_string(index) + " is out of bound for list size " + to_string(cc_vec_size) + ".";
       return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
     }
     return {true, *cc_vec[index]};}
@@ -592,6 +599,9 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 
 }
 //------------------------------ add
+Node::OpStatus Node::add(const UnsignedInteger key, unique_ptr<Node> child) {
+}
+//------------------------------ add
 
 
 void Node::set(const Integer v, Type t) { m_value = v; m_type = t; } // could be regular Integer or Atom
@@ -617,7 +627,7 @@ Node::OpStatus Node::has_key(const string&key) {
   }
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
-    auto &map = meta[ObjectIndex::StringMap]->unwrap_value<Map>();
+    auto &map = meta[MetaObjectIndex::StringMap]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return {true, Node::create(true)};
     return {true, Node::create(false)};
   }
@@ -638,7 +648,7 @@ bool Node::_has_key(const string&key) {
   }
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
-    auto &map = meta[ObjectIndex::StringMap]->unwrap_value<Map>();
+    auto &map = meta[MetaObjectIndex::StringMap]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return true;
     return false;
   }
@@ -689,7 +699,7 @@ bool Node::_has_atom(const Integer key) {
   }
   case Type::MetaObject:{
     auto &meta = get<MetaObject>(m_value);
-    auto &imap = meta[ObjectIndex::IntegerMap]->unwrap_value<IMap>();
+    auto &imap = meta[MetaObjectIndex::IntegerMap]->unwrap_value<IMap>();
     if (imap.find(key) != imap.end())  return true;
   }
 

@@ -3,7 +3,7 @@
 #include <memory>
 #include <unordered_map>
 #include "lang.hh"
-#include "tree.hh"
+//#include "lisp_reader.hh"
 //#include "environment.hh"
 
 using namespace  std;
@@ -18,7 +18,11 @@ class Lisp : public Lang {
   friend class Environment;
   friend class Tree;
 
-  Node* root;
+  //LispReader reader;
+
+  Node* m_root;
+  Node* m_lisp;
+  Node* m_keywords;
 
 public:
   enum class Op  : int
@@ -40,6 +44,8 @@ public:
   //Lisp(Environment& env, const Node::List &code) ;
   Lisp(Environment& env);
   static string _to_str(Lisp::Op op);
+  void set_op_str() ;
+  Op Lisp::str_to_op(const string &input) ; // convert lisp string op keyword  to Op
 };
 
 

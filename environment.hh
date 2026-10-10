@@ -96,7 +96,15 @@ class Process : public Environment {
 private:
   Node::Integer pid;
   Node* call_stack;
+public:
+  Process* create_child() override;
+  Node::ptr_R get_meta_ptr_r() override;
+  Node::OpStatusRef lookup(const string&name) override;
+};
 
+
+class Program : public Environment {
+public:
   Process* create_child() override;
   Node::ptr_R get_meta_ptr_r() override;
   Node::OpStatusRef lookup(const string&name) override;

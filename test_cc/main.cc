@@ -12,20 +12,16 @@
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "../scope_logger.hh"
-#include "../error.hh"
 
-#include "../io_file.hh"
 
 
 // init some static vars 
 void init() {
-  File::init();
-  Error::init();
 
 }
 
 
-Interactive *it_ptr;
+Loosh::Interactive *it_ptr;
 
 int main(int argc, char *argv[]) {
 
@@ -38,7 +34,7 @@ ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
 
   init();
 
-  Interactive lang_interactive(".loosh_history", "loosh> ");
+  Loosh::Interactive lang_interactive(".loosh_history", "loosh> ");
   //rl_variable_bind("completion-append-space", "off");
   rl_attempted_completion_function = lang_interactive.command_completion;
   it_ptr = &lang_interactive;

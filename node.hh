@@ -76,13 +76,24 @@ public:
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
-  enum ObjectIndex {Info, StringMap, 
+  enum MetaObjectIndex {
+    Info, 
+    StringMap, 
     VectorArray,
     IntegerMap,
     Parent,
     MetaLock,
     WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
+    cc_class,
     count}; // count is last element hack for counting size of this
+  enum ProgramObjectIndex {
+    ProgramName,
+    Cache,
+    Process,
+    Atoms
+
+
+  };
 
   enum class LockMode { Unlocked, Read, Write };
 
@@ -131,7 +142,6 @@ public:
   ~Node() = default; 
 
   static ptr_U create_error(Error::Type err_type, const string& msg);
-  static ptr_U create_meta(ptr_R parent=nullptr);
 
   static ptr_U create_lock(ptr_U node);
   static ptr_U create();
@@ -140,8 +150,9 @@ public:
   static ptr_U create(Value v, Type t);
   static ptr_U create(Type t);
 
+  static ptr_U create_meta(ptr_R parent=nullptr);
   Node::OpStatus create_meta(const string& key);
-  Node::OpStatus create_meta();
+  Node::OpStatus create_meta_child();
 
 
 

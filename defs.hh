@@ -10,6 +10,11 @@
 #define LOOSH_DQ_WORKER "dq_worker"
 #define LOOSH_STATE "state"
 
+#define LOOSH_LANG "lang"
+#define LOOSH_LISP "lisp"
+#define LOOSH_ATOMS "atoms"
+#define LOOSH_LISP_OPS "ops"
+
 #define LOOSH_CACHE "cache"
 #define LOOSH_TABLE "table"
 #define LOOSH_VAR "var"

@@ -6,9 +6,9 @@ MAKE=make
 
 #objects = node.o  node_str.o node_out.o node_clone.o scope_logger.o  my_helpers.o lang.o
 objects =  node.o  node_str.o node_out.o node_clone.o scope_logger.o  \
-	my_helpers.o  lisp.o lang.o node_error.o  node_math.o \
+	my_helpers.o  node_error.o  node_math.o \
 	node_map.o node_sequence.o node_object.o \
-	trace_guard.o tree.o
+	trace_guard.o tree.o #  interactive.o lang.o  lisp.o
 
 # node_map.o node_sequence.o node_object.o  environment.o \
 
