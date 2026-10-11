@@ -16,10 +16,8 @@ struct Token {
 
 
 
-class LispExpr;
-
 class LispReader  {
-friend class LispExpr;
+friend class Lisp;
 private:
   Node::Integer col_=1;
   Node::Integer line_=1;

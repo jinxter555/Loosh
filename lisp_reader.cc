@@ -204,7 +204,7 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
       try {  // see if (keyword) or (scalar)
 
         token_str = get<string>(token_status.second->m_value);
-        auto op = lisp->keyword_to_op(token_str); // Lisp::Op
+        auto op = lisp->str_to_op(token_str); // Lisp::Op
         //MYLOGGER_MSG(trace_function, string("op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);
 
         if(op != Lisp::Op::scalar)  { // identifier or scalar
@@ -281,7 +281,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
     if(token.m_value[0]==':') {
       token.m_value.erase(0, 1);
       auto v = lisp->str_to_atom(token.m_value); //auto node_ptr = Node::create(atom);
-      auto node_ptr = Node::create(v); node_ptr->set_atom();
+      auto node_ptr = Node::create(v); node_ptr->type_set_atom();
       return {true, move(node_ptr)}; 
     }
     // " quoted srepeat with 
@@ -348,7 +348,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   //token_previous.m_value = token.m_value;
 
   auto node_ptr = Node::create(token.m_value); 
-  node_ptr->set_identifier();
+  node_ptr->type_set_identifier();
   return {true, move(node_ptr)};
 }
 
@@ -477,7 +477,7 @@ bool LispReader::is_closurable(const string&token_str) {
   && closurable_user_defined.at(token_str)==true) 
     return true;
 
-  auto op = lisp->keyword_to_op(token_str); // Lisp::Op
+  auto op = lisp->str_to_op(token_str); // Lisp::Op
 
 
 
@@ -538,7 +538,7 @@ bool LispReader::is_endable(const string&token_str) {
 
   // might need to get rid of these two lines
 
-  auto op = lisp->keyword_to_op(op_str); // Lisp::Op
+  auto op = lisp->str_to_op(op_str); // Lisp::Op
   return is_closurable(op);
 }
 

@@ -26,6 +26,7 @@ class Node {
 friend class Tree;
 friend class Lang;
 friend class Lisp;
+friend class LispReader;
 friend class Environment;
 friend class Scope;
 friend class Frame;

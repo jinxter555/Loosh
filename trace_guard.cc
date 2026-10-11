@@ -29,7 +29,6 @@ const char* TraceGuard::get_color(int depth) const {
   // Ensures we handle negative depth values gracefully if an edge case occurs
   size_t index = static_cast<size_t>(std::abs(depth)) % colors.size();
   return colors[index];
-//  return colors[1];
 }
 
 string TraceGuard::get_indent() const {

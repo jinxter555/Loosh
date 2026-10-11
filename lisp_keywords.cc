@@ -133,16 +133,19 @@ Lisp::Op Lisp::str_to_op(const string &input) {
 //  auto m_ops = get_branch(lisp_path_keyword);
   //auto &m_ops = Lisp::m_ops;
 
+//*
   if(m_ops == nullptr || m_ops->m_type != Node::Type::Map) {
     cout << "lisp keyworld m_ops type != map\n";
     return Lisp::Op::error;
   }
+//*/
+
   auto status = (*m_ops)[input];
   if(!status.first) {
     MYLOGGER_MSG(trace_function, "Lisp keyword: " + input + " not found , return as scalar", SLOG_FUNC_INFO+30);
     return Lisp::Op::scalar;
   }
-  auto op = get<Lisp::Op>(status.second.value_);
+  auto op = get<Lisp::Op>(status.second.m_value);
   return op;
 }
 
