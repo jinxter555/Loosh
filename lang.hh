@@ -28,6 +28,7 @@ protected:
   static std::hash<std::string> hasher;
   Node* m_root;
   Node* m_atoms;
+  Node* m_lang;
   //static unordered_map<UnsignedInteger , string> Atoms;
   //static IMap Atoms;
   //static  unique_ptr<Node> Atoms;

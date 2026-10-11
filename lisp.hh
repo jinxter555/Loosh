@@ -20,9 +20,8 @@ class Lisp : public Lang {
 
   //LispReader reader;
 
-  Node* m_root;
   Node* m_lisp;
-  Node* m_keywords;
+  Node* m_ops;
 
 public:
   enum class Op  : int
@@ -45,7 +44,7 @@ public:
   Lisp(Environment& env);
   static string _to_str(Lisp::Op op);
   void set_op_str() ;
-  Op Lisp::str_to_op(const string &input) ; // convert lisp string op keyword  to Op
+  Op str_to_op(const string &input) ; // convert lisp string op keyword string 
 };
 
 

@@ -6,6 +6,7 @@
 #include "node.hh"
 #include "defs.hh"
 #include "my_helpers.hh"
+#include "atom.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -58,7 +59,7 @@ string Node::_to_str() const {
 
   case Type::Atom: {
     Integer num = get<Integer>(m_value);
-    return ":" + Lang::atom_to_str(num); 
+    return ":" + Loosh::Atom::atom_to_str(num); 
   }
   case Type::Integer: {
       Integer num = get<Integer>(m_value);
@@ -251,7 +252,7 @@ string Node::_to_str(const IMap&cc_imap) {
 
   for (auto const& [key, val] : cc_imap) {
       //outstr = q + Lang::atom_to_str( key) + q  + colon + " " + val->_to_str();
-      auto atom_key_str = Lang::atom_to_str_imap(key);
+      auto atom_key_str = Loosh::Atom::atom_to_str_imap(key);
       if(atom_key_str.back() == 'i')
         outstr =  atom_key_str  + " " + val->_to_str();
       else

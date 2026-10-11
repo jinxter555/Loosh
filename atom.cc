@@ -3,7 +3,8 @@
 namespace Loosh 
 {
   
-std::hash<string> Lang::hasher;
+std::hash<string> Atom::hasher;
+
 Node::ptr_U Atom::atoms_uptr = Node::create_meta();
 Node::ptr_R Atom::atoms = Atom::atoms_uptr.get();
 
