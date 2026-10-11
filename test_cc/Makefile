@@ -8,6 +8,7 @@ TMPDIR = /dev/shm
 
 # Added -I/usr/local/include for the implicit pattern rules
 CXXFLAGS = -g -std=c++23 -I/usr/local/include -DSPDLOG_FMT_EXTERNAL -pthread
+# CXXFLAGS = -g -std=c++23 -I/usr/local/include -pthread
 
 # THE FIX: Point to the compiled library directory in /usr/local
 LDFLAGS  = -L/usr/local/lib

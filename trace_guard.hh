@@ -52,7 +52,8 @@ public:
 };
 
 //#define AUTO_TRACE() TraceGuard trace_guard_obj(__func__)
-#define AUTO_TRACE() TraceGuard trace_guard_obj(clean_function_name())
+//#define AUTO_TRACE() TraceGuard trace_guard_obj(clean_function_name())
+#define AUTO_TRACE() 
 
 
 
