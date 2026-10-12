@@ -7,6 +7,8 @@
 #include <vector>
 #include "defs.hh"
 
+namespace Loosh 
+{
 class Interactive;
 class Commandline {
   friend class Interactive;
@@ -15,7 +17,7 @@ class Commandline {
 public:
   //std::map<std::string, std::string> options;
   std::string infile_name="";
-  std::string closurable_file_name=CLOSURABLE_FILE;
+  std::string closurable_file_name=LOOSH_CLOSURABLE_FILE;
   std::vector<std::string> arguments;
 
   static struct option long_options[];
@@ -35,3 +37,5 @@ public:
   void load_files(Interactive *i, const std::string& file_str);
 
 };
+
+}

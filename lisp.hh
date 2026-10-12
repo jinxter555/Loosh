@@ -17,8 +17,10 @@ class Lisp : public Lang {
   friend class Node;
   friend class Environment;
   friend class Tree;
+  friend class Interactive;
 
-  unique_ptr<LispReader> reader;
+  //unique_ptr<LispReader> reader;
+  LispReader& reader;
 
   Node* m_lisp;
   Node* m_ops;
@@ -41,10 +43,21 @@ public:
   };
   using Type=Op;
   //Lisp(Environment& env, const Node::List &code) ;
-  Lisp(Environment& env);
+
+  Lisp(Environment& env, LispReader& r);
   static string _to_str(Lisp::Op op);
   void set_op_str() ;
   Op str_to_op(const string &input) ; // convert lisp string op keyword string 
+
+
+  //--
+  Node::OpStatus run_program(int argc, char *argv[]); // create module structure 
+  Node::OpStatus build_program(); // create module structure 
+  Node::OpStatus build_file_str(const string& input); // create module structure 
+
+
+
+
 };
 
 

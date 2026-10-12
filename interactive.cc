@@ -23,7 +23,7 @@ Node *Interactive::proc_shell=nullptr;
 // histoery_file , prompt string
 
 Interactive::Interactive(const std::string& hf , const std::string&ps) 
-: LangPrompt(hf, ps) , jli(env)
+: LangPrompt(hf, ps) , jli(env, reader)
 {
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
   //jli.set_interface(this);
@@ -87,7 +87,7 @@ Node::OpStatus Interactive::load(const std::string &filename) {
 
   std::ifstream infile(filename);
   if(! infile.is_open()) {
-    return {false, Node::create_error(Error::Type::System, "Can't open file: " + filename)};
+    return {false, Node::create_error(Node::Error::Type::System, "Can't open file: " + filename)};
   }
 
   string line, source_str; 
@@ -143,7 +143,7 @@ void Interactive::print() {
 }
 
 LispReader& Interactive::get_reader() {
-  return lang.get_reader();
+  return reader;
 }
 
 

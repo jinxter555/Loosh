@@ -8,6 +8,8 @@
 
 
 using namespace std;
+namespace Loosh 
+{
 
 enum class PromptSwitch {
   exit,
@@ -37,3 +39,4 @@ public:
   string read(); // ready for user readline input
 
 };
+}

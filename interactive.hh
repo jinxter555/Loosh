@@ -23,6 +23,7 @@ private:
   Program env;
 
   Lisp jli; // 
+  LispReader reader;
   static  Node *proc_shell;
 public:
   Interactive(const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};

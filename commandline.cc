@@ -6,6 +6,8 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+namespace Loosh 
+{
 struct option Commandline::long_options[] = {
   {"inputfile", required_argument, NULL, 'f'},
   {"lang", required_argument, NULL, 'l'},
@@ -130,4 +132,5 @@ void Commandline::load_files(Interactive *interactive, const string& file_str) {
     }
   }
 
+}
 }

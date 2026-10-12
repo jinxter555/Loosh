@@ -4,6 +4,8 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+namespace Loosh 
+{
 
 void LangPrompt::save_history() {
   std::ofstream outfile(history_filename);
@@ -91,4 +93,6 @@ string LangPrompt::read() {
 
 void LangPrompt::pop_last_exit_history() {
   if(history.back() == "exit") { history.pop_back(); }
+}
+
 }
