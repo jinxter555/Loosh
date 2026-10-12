@@ -2,6 +2,7 @@
 #include "node.hh"
 #include "defs.hh"
 #include "environment.hh"
+#include "lisp_reader.hh"
 #include <iostream>
 
 
@@ -9,7 +10,8 @@
 namespace Loosh 
 {
 
-Lisp::Lisp(Environment&env): Lang(env.universal.get_root()) {
+Lisp::Lisp(Environment&env)
+  : Lang(env.universal.get_root()), reader(make_unique<LispReader>()) {
 
   auto lisp = m_root->create_meta();
   auto ops = lisp->create(Node::Type::Map);
@@ -17,9 +19,6 @@ Lisp::Lisp(Environment&env): Lang(env.universal.get_root()) {
 
   m_lang->obj_data_add(LOOSH_LISP, move(lisp));
   lisp->add(LOOSH_LISP_OPS, move(ops));
-}
-string Lisp::_to_str(Lisp::Op op) {
-
 }
 
 };

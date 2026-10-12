@@ -1,3 +1,4 @@
+#pragma once
 #include "node.hh"
 
 namespace Loosh 

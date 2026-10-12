@@ -3,8 +3,7 @@
 #include <memory>
 #include <unordered_map>
 #include "lang.hh"
-//#include "lisp_reader.hh"
-//#include "environment.hh"
+
 
 using namespace  std;
 namespace Loosh 
@@ -12,13 +11,14 @@ namespace Loosh
 
 
 class Environment;
+class LispReader;
 
 class Lisp : public Lang {
   friend class Node;
   friend class Environment;
   friend class Tree;
 
-  //LispReader reader;
+  unique_ptr<LispReader> reader;
 
   Node* m_lisp;
   Node* m_ops;

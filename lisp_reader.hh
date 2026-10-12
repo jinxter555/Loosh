@@ -1,6 +1,5 @@
 #pragma once
 #include  "node.hh"
-#include "lang.hh"
 #include "lisp.hh"
 #include <map>
 
@@ -8,8 +7,8 @@ namespace Loosh
 {
 
 struct Token {
-  Node::Integer col_;
-  Node::Integer line_;
+  Node::Integer m_col;
+  Node::Integer m_line;
   string m_value;
 } ;
 
@@ -19,8 +18,8 @@ struct Token {
 class LispReader  {
 friend class Lisp;
 private:
-  Node::Integer col_=1;
-  Node::Integer line_=1;
+  Node::Integer m_col=1;
+  Node::Integer m_line=1;
   static const Node lisp_op_map;
   Lisp *lisp;   // lisp to atom hasher
 
@@ -36,7 +35,7 @@ public:
   LispReader();
   string tokenize_preprocess(const string& input);
   string tokenize_preprocess_multiline(const string& input) ;
-  string tokenize_preprocess_multiline_parenthesis(const string& input) ;
+  string tokenize_preprocess_multim_lineparenthesis(const string& input) ;
 
   void convert_to_infix(string&); // convert string to infix
 

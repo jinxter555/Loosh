@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstring>
 #include "lisp_reader.hh"
-#include "lisp_expr.hh"
 #include "my_helpers.hh"
 
 
@@ -11,6 +10,9 @@
 #include "scope_logger.hh"
 
 using namespace std;
+
+namespace Loosh 
+{
 
 bool sym_lang(char c) {
   switch(c) {
@@ -180,4 +182,5 @@ void LispReader::convert_to_infix(string& infix_input) {
     input  = replace_bracketed_string(input, lisp_prefix_str);
   }
   infix_input = input;
+}
 }

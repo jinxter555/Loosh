@@ -1,5 +1,6 @@
 #include "node.hh"
 #include "node_tmpl_cc.hh"
+#include "atom.hh"
 
 
 #include "trace_guard.hh"
@@ -600,6 +601,17 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 }
 //------------------------------ add
 Node::OpStatus Node::add(const UnsignedInteger key, unique_ptr<Node> child) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  if (m_type != Type::IMap) {
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
+  }        
+  IMap& imap = get<IMap>(m_value);
+
+  if(!imap.try_emplace(key, move(child)).second) {
+    return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + Loosh::Atom::atom_to_str_imap( key) + "' already exists in map.")};
+  }
+  return {true, Node::create(true)};
+
 }
 //------------------------------ add
 

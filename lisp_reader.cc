@@ -26,7 +26,7 @@ LispReader::LispReader() {
 
 }
 
-void LispReader::reset() { col_=1; line_=1; }
+void LispReader::reset() { m_col=1; m_line=1; }
 
 void LispReader::to_newline(const string&input, size_t &i) {
   for(++i; i<input.size(); i++) {
@@ -101,21 +101,21 @@ list<Token> LispReader::tokenize(const string& input)  {
     if(isspace(c)) {
       token_begin = true;
       if(!token_str.empty()) {
-        //token.line_ = line_; token.col_ = col_;
+        //token.m_line = m_line; token.m_col = m_col;
         token.m_value = move(token_str);
         tokens.push_back(token);
       }
-      if(c=='\n') { line_++; col_= 1; continue;}
+      if(c=='\n') { m_line++; m_col= 1; continue;}
 
     } else if(c=='(' || c==')') {
       token_begin = true;
 
       if(!token_str.empty()) {
-        //token.line_ = line_; token.col_ = col_-1;
+        //token.m_line = m_line; token.m_col = m_col-1;
         token.m_value = move(token_str);
         tokens.push_back(token);
       }
-      //token.line_ = line_; token.col_ = col_-1;
+      //token.m_line = m_line; token.m_col = m_col-1;
       token.m_value = string(1,c);
       tokens.push_back(token);
 
@@ -127,13 +127,13 @@ list<Token> LispReader::tokenize(const string& input)  {
 
 
     } else if(c == '\'') {
-      auto result_str  =  move(extract_single_quoted_string(input, i));
+      auto result_str  =  extract_single_quoted_string(input, i);
       if(result_str != "") {
         token.m_value = '\'' + result_str;
         tokens.push_back(token);
         token_begin = true;
       } else {
-        if(token_begin) { token.col_ = col_; token_begin=false;}
+        if(token_begin) { token.m_col = m_col; token_begin=false;}
         token_str += c;
 
       }
@@ -145,19 +145,19 @@ list<Token> LispReader::tokenize(const string& input)  {
         tokens.push_back(token);
       }
       to_newline(input, i);
-      line_++; col_ = 1; 
+      m_line++; m_col = 1; 
       continue;
 
     } else {
-      if(token_begin) { token.col_ = col_; token_begin=false;}
+      if(token_begin) { token.m_col = m_col; token_begin=false;}
       token_str += c;
 
     }
-    col_++;
+    m_col++;
   }
 
   if(!token_str.empty()) {
-    //token.line_ = line_; token.col_ = col_-1;
+    //token.m_line = m_line; token.m_col = m_col-1;
     token.m_value = move(token_str);
     tokens.push_back(token);
   }
@@ -249,7 +249,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   if(token.m_value == "'") { //  parse escaped literal list
     token_next = tokens.front(); tokens.pop_front();
     if(token_next.m_value == "(") {
-      tokens.push_front({token_next.col_, token_next.line_, "literal"});
+      tokens.push_front({token_next.m_col, token_next.m_line, "literal"});
       return parse_sequence(tokens);
     }
   }
@@ -341,8 +341,8 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   // lisp identifier 
   /*
   cout << "token: '" <<  token << "', token_previous: '" << token_previous << "' \n";
-  token_previous.col_= token.col_;
-  token_previous.line_= token.line_;
+  token_previous.m_col= token.m_col;
+  token_previous.m_line= token.m_line;
   token_previous.m_value = token.m_value;
 */
   //token_previous.m_value = token.m_value;
@@ -355,7 +355,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
 //------------------------------------------------------------------------ pre tokenize string
 string LispReader::tokenize_preprocess(const string& input) {
   auto input_paren = 
-    tokenize_preprocess_multiline_parenthesis(
+    tokenize_preprocess_multim_lineparenthesis(
       tokenize_preprocess_multiline(input));
   //cout << "after putting ():\n" << input_paren <<"\n\n";
 
@@ -366,48 +366,48 @@ string LispReader::tokenize_preprocess(const string& input) {
 string LispReader::tokenize_preprocess_multiline(const string& input) {
 
   istringstream stream(input); // Wrap the string in an input string stream
-  string line_current, line_result;
+  string m_linecurrent, m_lineresult;
   bool multi_line = false;
 
-  while (getline(stream, line_current)) {
+  while (getline(stream, m_linecurrent)) {
     if(multi_line) { // multi line begins
 
-      if(line_current.back() == '\\') { 
-        line_current.pop_back(); // get rid multi line character
+      if(m_linecurrent.back() == '\\') { 
+        m_linecurrent.pop_back(); // get rid multi line character
         multi_line = true;
       } else {
         multi_line = false;
-        line_current += "\n";
+        m_linecurrent += "\n";
       }
-      line_result += line_current;
+      m_lineresult += m_linecurrent;
       continue;
     }
 
-    if(line_current.back() == '\\') {
-      line_current.pop_back();
+    if(m_linecurrent.back() == '\\') {
+      m_linecurrent.pop_back();
       multi_line = true;
     } else {
       multi_line = false;
-      line_current += "\n";
+      m_linecurrent += "\n";
 
     }
 
-    line_result += line_current;
+    m_lineresult += m_linecurrent;
   }
-  convert_to_infix(line_result);
+  convert_to_infix(m_lineresult);
 
-  return line_result;
+  return m_lineresult;
 }
 
 
 
-string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input) {
+string LispReader::tokenize_preprocess_multim_lineparenthesis(const string& input) {
   istringstream stream(input); // Wrap the string in an input string stream
 
-  string line_current, line_result;
+  string m_linecurrent, m_lineresult;
 
-  while (getline(stream, line_current)) {
-    auto line = trim(line_current);
+  while (getline(stream, m_linecurrent)) {
+    auto line = trim(m_linecurrent);
 
 
 
@@ -418,22 +418,22 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     }
 
     if(line == "") continue;
-    //auto line_vector = split_string(line, " ");
-    auto line_vector = tokenize_pre(line);
+    //auto m_linevector = split_string(line, " ");
+    auto m_linevector = tokenize_pre(line);
 
-    if(line_vector.front() == "#") continue;
+    if(m_linevector.front() == "#") continue;
 
-    if(is_closurable(line_vector.front())) {
-      //cout << "line is closurable " <<  line_vector[0] <<  " " <<line_vector.back() << "\n";
-      line_result += "(" + join_str(line_vector) + "\n";
-      end_list.push_back(line_vector[0]); 
+    if(is_closurable(m_linevector.front())) {
+      //cout << "line is closurable " <<  m_linevector[0] <<  " " <<m_linevector.back() << "\n";
+      m_lineresult += "(" + join_str(m_linevector) + "\n";
+      end_list.push_back(m_linevector[0]); 
       continue;
     }
-    if(is_endable( line_vector.back()) )  {
-      auto line_back_vector = split_string(line_vector.back(), ".");
+    if(is_endable( m_linevector.back()) )  {
+      auto m_lineback_vector = split_string(m_linevector.back(), ".");
       auto back = end_list.back();
 
-      if(back != line_back_vector.back()) {
+      if(back != m_lineback_vector.back()) {
         cout << "endlist " << _to_str_ext(end_list) << "\n";
         cout << "error with parsing closing token! '" << back <<"' \n";
         exit(1);
@@ -441,27 +441,27 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
       end_list.pop_back();
 
 
-      line_result += ")\n";
+      m_lineresult += ")\n";
       continue;
     }
 
 
     if(line.front() != '(' && line.back() == ')' && is_complete_parenthesis(line)){ 
-      line_result += "(" + line + ")"+"\n";
+      m_lineresult += "(" + line + ")"+"\n";
       continue;
     }
 
     if(line.front() != '(' && line.back() != ')'){ //   lispfun arg1 arg2 ...
-      line_result += "(" + line + ")"+"\n";
+      m_lineresult += "(" + line + ")"+"\n";
       continue;
     } 
 
-    line_result +=  line +"\n";
+    m_lineresult +=  line +"\n";
 
   }
 
-//  cout << "\nline result:\n" << line_result << "\n";
-  return line_result;
+//  cout << "\nline result:\n" << m_lineresult << "\n";
+  return m_lineresult;
 }
 
 
