@@ -48,9 +48,9 @@ public:
   string atom_to_str_imap(UnsignedInteger v);
 
 
-  //virtual Node::OpStatus run_program(int argc, char *argv[]); // create module structure 
-  //virtual Node::OpStatus build_program(); // create module structure 
-  //virtual Node::OpStatus build_file_str(const string& input); // create module structure 
+  virtual Node::OpStatus run_program(int argc, char *argv[]) =0; // create module structure 
+  virtual Node::OpStatus build_program() =0; // create module structure 
+  virtual Node::OpStatus build_file_str(const string& input) =0; // create module structure 
 };
 
 }

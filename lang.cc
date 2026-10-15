@@ -74,46 +74,4 @@ string Lang::unqiue_name(const string& input) {
 }
 
 
-/*
-const UnsignedInteger Lang::Atom::fun=str_to_atom("fun");
-const UnsignedInteger Lang::Atom::server=str_to_atom("server");
-const UnsignedInteger Lang::Atom::accept=str_to_atom("accept");
-const UnsignedInteger Lang::Atom::connect=str_to_atom("connect");
-const UnsignedInteger Lang::Atom::client=str_to_atom("client");
-const UnsignedInteger Lang::Atom::run=str_to_atom("run");
-const UnsignedInteger Lang::Atom::ok=str_to_atom("ok");
-const UnsignedInteger Lang::Atom::error=str_to_atom("error");
-const UnsignedInteger Lang::Atom::read=str_to_atom("read");
-const UnsignedInteger Lang::Atom::write=str_to_atom("write");
-const UnsignedInteger Lang::Atom::read_text=str_to_atom("read_text");
-const UnsignedInteger Lang::Atom::write_text=str_to_atom("write_text");
-const UnsignedInteger Lang::Atom::read_binary=str_to_atom("read_binary");
-const UnsignedInteger Lang::Atom::write_binary=str_to_atom("write_binary");
-const UnsignedInteger Lang::Atom::is_open=str_to_atom("is_open");
-const UnsignedInteger Lang::Atom::got_text=str_to_atom("got_text");
-const UnsignedInteger Lang::Atom::echo=str_to_atom("echo");
-const UnsignedInteger Lang::Atom::initialize=str_to_atom("initialize");
-const UnsignedInteger Lang::Atom::finalize=str_to_atom("finalize");
-const UnsignedInteger Lang::Atom::extract=str_to_atom("extract");
-const UnsignedInteger Lang::Atom::match=str_to_atom("match");
-const UnsignedInteger Lang::Atom::replace=str_to_atom("replace");
-const UnsignedInteger Lang::Atom::part=str_to_atom("part");
-const UnsignedInteger Lang::Atom::full=str_to_atom("full");
-
-
-const UnsignedInteger Lang::Atom::icase=str_to_atom("icase");
-const UnsignedInteger Lang::Atom::nosubs=str_to_atom("nosubs");
-const UnsignedInteger Lang::Atom::optimize=str_to_atom("optimize");
-const UnsignedInteger Lang::Atom::collate=str_to_atom("collate");
-const UnsignedInteger Lang::Atom::ecmas=str_to_atom("ecmas");
-const UnsignedInteger Lang::Atom::basic=str_to_atom("basic");
-const UnsignedInteger Lang::Atom::extended=str_to_atom("extended");
-const UnsignedInteger Lang::Atom::awk=str_to_atom("awk");
-const UnsignedInteger Lang::Atom::grep=str_to_atom("grep");
-const UnsignedInteger Lang::Atom::egrep=str_to_atom("egrep");
-
-const UnsignedInteger Lang::Atom::scope=str_to_atom("scope");
-const UnsignedInteger Lang::Atom::frame=str_to_atom("frame");
-const UnsignedInteger Lang::Atom::process=str_to_atom("process");
-*/
 };

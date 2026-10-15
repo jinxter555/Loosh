@@ -39,7 +39,7 @@ public:
 // this is an Scope interface to Node
 class Scope : public Environment {
 private:
-  Node::Map* scope_map_ptr_r=nullptr;
+  Node::IMap* scope_imap_ptr_r=nullptr;
   Node* table_ptr_r=nullptr;
   Node* children_ptr_r=nullptr;
   Node* parent_ptr_r=nullptr;

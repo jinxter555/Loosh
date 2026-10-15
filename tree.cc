@@ -4,20 +4,12 @@ using namespace std;
 namespace Loosh 
 {
 //------------------------------------------------------------------------
-Tree::Tree() { 
-  root = Node::create(
-    Node::create(Node::Type::MetaObject), 
-    Node::Type::Lock
-  );
-}
+Tree::Tree() { root = Node::create(Node::Type::MetaObject); }
 
 Tree::Tree(unique_ptr<Node> root_node) 
 : root(move(root_node)) { 
   if(!root || root->m_type == Node::Type::Null) {
-    root = Node::create(Node::Value(Node::Map{}));
-  }
-  else if(root->m_type != Node::Type::Map) {
-    root = Node::create(Node::Value(Node::Map{}));
+    root = Node::create_meta();
   }
 }
 

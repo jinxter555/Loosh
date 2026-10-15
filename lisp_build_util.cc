@@ -20,6 +20,7 @@ Node::OpStatus Lisp::build_file_str(const string& input) {
   Node::OpStatus op_status;
 
 
+  /*
   do{
     auto tokens_interpreted  = reader.parse(token_list);  
     //if(token_list.size() != 0) cout << "error parsing left over tokens! [" << token_list<< "]\n";
@@ -53,8 +54,15 @@ Node::OpStatus Lisp::build_file_str(const string& input) {
   build_namespace.push_back(build_namespace_default);
 
   return op_status;
+  */
 }
 
 
+Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
+
+}
+Node::OpStatus Lisp::build_program() {
+
+}
 
 }

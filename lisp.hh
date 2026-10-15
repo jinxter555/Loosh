@@ -48,9 +48,9 @@ public:
 
 
   //-- utilies to communicate with out side. aka interactive 
- // Node::OpStatus run_program(int argc, char *argv[]) override; // create module structure 
- // Node::OpStatus build_program() override; // create module structure 
- // Node::OpStatus build_file_str(const string& input) override; // create module structure 
+  Node::OpStatus run_program(int argc, char *argv[]) override; // create module structure 
+  Node::OpStatus build_program() override; // create module structure 
+  Node::OpStatus build_file_str(const string& input) override; // create module structure 
 
   // build lisp lang code structure 
   Node::OpStatus parse_build(Node& tokens) ;

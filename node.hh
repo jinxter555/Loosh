@@ -32,6 +32,7 @@ friend class Frame;
 friend class ostream;
 
 public:
+
   enum class Op  : int
   { root, nil, kernel, system, process, branch, namespace_, interpreter
   , class_, private_, new_, delete_, clone, use
@@ -102,6 +103,7 @@ public:
     WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
     cc_class,
     count}; // count is last element hack for counting size of this
+
   enum ProgramObjectIndex {
     ProgramName,
     Cache,
