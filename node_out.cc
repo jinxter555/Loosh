@@ -8,6 +8,7 @@
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
+#include "lisp.hh"
 
 
 
@@ -70,7 +71,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
       cout << arg; 
     } else if constexpr (is_same_v<T, Float>) {
       cout << fixed << setprecision(2) << arg; 
-    } else if constexpr (is_same_v<T, Lisp::Op>) {
+    } else if constexpr (is_same_v<T, Op>) {
       cout << Lisp::_to_str(arg); 
     } else if constexpr (is_same_v<T, string>) {
       std::cout << "\"" << arg << "\""; 

@@ -36,7 +36,7 @@ string Node::_to_str(Type type) {
     case Type::Set: return "Set";
     case Type::Atom: return "Atom";
     case Type::ObjectId: return "ObjectId";
-    case Type::LispOp: return "LispOp";
+    case Type::Op: return "Operator";
     case Type::Identifier: return "Identifier";
     case Type::Identifier_g: return "Global Identifier";
     case Type::Raw: return "RawPtr";

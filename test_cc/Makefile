@@ -12,7 +12,7 @@ CXXFLAGS = -g -std=c++23 -I/usr/local/include -DSPDLOG_FMT_EXTERNAL -pthread
 
 # THE FIX: Point to the compiled library directory in /usr/local
 LDFLAGS  = -L/usr/local/lib
-LDLIBS   = -lCatch2Main -lCatch2 -lfmt -lspdlog
+LDLIBS   = -lCatch2Main -lCatch2 -lfmt -lspdlog -lreadline
 
 MAKE=make
 node_o := $(wildcard ../*.o)
@@ -22,10 +22,10 @@ node_o := $(wildcard ../*.o)
 headers  := (wildcard: *.hh)
 
 #all:  test_scope_1.out # test_node_1.out 
-all:  test_obj_1.out # test_node_1.out test_node_2.out   
+all:  test_obj_1.out main.out # test_node_1.out test_node_2.out   
 
-#main.out : main.o $(node_o)
-#       $^ -o $@ -lreadline
+main.out : main.o $(node_o)
+	$(CC) $^ -o $@ -lreadline
 
 # Added $(LDFLAGS) before objects, ensuring libraries link cleanly at the end
 test_node_1.out : test_node_1.o $(node_o)
@@ -39,6 +39,10 @@ test_obj_1.out : test_obj_1.o $(node_o)
 
 test_scope_1.out : test_scope_1.o $(node_o)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+
+main.out : main.o $(node_o)
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+
 
 %.out : %.o $(node_o)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@

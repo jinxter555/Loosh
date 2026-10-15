@@ -23,11 +23,11 @@ Node *Interactive::proc_shell=nullptr;
 // histoery_file , prompt string
 
 Interactive::Interactive(const std::string& hf , const std::string&ps) 
-: LangPrompt(hf, ps) , jli(env, reader)
+: LangPrompt(hf, ps) , lang(env, reader)
 {
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
   //jli.set_interface(this);
-  jli.add_atoms(move(Atom::atoms_uptr));
+  lang.add_atoms(move(Atom::atoms_uptr));
 
   
 };
@@ -38,15 +38,15 @@ void Interactive::accept_prompt(const std::string &line) {
   cout << " in interactive:: accept prompt!\n";
   cout << "you have entered: " << line <<"\n";
 
-  auto token_list = jli.reader.tokenize( jli.reader.tokenize_preprocess( line)); // list<Token> 
-  auto parsed_tokens_status =  jli.reader.parse(token_list); // parse 
+  auto token_list = lang.reader.tokenize( lang.reader.tokenize_preprocess( line)); // list<Token> 
+  auto parsed_tokens_status =  lang.reader.parse(token_list); // parse 
   if(!parsed_tokens_status.first) {
     cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
     //return parsed_tokens_status;
   }
 
   auto tokens = Node::create(move(parsed_tokens_status.second->_get_list_ref())); // this extra step maybe uncessary in future
-  auto input_code_status = jli.parse_build(*tokens);
+  auto input_code_status = lang.parse_build(*tokens);
   if(input_code_status.first) {
     //lang. kernel eval?
   }
@@ -139,7 +139,7 @@ Node::OpStatus Interactive::build_file_str(const std::string &source) {
 
 void Interactive::print() {
   MYLOGGER(trace_function , "Interactive::print()" ,  __CLASS_NAME__ + "::" +  __func__, SLOG_FUNC_INFO);
-  lang.print();
+  //lang.print();
 }
 
 LispReader& Interactive::get_reader() {
@@ -155,7 +155,7 @@ vector<std::string> Interactive::get_ui_commands() {
 
 
   auto lvs = it_ptr->lang.get_local_vars(*proc_shell);
-  auto kws = it_ptr->lang.get_branch(LispExpr::lisp_path_keyword)->get_keys_vector();
+  auto kws = it_ptr->lang.m_ops->get_map_keys();
 
   lvs.insert(lvs.end(), kws.begin(), kws.end());
 
@@ -167,7 +167,7 @@ vector<string> Interactive::get_map_var_children(const string& map_var) {
   if(!m_ref_status.first) return {};
   vector<string> children;
 
-  auto keys = m_ref_status.second.get_keys_vector();
+  auto keys = m_ref_status.second.get_map_keys();
   for(auto k : keys) {
     children.push_back( map_var+ "." + k);
 

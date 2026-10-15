@@ -9,8 +9,8 @@ Node::ptr_U Atom::atoms_uptr = Node::create_meta();
 Node::ptr_R Atom::atoms = Atom::atoms_uptr.get();
 
 //------------------------------------------------------------------------
-UnsignedInteger Atom::str_to_atom(const string& input) {
-  UnsignedInteger hashed_value = hasher(input);
+Node::UnsignedInteger Atom::str_to_atom(const string& input) {
+  Node::UnsignedInteger hashed_value = hasher(input);
   //Atoms[hash_value] = input;
   //Atoms->add(hash_value,  Node::create(input));
   atoms->obj_atoms_add(hashed_value,  Node::create(input));
@@ -20,13 +20,13 @@ UnsignedInteger Atom::str_to_atom(const string& input) {
 
 
 
-string Atom::atom_to_str(UnsignedInteger v) {
-  auto &atom_ref = atoms->unwrap_value<IMap>();
+string Atom::atom_to_str(Node::UnsignedInteger v) {
+  auto &atom_ref = atoms->unwrap_value<Node::IMap>();
   return atom_ref[v]->_to_str();
 }
 
-string Atom::atom_to_str_imap(UnsignedInteger v) {
-  auto &atom_ref = atoms->unwrap_value<IMap>();
+string Atom::atom_to_str_imap(Node::UnsignedInteger v) {
+  auto &atom_ref = atoms->unwrap_value<Node::IMap>();
   //if (auto it = Atoms.find(v); it != Atoms.end()) 
   if (auto it = atom_ref.find(v); it != atom_ref.end()) 
     return atom_ref[v]->_to_str();

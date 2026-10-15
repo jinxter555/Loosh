@@ -486,7 +486,7 @@ Node& Node::get_node() {
 //------------------------------ _get
 bool Node::_get_bool() const { return get<bool>(m_value); }
 
-Lisp::Op Node::_get_lisp_op() const { return get<Lisp::Op>(m_value); }
+Node::Op Node::_get_lisp_op() const { return get<Op>(m_value); }
 
 Node::Integer Node::_get_integer() const { return get<Integer>(m_value); }
 Node::Atom  Node::_get_atom() const { return get<Atom>(m_value); }
@@ -603,12 +603,12 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 Node::OpStatus Node::add(const UnsignedInteger key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if (m_type != Type::IMap) {
-    return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-IMap node.")};
   }        
   IMap& imap = get<IMap>(m_value);
 
   if(!imap.try_emplace(key, move(child)).second) {
-    return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + Loosh::Atom::atom_to_str_imap( key) + "' already exists in map.")};
+    return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + Loosh::Atom::atom_to_str_imap( key) + "' already exists in IMap.")};
   }
   return {true, Node::create(true)};
 

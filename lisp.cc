@@ -10,6 +10,7 @@
 namespace Loosh 
 {
 
+
 Lisp::Lisp(Environment&env, LispReader&r)
   : Lang(env.universal.get_root()), reader(r) {
 
@@ -19,6 +20,7 @@ Lisp::Lisp(Environment&env, LispReader&r)
 
   m_lang->obj_data_add(LOOSH_LISP, move(lisp));
   lisp->add(LOOSH_LISP_OPS, move(ops));
+  set_op_str() ;
 }
 
 };

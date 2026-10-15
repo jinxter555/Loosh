@@ -301,7 +301,7 @@ Node::SimpleObject Node::create_simple_vec() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  MetaObject cc_vec(LOOSH_D_SIMPLE_OBJECT_COUNT);
+  MetaObject cc_vec(LOOSH_SIMPLE_OBJECT_COUNT);
 
   auto info_ptr_u = Node::create(Node::Type::Map);
   cc_vec[MetaObjectIndex::Info] = Node::create(info_ptr_u.get()); // create pointer to object information

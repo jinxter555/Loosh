@@ -22,7 +22,7 @@ class Interactive : public LangPrompt {
 private:
   Program env;
 
-  Lisp jli; // 
+  Lisp lang; // 
   LispReader reader;
   static  Node *proc_shell;
 public:

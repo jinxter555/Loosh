@@ -14,7 +14,6 @@
 
 
 #include "defs.hh"
-#include "lisp.hh"
 
 
 using namespace std;
@@ -33,6 +32,21 @@ friend class Frame;
 friend class ostream;
 
 public:
+  enum class Op  : int
+  { root, nil, kernel, system, process, branch, namespace_, interpreter
+  , class_, private_, new_, delete_, clone, use
+  , error, noop
+  , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
+  , atom, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map, cc_imap
+  , typeof_, size, is_atom, is_integer, is_float, is_string, is_list, is_deque, is_vector, is_cc_list, is_hash, is_ihash
+  , var, assign
+  , car, cdr, map, index, head, tail, body
+  , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_
+  , read, readline, load, import, require
+  , call, send, ret, call_extern, funcall, curry, pipe, spawn, spin, sleep
+  , cond, print, printr, loop, eval, while_, return_, exit_, continue_, break_, repeat, for_, do_, if_, iif, case_, match, when
+  , module_, def, defun, defmacro, alias, lambda, faz
+  };
 
 //----------------------------------
   struct Error {  enum class Type {
@@ -74,7 +88,7 @@ public:
 // MapObjectId: 
   enum class Type { 
     Null, Bool, Error, Size, Integer, UnsignedInteger, Float, String,
-    Identifier, Identifier_g,  Tuple, List, Map, IMap, Set, Vector, DeQue, LispOp, 
+    Identifier, Identifier_g,  Tuple, List, Map, IMap, Set, Vector, DeQue, Op, 
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
@@ -129,7 +143,7 @@ public:
 
 
   //using Value = variant<monostate, bool, Error, Integer, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, ptr_R, ptr_U, Fun, Lock>;
-  using Value = variant<monostate, bool, Error, Integer, UnsignedInteger, Float, string, Lisp::Op, List, Vector, DeQue, Map, IMap, Set, ptr_R, ptr_U, Fun, AtomicInteger, Lock>;
+  using Value = variant<monostate, bool, Error, Integer, UnsignedInteger, Float, string, Op, List, Vector, DeQue, Map, IMap, Set, ptr_R, ptr_U, Fun, AtomicInteger, Lock>;
 
 //----------------------------------
   
@@ -278,7 +292,7 @@ template <typename T> T& get_value() {
   Integer _get_integer() const;
   Atom _get_atom() const;
   Float _get_float() const;
-  Lisp::Op _get_lisp_op() const;
+  Op _get_lisp_op() const;
   bool _get_bool() const;
   string _get_str() const;
   Map& _get_map_ref() ;
@@ -290,6 +304,11 @@ template <typename T> T& get_value() {
   ptr_R _get_ptr_r() ;
   ptr_U _get_ptr_u() ;
   //ptr_R _get_meta_ptr_r() ;
+
+  vector<string> get_map_keys();
+  vector<string> get_imap_keys();
+  vector<Integer> get_imap_ikeys();
+
 
   //
   OpStatus add(unique_ptr<Node> child);
@@ -310,6 +329,9 @@ template <typename T> T& get_value() {
   OpStatus is_in_range(const Integer index); // if integer is in range of a sequence, vector, list or deque
   OpStatus has_key(const string&key);
   OpStatus has_atom(const Integer key);
+
+    bool empty_container() const;
+
 
   bool _is_in_range(const Integer index);
   bool _has_key(const string&key);

@@ -59,12 +59,13 @@
 #define LOOSH_PARAMS "params"
 #define LOOSH_SCOPES "scopes"
 #define LOOSH_DESC "description"
+
 #define LOOSH_D_OBJ_INFO "__object_info__"
 #define LOOSH_D_OBJ_IMAP "__object_imap__"
 #define LOOSH_D_OBJ_DATA "__object_data__"
 #define LOOSH_D_OBJ_VECTOR  "__object_vector__"
-#define LOOSH_CC_OBJ_ID "__cc_obj_id__"
-#define LOOSH_CC_OBJ_TYPE "__cc_obj_type__"
+#define LOOSH_D_CC_OBJ_ID "__cc_obj_id__"
+#define LOOSH_D_CC_OBJ_TYPE "__cc_obj_type__"
 
 #define LOOSH_TYPE "type"
 #define LOOSH_BASE_FRAME "base_frame"
@@ -74,6 +75,6 @@
 #define LOOSH_FINALIZE "finalize"
 
 #define LOOSH_CLOSURABLE_FILE "closurable.txt"
-#define LOOSH_D_SIMPLE_OBJECT_COUNT  2
+#define LOOSH_SIMPLE_OBJECT_COUNT  2
 
 #define LOOSH_T_LONG long long

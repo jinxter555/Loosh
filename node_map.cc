@@ -188,6 +188,30 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 }
 
 
+vector<string> Node::get_map_keys() {
+  MYLOGGER(trace_function, "Node::get_keys_vector()", __func__, SLOG_FUNC_INFO);
+
+  switch(m_type) {
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(m_value);
+    return sptr->get_map_keys(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(m_value);
+    return sptr->get_map_keys(); }
+  case Type::Map:  {
+    auto &m = get<Map>(m_value);
+    vector<string> keys;
+    for( auto const& [key, value] : m) {
+      keys.push_back(key);
+    }
+    return keys; }
+  default: {}
+  }
+
+  return {};
+
+}
+
 
 }
 
