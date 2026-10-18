@@ -226,12 +226,12 @@ public:
   //
   Node& get_node(); // returns node,  if it's raw unique ptr unwrap
 
-  OpStatusRef operator[](Integer index) ;
+  OpStatusRef operator[](UnsignedInteger index) ; // for only  vector
   OpStatusRef operator[](const string& key) ;
   // get leaf should be
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
-  OpStatusRef get_node(UnsignedInteger index);
+  OpStatusRef get_node(UnsignedInteger index); // for only imap aka atom
 
 
   OpStatusRef get_subtree(const std::vector<std::string>& path);

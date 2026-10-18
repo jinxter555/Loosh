@@ -506,7 +506,7 @@ string Node::_get_str() const { return _to_str(); }
 
 //------------------------------
 
-Node::OpStatusRef Node::operator[](Integer index) {
+Node::OpStatusRef Node::operator[](UnsignedInteger index) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   switch(m_type) {
   case Type::MetaObject: {

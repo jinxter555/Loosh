@@ -10,7 +10,7 @@ namespace Loosh
 {
 
 //---------------------------------------------------------------------- 
-Node::OpStatusRef Node::get_node(Integer index) {
+Node::OpStatusRef Node::get_node(UnsignedInteger index) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
   MYLOGGER_MSG(trace_function, "index: " + to_string(index), SLOG_NODE_OP+30)
 
