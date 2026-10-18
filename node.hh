@@ -217,6 +217,7 @@ public:
 
   // map
   OpStatus set(const string&key, unique_ptr<Node> child);
+  OpStatus set(const UnsignedInteger key, unique_ptr<Node> child);
   OpStatus set(const string&key, Value v);
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
   static Node* extend_map_by_key(Map& map, const string&key, bool create=true); // for map
@@ -230,7 +231,7 @@ public:
   // get leaf should be
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
-  OpStatusRef get_node(Integer index);
+  OpStatusRef get_node(UnsignedInteger index);
 
 
   OpStatusRef get_subtree(const std::vector<std::string>& path);
@@ -388,9 +389,9 @@ template <typename T> T& get_value() {
   OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
   OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
 
-  OpStatus obj_atoms_add(const UnsignedInteger key, unique_ptr<Node> child);
-  OpStatus obj_atoms_set(const UnsignedInteger key, unique_ptr<Node> child);
-  OpStatus obj_atoms_get(const UnsignedInteger key);
+  OpStatus obj_atom_add(const UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus obj_atom_set(const UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus obj_atom_get(const UnsignedInteger key);
 
   OpStatus obj_array_push_back(ptr_U);
   OpStatusRef obj_array_get(Integer);

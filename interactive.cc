@@ -23,7 +23,7 @@ Node *Interactive::proc_shell=nullptr;
 // histoery_file , prompt string
 
 Interactive::Interactive(const std::string& hf , const std::string&ps) 
-: LangPrompt(hf, ps) , lang(env, reader)
+: LangPrompt(hf, ps) , lang(universal_tree, reader)
 {
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
   //jli.set_interface(this);

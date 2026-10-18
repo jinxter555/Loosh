@@ -6,7 +6,7 @@
 
 #include "prompt.hh"
 #include "commandline.hh"
-#include "environment.hh"
+#include "tree.hh"
 #include "lisp.hh"
 
 #include "lisp_reader.hh"
@@ -20,7 +20,7 @@ namespace Loosh
 
 class Interactive : public LangPrompt {
 private:
-  Program env;
+  Tree universal_tree;
 
   Lisp lang; // 
   LispReader reader;

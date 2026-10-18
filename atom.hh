@@ -12,7 +12,7 @@ public:
       read_binary, write_binary, is_open, got_text, echo, initialize, finalize,
       match, extract, replace, full, part,
       icase, nosubs, optimize, collate, ecmas, basic, extended, awk, grep, egrep,
-      scope, frame, process
+      scope, frame, process, lang, atom
   ;
 
 static Node::ptr_U atoms_uptr;

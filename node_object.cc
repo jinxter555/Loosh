@@ -6,6 +6,7 @@
 #include "scope_logger.hh"
 
 #include "node_tmpl_cc.hh"
+#include "atom.hh"
 
 
 using namespace std;
@@ -262,10 +263,61 @@ Node::OpStatus Node::get_parent() {
 
 //------------------------------------------------------------------------ 
 
-//------------------------------ 
-Node::OpStatus Node::obj_atoms_add(const UnsignedInteger key, unique_ptr<Node> child) {
-  return {false, create(false)};
+//------------------------------  Atom
+Node::OpStatus Node::obj_atom_add(const UnsignedInteger key, unique_ptr<Node> value) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }}
+
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_atom  = obj[MetaObjectIndex::IntegerMap]->get_node();
+
+  if(!obj_atom.add(key, move(value)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + Atom::atom_to_str_imap(key) + "' already exists in map.")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+  return {true, Node::create(true)};
 }
+
+Node::OpStatus Node::obj_atom_set(const UnsignedInteger key, unique_ptr<Node> value) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  switch (m_type) {
+  case Type::MetaObject:
+  case Type::SimpleObject:
+    break;
+  default:{
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }}
+
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_atom  = obj[MetaObjectIndex::IntegerMap]->get_node();
+
+  if(!obj_atom.set(key, move(value)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + Atom::atom_to_str_imap(key) + "' already exists in map.")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+  return {true, Node::create(true)};
+}
+
 //------------------------------ 
 Node::MetaObject Node::create_meta_vec() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);

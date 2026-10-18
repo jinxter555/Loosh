@@ -41,7 +41,7 @@ public:
 
 //  Lisp(Environment& env);
 
-  Lisp(Environment& env, LispReader& r);
+  Lisp(Tree& t, LispReader& r);
   static string _to_str(Lisp::Op op);
   void set_op_str() ;
   Op str_to_op(const string &input) ; // convert lisp string op keyword string 

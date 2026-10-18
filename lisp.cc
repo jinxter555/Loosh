@@ -11,8 +11,8 @@ namespace Loosh
 {
 
 
-Lisp::Lisp(Environment&env, LispReader&r)
-  : Lang(env.universal.get_root()), reader(r) {
+Lisp::Lisp(Tree&t, LispReader&r)
+  : Lang(t.get_root()), reader(r) {
 
   auto lisp = m_root->create_meta();
   auto ops = lisp->create(Node::Type::Map);

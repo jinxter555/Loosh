@@ -432,6 +432,15 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   return {true, create(true)};
 }
 
+Node::OpStatus Node::set(const UnsignedInteger key, unique_ptr<Node> child) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  if (m_type != Type::IMap) {
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
+  }        
+  IMap& map= get<IMap>(m_value);
+  map[key] = move(child);
+  return {true, create(true)};
+}
 
 //------------------------------------------------------------------------
 
