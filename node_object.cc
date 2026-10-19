@@ -178,8 +178,9 @@ Node::OpStatusRef Node::obj_data_get(const string&key) {
   }}
 
   auto &obj = get<VecObject>(m_value);
-  auto &obj_data = obj[MetaObjectIndex::StringMap]->get_node();
-  return obj_data.get_node(key);
+  //auto &obj_data = obj[MetaObjectIndex::StringMap]->get_node();
+  auto &obj_data = obj[MetaObjectIndex::StringMap];
+  return obj_data->get_node(key);
 }
 
 //------------------------------------------------------------------------ 
@@ -284,7 +285,8 @@ Node::OpStatus Node::obj_atom_add(const UnsignedInteger key, unique_ptr<Node> va
   auto &obj_atom  = obj[MetaObjectIndex::IntegerMap]->get_node();
 
   if(!obj_atom.add(key, move(value)).second) {
-    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + Atom::atom_to_str_imap(key) + "' already exists in map.")};
+    auto key_vstr = Loosh::Atom::atom_to_str_imap(key);
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key_vstr + "' already exists in map.")};
   }
 
   //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
@@ -311,11 +313,30 @@ Node::OpStatus Node::obj_atom_set(const UnsignedInteger key, unique_ptr<Node> va
   auto &obj_atom  = obj[MetaObjectIndex::IntegerMap]->get_node();
 
   if(!obj_atom.set(key, move(value)).second) {
-    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + Atom::atom_to_str_imap(key) + "' already exists in map.")};
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + Loosh::Atom::atom_to_str_imap(key) + "' already exists in map.")};
   }
 
   //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
   return {true, Node::create(true)};
+}
+Node::OpStatusRef Node::obj_atom_get(const UnsignedInteger key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if (m_type != Type::MetaObject) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return{false, 
+      Error::ref(Error::Type::InvalidOperation, 
+        "Unsupported types for addition! " + _to_str(m_type) + " : " + _to_str(m_type))
+    };
+  }
+
+  auto &obj = get<VecObject>(m_value);
+  //auto &obj_atom = obj[MetaObjectIndex::IntegerMap]->get_node();
+  auto &obj_atom = obj[MetaObjectIndex::IntegerMap];
+  return obj_atom->get_node(key);
 }
 
 //------------------------------ 

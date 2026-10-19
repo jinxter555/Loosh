@@ -518,7 +518,7 @@ Node::OpStatusRef Node::operator[](UnsignedInteger index) {
     return {true, *cc_vec[index]};}
   case Type::Vector: {
     Vector& cc_vec = get<Vector>(m_value);
-    const Integer cc_vec_size =  static_cast<Integer>(cc_vec.size());
+    UnsignedInteger cc_vec_size =  static_cast<Integer>(cc_vec.size());
     if(index < 0 || index >= cc_vec_size){
       string msg = "Index " + to_string(index) + " is out of bound for list size " + to_string(cc_vec_size) + ".";
       return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
@@ -543,6 +543,7 @@ Node::OpStatusRef Node::operator[](UnsignedInteger index) {
   )};
 
 }
+
 
 //
 // doesn't get nested pointer node reference

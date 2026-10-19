@@ -228,6 +228,7 @@ public:
 
   OpStatusRef operator[](UnsignedInteger index) ; // for only  vector
   OpStatusRef operator[](const string& key) ;
+  //OpStatusRef get_imap_element(UnsignedInteger index); // for only imap aka atom
   // get leaf should be
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
@@ -391,7 +392,7 @@ template <typename T> T& get_value() {
 
   OpStatus obj_atom_add(const UnsignedInteger key, unique_ptr<Node> child);
   OpStatus obj_atom_set(const UnsignedInteger key, unique_ptr<Node> child);
-  OpStatus obj_atom_get(const UnsignedInteger key);
+  OpStatusRef obj_atom_get(const UnsignedInteger key);
 
   OpStatus obj_array_push_back(ptr_U);
   OpStatusRef obj_array_get(Integer);

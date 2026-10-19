@@ -13,7 +13,7 @@ Node::UnsignedInteger Atom::str_to_atom(const string& input) {
   Node::UnsignedInteger hashed_value = hasher(input);
   //Atoms[hash_value] = input;
   //Atoms->add(hash_value,  Node::create(input));
-  atoms->obj_atoms_add(hashed_value,  Node::create(input));
+  atoms->obj_atom_add(hashed_value,  Node::create(input));
   //Atoms[hash_value] = Node::create(input);
   return hashed_value;
 }

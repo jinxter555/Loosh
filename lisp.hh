@@ -16,6 +16,7 @@ namespace Loosh
 
 class Environment;
 class LispReader;
+class Tree;
 
 
  static const vector<string> cc_path_module; 

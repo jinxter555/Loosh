@@ -1,4 +1,5 @@
 #include "lang.hh"
+#include "atom.hh"
 #include "node.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -27,7 +28,7 @@ Lang::Lang(Node *r) : m_root(r) {
 
   auto lang = m_root->create_meta();
   m_lang = lang.get();
-  m_root->obj_data_add(LOOSH_LANG, move(lang));
+  m_root->obj_atom_add(Atom::lang, move(lang));
 }
 
 void Lang::add_atoms(unique_ptr<Node>atoms) {
@@ -49,7 +50,7 @@ void Lang::add_atoms(unique_ptr<Node>atoms) {
 //------------------------------------------------------------------------
 UnsignedInteger Lang::str_to_atom(const string& str_value) {
   UnsignedInteger hashed_value = hasher(str_value);
-  m_atoms->obj_atoms_add(hashed_value,  Node::create(str_value));
+  m_atoms->obj_atom_add(hashed_value,  Node::create(str_value));
   return hashed_value;
 }
 

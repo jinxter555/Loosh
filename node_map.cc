@@ -147,11 +147,11 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
   Node* current = this;
   for(const auto&key : path) {
-    Integer ikey;
+    UnsignedInteger ikey;
 
     try {
       // for vector of integer and Imap nodes
-      ikey = stoll(key);
+      ikey = stoull(key);
 
       auto current_node_ref = current->get_node(ikey);
       if(!current_node_ref.first) {
