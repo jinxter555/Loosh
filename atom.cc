@@ -79,5 +79,14 @@ const Node::UnsignedInteger Atom::scope=str_to_atom("scope");
 const Node::UnsignedInteger Atom::frame=str_to_atom("frame");
 const Node::UnsignedInteger Atom::process=str_to_atom("process");
 const Node::UnsignedInteger Atom::lang=str_to_atom("lang");
+const Node::UnsignedInteger Atom::lisp=str_to_atom("lisp");
 const Node::UnsignedInteger Atom::atom=str_to_atom("atom");
+
+
+const Node::UnsignedInteger Atom::class_=str_to_atom("class");
+const Node::UnsignedInteger Atom::function_=str_to_atom("function");
+const Node::UnsignedInteger Atom::ops=str_to_atom("ops");
+
+
+
 };

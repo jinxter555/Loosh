@@ -4,6 +4,7 @@
 #include "lisp_reader.hh"
 #include "tree.hh"
 #include <iostream>
+#include "atom.hh"
 
 
 
@@ -15,11 +16,14 @@ Lisp::Lisp(Tree*t, LispReader&r)
   : Lang(t->get_root()), reader(r) {
 
   auto lisp = m_root->create_meta();
+  m_lisp = lisp.get();
+
   auto ops = lisp->create(Node::Type::Map);
   m_ops = ops.get();
 
-  m_lang->obj_data_add(LOOSH_LISP, move(lisp));
-  lisp->add(LOOSH_LISP_OPS, move(ops));
+  m_lisp->obj_atom_add(Atom::ops, move(ops));
+
+  m_lang->obj_atom_add(Atom::lisp, move(lisp));
   set_op_str() ;
 }
 

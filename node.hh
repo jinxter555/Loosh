@@ -233,6 +233,7 @@ public:
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(UnsignedInteger index); // for only imap aka atom
+  OpStatusRef get_node(const Node& key); // for only imap aka atom
 
 
   OpStatusRef get_subtree(const std::vector<std::string>& path);

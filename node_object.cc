@@ -178,7 +178,6 @@ Node::OpStatusRef Node::obj_data_get(const string&key) {
   }}
 
   auto &obj = get<VecObject>(m_value);
-  //auto &obj_data = obj[MetaObjectIndex::StringMap]->get_node();
   auto &obj_data = obj[MetaObjectIndex::StringMap];
   return obj_data->get_node(key);
 }
@@ -334,7 +333,6 @@ Node::OpStatusRef Node::obj_atom_get(const UnsignedInteger key) {
   }
 
   auto &obj = get<VecObject>(m_value);
-  //auto &obj_atom = obj[MetaObjectIndex::IntegerMap]->get_node();
   auto &obj_atom = obj[MetaObjectIndex::IntegerMap];
   return obj_atom->get_node(key);
 }

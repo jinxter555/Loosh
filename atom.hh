@@ -12,8 +12,14 @@ public:
       read_binary, write_binary, is_open, got_text, echo, initialize, finalize,
       match, extract, replace, full, part,
       icase, nosubs, optimize, collate, ecmas, basic, extended, awk, grep, egrep,
-      scope, frame, process, lang, atom
+      scope, frame, process, lang, lisp, atom
   ;
+  static const Node::UnsignedInteger   class_, function_, ops;
+  
+
+
+
+
 
 static Node::ptr_U atoms_uptr;
 static Node::ptr_R atoms;
