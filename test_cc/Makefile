@@ -22,7 +22,8 @@ node_o := $(wildcard ../*.o)
 headers  := (wildcard: *.hh)
 
 #all:  test_scope_1.out # test_node_1.out 
-all:  test_obj_1.out main.out # test_node_1.out test_node_2.out   
+# all:  test_obj_1.out main.out # test_node_1.out test_node_2.out   
+all:  main.out # test_node_1.out test_node_2.out   
 
 main.out : main.o $(node_o)
 	$(CC) $^ -o $@ -lreadline

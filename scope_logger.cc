@@ -2,7 +2,8 @@
 #include <vector>
 #include "scope_logger.hh"
 //fstream log_output;
-fstream trace_function;
+//fstream trace_function;
+extern fstream trace_function;
 
 
 typedef struct {

@@ -4,11 +4,12 @@
 
 
 
+
 using namespace  std;
 namespace Loosh 
 {
 
-Scope::Scope() {}
+Scope::Scope() : Environment() {}
 
 unique_ptr<Scope> Scope::create(Node& frame)  {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)

@@ -1,5 +1,4 @@
 #include "node.hh"
-#include "tree.hh"
 
 using namespace  std;
 namespace Loosh 
@@ -8,7 +7,6 @@ namespace Loosh
 class Environment {
   friend class Lisp;
 private:
-  Tree universal;
 public:
   Environment();
 //  Environment(Node::Type t) ;

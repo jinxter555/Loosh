@@ -8,5 +8,6 @@
 using namespace  std;
 namespace Loosh 
 {
+Environment::Environment() {}
 
 };

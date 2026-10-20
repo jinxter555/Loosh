@@ -3,17 +3,18 @@
 #include "interactive.hh"
 #include "my_helpers.hh"
 
+#include "tree.hh"
 #include "atom.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
 
+extern Loosh::Interactive *it_ptr;
 using namespace std;
 namespace Loosh 
 {
 
-extern Interactive *it_ptr;
 
 std::vector<std::string> Interactive::line_buff_keys={}; // after space ' ' completion
 std::vector<std::string> Interactive::map_children_keys={}; // only for map or object completion
@@ -22,12 +23,12 @@ Node *Interactive::proc_shell=nullptr;
 // Interactive svlm_it(".svlm_history", "svlm> ");
 // histoery_file , prompt string
 
-Interactive::Interactive(const std::string& hf , const std::string&ps) 
-: LangPrompt(hf, ps) , lang(universal_tree, reader)
+Interactive::Interactive(Tree* tree, const std::string& hf , const std::string&ps) 
+: LangPrompt(hf, ps) , lisp_lang(tree, reader)
 {
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
   //jli.set_interface(this);
-  lang.add_atoms(move(Atom::atoms_uptr));
+  lisp_lang.add_atoms(move(Atom::atoms_uptr));
 
   
 };
@@ -38,19 +39,20 @@ void Interactive::accept_prompt(const std::string &line) {
   cout << " in interactive:: accept prompt!\n";
   cout << "you have entered: " << line <<"\n";
 
-  auto token_list = lang.reader.tokenize( lang.reader.tokenize_preprocess( line)); // list<Token> 
-  auto parsed_tokens_status =  lang.reader.parse(token_list); // parse 
+  auto token_list = lisp_lang.reader.tokenize( lisp_lang.reader.tokenize_preprocess( line)); // list<Token> 
+  auto parsed_tokens_status =  lisp_lang.reader.parse(token_list); // parse 
   if(!parsed_tokens_status.first) {
     cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
     //return parsed_tokens_status;
   }
 
   auto tokens = Node::create(move(parsed_tokens_status.second->_get_list_ref())); // this extra step maybe uncessary in future
-  auto input_code_status = lang.parse_build(*tokens);
+  /*
+  auto input_code_status = lisp_lang.parse_build(*tokens);
   if(input_code_status.first) {
-    //lang. kernel eval?
+    //lisp_lang. kernel eval?
   }
-
+*/
 //  parse_prompt(line);
 }
 
@@ -115,31 +117,31 @@ void Interactive::run_program(const std::string &l) {
   MYLOGGER(trace_function , "Interactive::run_program()" , __func__, SLOG_FUNC_INFO);
   //MYLOGGER(trace_function , __PRETTY_FUNCTION__ , __func__, SLOG_FUNC_INFO);
   //std::cout << "run program\n";
-  //svlm_lang.run_evaluate();
-  lang.run_program(0, nullptr);
+  //svlm_lisp_lang.run_evaluate();
+  lisp_lang.run_program(0, nullptr);
 }
 void Interactive::run_program(int argc, char *argv[]){
   MYLOGGER(trace_function , "Interactive::run_program(int argc, char *argv[])" , __func__, SLOG_FUNC_INFO);
-  lang.run_program(argc, argv);
+  lisp_lang.run_program(argc, argv);
 }
 
 
 
 Node::OpStatus Interactive::build_program() {
   MYLOGGER(trace_function , "Interactive::build_program()" , __func__, SLOG_FUNC_INFO);
-  return lang.build_program();
+  return lisp_lang.build_program();
 }
 
 Node::OpStatus Interactive::build_file_str(const std::string &source) {
   MYLOGGER(trace_function , "Interactive::build_program()" , __func__, SLOG_FUNC_INFO);
-  auto op_status = lang.build_file_str(source);
+  auto op_status = lisp_lang.build_file_str(source);
   return op_status;
 }
 
 
 void Interactive::print() {
   MYLOGGER(trace_function , "Interactive::print()" ,  __CLASS_NAME__ + "::" +  __func__, SLOG_FUNC_INFO);
-  //lang.print();
+  //lisp_lang.print();
 }
 
 LispReader& Interactive::get_reader() {
@@ -154,8 +156,8 @@ vector<std::string> Interactive::get_ui_commands() {
   if(!map_children_keys.empty()) return map_children_keys;
 
 
-  auto lvs = it_ptr->lang.get_local_vars(*proc_shell);
-  auto kws = it_ptr->lang.m_ops->get_map_keys();
+  auto lvs = it_ptr->lisp_lang.get_local_vars(*proc_shell);
+  auto kws = it_ptr->lisp_lang.m_ops->get_map_keys();
 
   lvs.insert(lvs.end(), kws.begin(), kws.end());
 
@@ -163,7 +165,7 @@ vector<std::string> Interactive::get_ui_commands() {
 }
 
 vector<string> Interactive::get_map_var_children(const string& map_var) {
-  auto m_ref_status = it_ptr->lang.symbol_lookup(*proc_shell, map_var);
+  auto m_ref_status = it_ptr->lisp_lang.symbol_lookup(*proc_shell, map_var);
   if(!m_ref_status.first) return {};
   vector<string> children;
 

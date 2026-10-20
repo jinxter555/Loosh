@@ -20,13 +20,13 @@ namespace Loosh
 
 class Interactive : public LangPrompt {
 private:
-  Tree universal_tree;
+  Tree *universal_tree;
 
-  Lisp lang; // 
+  Lisp lisp_lang; // 
   LispReader reader;
   static  Node *proc_shell;
 public:
-  Interactive(const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
+  Interactive(Tree *t, const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
   void accept_prompt(const std::string&l) override; // readyline prompt
   void parse(const std::string &line) override; // parse readline line
   void parse_prompt(const std::string &line); // parse readline line
