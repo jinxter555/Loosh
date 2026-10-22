@@ -418,6 +418,10 @@ Node::UnsignedInteger Node::obj_array_size() const {
     throw std::bad_typeid();
   }
 
+  auto &obj = get<VecObject>(m_value);
+  auto &vec_array = obj[MetaObjectIndex::VectorArray]->get_node();
+  return vec_array._size();
+
 }
 
 

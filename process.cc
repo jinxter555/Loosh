@@ -17,7 +17,7 @@ ProcessBranch::ProcessBranch(Node*r) :  m_root(r){
     throw std::bad_typeid();
   }
 
-  auto pb = m_root->create_meta();
+  auto pb = Node::create_meta(m_root);
   m_process= pb.get();
   m_root->obj_atom_add(Atom::process, move(pb));
 
@@ -29,6 +29,14 @@ Node::ptr_U ProcessBranch::create_process(Node&parent_process) {
 
   m_process->push_back(Node::create (move(cc_vec)));
 
+}
+Node::ptr_U ProcessBranch::create_kernel() {
+  if(m_process->obj_array_size()> 0) {
+    auto msg =  "kernel process space has already been created"   ;
+    spdlog::error(msg);
+    throw std::bad_typeid();
+  }
+  auto proc = Node::create_meta(m_process);
 }
 
 Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {

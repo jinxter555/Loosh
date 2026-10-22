@@ -27,7 +27,7 @@ Lang::Lang(Node *r) : m_root(r), process_branch(r) {
     throw std::bad_typeid();
   }
 
-  auto lang = m_root->create_meta();
+  auto lang = Node::create_meta(m_root);
   m_lang = lang.get();
   m_root->obj_atom_add(Atom::lang, move(lang));
 }
