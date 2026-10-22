@@ -688,7 +688,7 @@ bool Node::_has_key(const string&key) {
 
 //------------------------------ 
 
-bool Node::_is_in_range(const Integer index) {
+bool Node::_is_in_range(UnsignedInteger index) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
@@ -704,7 +704,7 @@ bool Node::_is_in_range(const Integer index) {
   return false;
 }
 
-bool Node::_has_atom(const Integer key) {
+bool Node::_has_atom(Atom key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
@@ -752,7 +752,7 @@ Node::OpStatus Node::size() const  {
 }
 
 //Node::OpStatus Node::size() const {}
-Node::Integer Node::_size() const  {
+Node::UnsignedInteger Node::_size() const  {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 

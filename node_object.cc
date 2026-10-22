@@ -387,6 +387,7 @@ Node::SimpleObject Node::create_simple_vec() {
   return cc_vec;
 }
 
+//------------------------------------------------------------------------ obj array  push pop
 Node::OpStatus Node::obj_array_push_back(ptr_U v) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -404,6 +405,18 @@ Node::OpStatus Node::obj_array_push_back(ptr_U v) {
 
   return {false, create(false)};
 
+
+}
+Node::UnsignedInteger Node::obj_array_size() const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::MetaObject) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    throw std::bad_typeid();
+  }
 
 }
 

@@ -19,12 +19,19 @@ using namespace std;
 namespace Loosh 
 {
 
-class Process : public Environment {
-  Node* m_root;
-public:
-  class Index { public: enum { Pid, Frames, PPid}; };
 
-  static unique_ptr<Node> create() ;
+// process under root->process->[0..max_pid_count]
+class ProcessBranch: public Environment {
+  Node* m_root;
+  Node* m_process;
+public:
+  class Index { public: enum { Pid, PPid, Frame, count}; };
+
+  ProcessBranch(Node*r);
+
+  unique_ptr<Node> create_kernel() ;
+  unique_ptr<Node> create_process(Node&parent_process) ;
+  //static unique_ptr<Node> create_process(Node&process_branch) ;
   static Node::OpStatusRef frame_current(Node&process)  ;
 
 

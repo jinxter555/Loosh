@@ -13,8 +13,11 @@
 
 #include "defs.hh"
 #include "node.hh"
+#include "process.hh"
+
 
 using namespace std;
+class ProcessBranch;
 
 namespace Loosh 
 {
@@ -32,6 +35,7 @@ protected:
   Node* m_root;
   Node* m_atoms;
   Node* m_lang;
+  ProcessBranch process_branch;
   //static unordered_map<UnsignedInteger , string> Atoms;
   //static IMap Atoms;
   //static  unique_ptr<Node> Atoms;

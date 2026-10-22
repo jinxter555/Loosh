@@ -82,6 +82,9 @@ void Commandline::printout() {
 }
 
 void Commandline::run(Interactive* interactive) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  cout << "command line run\n";
+  interactive->run_program(argc, argv);
 
   { // load closurable for macros
     auto& lisp_reader = interactive->get_reader();
@@ -94,7 +97,7 @@ void Commandline::run(Interactive* interactive) {
 
 
 
-  interactive->build_program(); // LispExpr post process
+  //interactive->build_program(); // LispExpr post process
 
   if(opt_run) {
     //interactive->run_program();
@@ -106,6 +109,7 @@ void Commandline::run(Interactive* interactive) {
     interactive->ready();
   }
   if(opt_print) interactive->print();
+  cout << "command line run2\n";
 }
 
 // build with mulitple source lisp files

@@ -1,3 +1,4 @@
+#include "atom.hh"
 #include "process.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -9,12 +10,31 @@ namespace Loosh
 {
 
 
+ProcessBranch::ProcessBranch(Node*r) :  m_root(r){
+  if(r->m_type != Node::Type::MetaObject) {
+    auto msg =  "Lang::Lang(Node* root) not a MetaObject "   ;
+    spdlog::error(msg);
+    throw std::bad_typeid();
+  }
+
+  auto pb = m_root->create_meta();
+  m_process= pb.get();
+  m_root->obj_atom_add(Atom::process, move(pb));
 
 
-Node::OpStatusRef Process::frame_current(Node&process)  {
+}
+
+Node::ptr_U ProcessBranch::create_process(Node&parent_process) {
+  Node::Vector cc_vec(Index::count); 
+
+  m_process->push_back(Node::create (move(cc_vec)));
+
+}
+
+Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
   MYLOGGER(trace_function, "LispExpr::frame_current(Node& process)", __func__, SLOG_FUNC_INFO);
 
-  auto frames_ref_status = process[Index::Frames];
+  auto frames_ref_status = process[Index::Frame];
   //cout << "frame_current(): frames_ref_status " << frames_ref_status << "\n";
 
   if(!frames_ref_status.first) {

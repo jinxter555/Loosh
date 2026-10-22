@@ -25,6 +25,7 @@ class Node {
 friend class Tree;
 friend class Lang;
 friend class Lisp;
+friend class ProcessBranch;
 friend class LispReader;
 friend class Environment;
 friend class Scope;
@@ -328,19 +329,19 @@ template <typename T> T& get_value() {
   OpStatusRef back();
 
 
-  Integer _size() const ;
+  UnsignedInteger _size() const ;
   OpStatus size() const ;
   //
   OpStatus is_in_range(const Integer index); // if integer is in range of a sequence, vector, list or deque
   OpStatus has_key(const string&key);
-  OpStatus has_atom(const Integer key);
+  OpStatus has_atom(const Atom key);
 
     bool empty_container() const;
 
 
-  bool _is_in_range(const Integer index);
+  bool _is_in_range(UnsignedInteger index);
   bool _has_key(const string&key);
-  bool _has_atom(const Integer key);
+  bool _has_atom(const UnsignedInteger key);
 
 
   //template <typename T>  bool _has_key(const T& key) const;
@@ -397,6 +398,7 @@ template <typename T> T& get_value() {
 
   OpStatus obj_array_push_back(ptr_U);
   OpStatusRef obj_array_get(Integer);
+  UnsignedInteger obj_array_size() const;
 
 
   OpStatusRef obj_data_get(const string&key);

@@ -1,6 +1,7 @@
 #include "lang.hh"
 #include "atom.hh"
 #include "node.hh"
+#include "process.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -17,7 +18,7 @@ namespace Loosh
 std::hash<string> Lang::hasher;
 
 
-Lang::Lang(Node *r) : m_root(r) {
+Lang::Lang(Node *r) : m_root(r), process_branch(r) {
   if(r->m_type != Node::Type::MetaObject) {
     auto msg =  "Lang::Lang(Node* root) not a MetaObject "   ;
     //spdlog::error(clean_function_name() + ": " +  msg);
