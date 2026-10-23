@@ -20,8 +20,13 @@ namespace Loosh
 {
 
 
+class Process : public Environment {
+
+
+};
+
 // process under root->process->[0..max_pid_count]
-class ProcessBranch: public Environment {
+class ProcessBranch {
   Node* m_root;
   Node* m_process;
 public:
@@ -29,8 +34,8 @@ public:
 
   ProcessBranch(Node*r);
 
-  unique_ptr<Node> create_kernel() ;
-  unique_ptr<Node> create_process(Node&parent_process) ;
+  Process* create_kernel() ;
+  Process* create_process(Node&parent_process) ;
   //static unique_ptr<Node> create_process(Node&process_branch) ;
   static Node::OpStatusRef frame_current(Node&process)  ;
 

@@ -24,19 +24,25 @@ ProcessBranch::ProcessBranch(Node*r) :  m_root(r){
 
 }
 
-Node::ptr_U ProcessBranch::create_process(Node&parent_process) {
+Process* ProcessBranch::create_process(Node&parent_process) {
   Node::Vector cc_vec(Index::count); 
 
   m_process->push_back(Node::create (move(cc_vec)));
 
 }
-Node::ptr_U ProcessBranch::create_kernel() {
+
+
+Process* ProcessBranch::create_kernel() {
   if(m_process->obj_array_size()> 0) {
     auto msg =  "kernel process space has already been created"   ;
     spdlog::error(msg);
     throw std::bad_typeid();
   }
-  auto proc = Node::create_meta(m_process);
+  auto proc = Node::create_meta();
+  auto ptr = proc.get();
+
+  m_process->push_back(move(proc));
+  return static_cast<Process*>(ptr);
 }
 
 Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {

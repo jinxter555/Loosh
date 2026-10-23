@@ -1,7 +1,6 @@
 #include "lang.hh"
 #include "atom.hh"
 #include "node.hh"
-#include "process.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
