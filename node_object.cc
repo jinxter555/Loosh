@@ -233,10 +233,17 @@ Node::OpStatus Node::create_meta(const string& key) {
 }
 
 
-Node::OpStatus Node::create_meta_child() {
+Node::ptr_U Node::create_meta_child() {
+  if(m_type != Type::MetaObject) {
+    string msg = "this is not a MetaObject and only MetaObject can create_meta_child()" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    throw std::bad_typeid();
+  }
+
   auto meta = make_unique<Node>(Type::MetaObject);
   meta->set_parent(this);
-  return {true, create(true)};
+  return meta;
 
 }
 

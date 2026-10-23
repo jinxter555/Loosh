@@ -171,7 +171,7 @@ public:
 
   static ptr_U create_meta(ptr_R parent=nullptr);
   Node::OpStatus create_meta(const string& key);
-  Node::OpStatus create_meta_child();
+  ptr_U create_meta_child();
 
 
 

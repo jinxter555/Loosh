@@ -1,5 +1,5 @@
 #include "atom.hh"
-#include "process.hh"
+#include "process_branch.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
