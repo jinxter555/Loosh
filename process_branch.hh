@@ -20,9 +20,11 @@ namespace Loosh
 {
 
 
+//class Process : public Environment {
 class Process : public Environment {
-
-
+public:
+  Process();
+  static unique_ptr<Process> create();
 };
 
 // process under root->process->[0..max_pid_count]

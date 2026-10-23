@@ -66,4 +66,14 @@ Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
 
 
 
+//------------------------------------------------------------------------ 
+Process::Process() : Environment(Node::Type::MetaObject){}
+
+
+unique_ptr<Process> Process::create() {
+  auto v = make_unique<Process>();
+
+
+}
+
 }

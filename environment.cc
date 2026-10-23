@@ -9,5 +9,6 @@ using namespace  std;
 namespace Loosh 
 {
 Environment::Environment() {}
+Environment::Environment(Node::Type t) : Node(t) {}
 
 };
