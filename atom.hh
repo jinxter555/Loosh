@@ -12,7 +12,9 @@ public:
       read_binary, write_binary, is_open, got_text, echo, initialize, finalize,
       match, extract, replace, full, part,
       icase, nosubs, optimize, collate, ecmas, basic, extended, awk, grep, egrep,
-      scope, frame, process, lang, lisp, atom
+      scope, frame, process,
+      lang, lisp, atom,
+      pid, parent_pid, parent 
   ;
   static const Node::UnsignedInteger   class_, function_, ops;
   

@@ -25,12 +25,16 @@ class Process : public Environment {
 public:
   Process();
   static unique_ptr<Process> create();
+  static unique_ptr<Process> create_kernel(ptr_R parent_node);
+
+  UnsignedInteger _get_pid();
+  OpStatus get_pid();
 };
 
 // process under root->process->[0..max_pid_count]
 class ProcessBranch {
   Node* m_root;
-  Node* m_process;
+  Node* m_process; // this branch from root. root->process->[0..max]
 public:
   class Index { public: enum { Pid, PPid, Frame, count}; };
 

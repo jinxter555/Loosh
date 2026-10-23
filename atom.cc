@@ -78,6 +78,11 @@ const Node::UnsignedInteger Atom::egrep=str_to_atom("egrep");
 const Node::UnsignedInteger Atom::scope=str_to_atom("scope");
 const Node::UnsignedInteger Atom::frame=str_to_atom("frame");
 const Node::UnsignedInteger Atom::process=str_to_atom("process");
+const Node::UnsignedInteger Atom::pid=str_to_atom("pid");
+const Node::UnsignedInteger Atom::parent_pid=str_to_atom("parent_pid");
+const Node::UnsignedInteger Atom::parent=str_to_atom("parent");
+
+
 const Node::UnsignedInteger Atom::lang=str_to_atom("lang");
 const Node::UnsignedInteger Atom::lisp=str_to_atom("lisp");
 const Node::UnsignedInteger Atom::atom=str_to_atom("atom");

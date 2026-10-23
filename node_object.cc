@@ -248,20 +248,22 @@ Node::ptr_U Node::create_meta_child() {
 }
 
 //------------------------------------------------------------------------ 
+Node::ptr_R Node::_get_parent() {
+  auto &obj = get<VecObject>(m_value);
+  auto ptr = obj[MetaObjectIndex::Parent].get();
+  return ptr;
+}
 Node::OpStatus Node::get_parent() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  switch (m_type) {
-  case Type::MetaObject:
-  case Type::SimpleObject:
-    break;
-  default:{
+  if (m_type != Type::MetaObject) {
     string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(msg);
     return {false, create(false)};
-  }}
+  }
+
   auto &obj = get<VecObject>(m_value);
   auto ptr = obj[MetaObjectIndex::Parent].get();
   return {true, Node::create(ptr)};

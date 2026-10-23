@@ -402,9 +402,13 @@ template <typename T> T& get_value() {
 
 
   OpStatusRef obj_data_get(const string&key);
+//------------------------------ 
 
   bool set_parent(ptr_R parent);
+  ptr_R _get_parent();
   OpStatus get_parent();
+//------------------------------ 
+
 
   OpStatus lock_shared() const;
   OpStatus lock_exclusive() const;

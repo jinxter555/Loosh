@@ -9,7 +9,21 @@ using namespace std;
 namespace Loosh 
 {
 
+//------------------------------------------------------------------------ 
 
+Process::Process() : Environment(Node::Type::MetaObject) {}
+
+unique_ptr<Process> Process::create() {
+  auto proc = make_unique<Process>();
+}
+unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
+  auto proc = make_unique<Process>();
+  proc->obj_atom_add(Loosh::Atom::pid, Node::create(UnsignedInteger(0)));
+  proc->obj_atom_add(Loosh::Atom::parent_pid, Node::create(0));
+  proc->set_parent(parent_node);
+}
+
+//------------------------------------------------------------------------ 
 ProcessBranch::ProcessBranch(Node*r) :  m_root(r){
   if(r->m_type != Node::Type::MetaObject) {
     auto msg =  "Lang::Lang(Node* root) not a MetaObject "   ;
@@ -38,11 +52,11 @@ Process* ProcessBranch::create_kernel() {
     spdlog::error(msg);
     throw std::bad_typeid();
   }
-  auto proc = Node::create_meta();
+  auto proc = Process::create_kernel(m_process);
   auto ptr = proc.get();
 
   m_process->push_back(move(proc));
-  return static_cast<Process*>(ptr);
+  return ptr; //return static_cast<Process*>(ptr);
 }
 
 Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
@@ -67,13 +81,4 @@ Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
 
 
 //------------------------------------------------------------------------ 
-Process::Process() : Environment(Node::Type::MetaObject){}
-
-
-unique_ptr<Process> Process::create() {
-  auto v = make_unique<Process>();
-
-
-}
-
 }
