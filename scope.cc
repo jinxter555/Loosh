@@ -9,7 +9,10 @@ using namespace  std;
 namespace Loosh 
 {
 
-Scope::Scope() : Environment() {}
+Scope::Scope() : Environment(Node::Type::Vector) {}
+unique_ptr<Scope> Scope::create()  {
+  return make_unique<Scope>();
+}
 
 unique_ptr<Scope> Scope::create(Node& frame)  {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)

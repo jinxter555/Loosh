@@ -14,6 +14,7 @@ public :
   enum Index {Immute, Arg, Var, count};
 
   Scope();
+  static unique_ptr<Scope> create() ;
   static unique_ptr<Scope> create(Node &frame) ;
 
   Node::OpStatus var_add(Node& table, const string&name, Node::ptr_U) ;

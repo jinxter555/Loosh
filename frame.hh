@@ -19,7 +19,8 @@ public :
 
   //Node::OpStatus push_scope();
   ptr_R push_scope();
-  Node::OpStatus pop_scope();
+  void pop_scope();
+  UnsignedInteger scope_size() const;
 
 };
 
