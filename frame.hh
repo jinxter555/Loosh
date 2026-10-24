@@ -12,12 +12,13 @@ class Frame : public Environment {
 public :
   enum Index {Immute, Arg, Var, count};
 
-  Frame(){};
+  Frame();
   static unique_ptr<Node> create() ;
 
 
 
-  Node::OpStatus push_scope();
+  //Node::OpStatus push_scope();
+  ptr_R push_scope();
   Node::OpStatus pop_scope();
 
 };

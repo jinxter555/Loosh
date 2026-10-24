@@ -37,10 +37,13 @@ unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
 }
 
 void Process::set_pid(Node::UnsignedInteger pid) {
-  obj_atom_set(Atom::pid, Node::create(pid));
+  obj_atom_set(Loosh::Atom::pid, Node::create(pid));
 }
 
 Frame *Process::push_frame() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
   auto frame_branch_status = obj_atom_get(Loosh::Atom::frame);
   if(!frame_branch_status.first){
     string msg = "push  frame error!";
@@ -54,6 +57,9 @@ Frame *Process::push_frame() {
   return ptr;
 }
 void Process::pop_frame() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
   auto frame_branch_status = obj_atom_get(Loosh::Atom::frame);
   if(!frame_branch_status.first){
     string msg = "pop  frame error!";
