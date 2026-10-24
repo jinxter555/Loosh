@@ -250,7 +250,7 @@ Node::ptr_U Node::create_meta_child() {
 //------------------------------------------------------------------------ 
 Node::ptr_R Node::_get_parent() {
   auto &obj = get<VecObject>(m_value);
-  auto ptr = obj[MetaObjectIndex::Parent].get();
+  auto ptr = obj[MetaObjectIndex::Parent]->_get_ptr_r();
   return ptr;
 }
 Node::OpStatus Node::get_parent() {
@@ -265,7 +265,7 @@ Node::OpStatus Node::get_parent() {
   }
 
   auto &obj = get<VecObject>(m_value);
-  auto ptr = obj[MetaObjectIndex::Parent].get();
+  auto ptr = obj[MetaObjectIndex::Parent]->_get_ptr_r();
   return {true, Node::create(ptr)};
 
 }

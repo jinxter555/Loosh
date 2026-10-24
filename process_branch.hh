@@ -19,16 +19,27 @@ using namespace std;
 namespace Loosh 
 {
 
+  class Frame;
 
 //class Process : public Environment {
 class Process : public Environment {
+  friend class ProcessBranch;
+private:
+  void set_pid(UnsignedInteger pid);
+
 public:
   Process();
-  static unique_ptr<Process> create();
+  //unique_ptr<Process> create();
+  unique_ptr<Process> create(UnsignedInteger pid);
   static unique_ptr<Process> create_kernel(ptr_R parent_node);
 
   UnsignedInteger _get_pid();
   OpStatus get_pid();
+  Frame* push_frame();
+  void  pop_frame();
+
+
+
 };
 
 // process under root->process->[0..max_pid_count]
@@ -41,9 +52,11 @@ public:
   ProcessBranch(Node*r);
 
   Process* create_kernel() ;
-  Process* create_process(Node&parent_process) ;
+  Process* create_process(Process&proc) ;
   //static unique_ptr<Node> create_process(Node&process_branch) ;
   static Node::OpStatusRef frame_current(Node&process)  ;
+
+  Node::UnsignedInteger _get_next_pid() const;
 
 
 };
