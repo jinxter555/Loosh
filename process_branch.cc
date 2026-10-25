@@ -36,6 +36,14 @@ unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
   return proc;
 }
 
+Node::UnsignedInteger Process::_get_pid() {
+  auto pid_status = obj_atom_get(Loosh::Atom::pid);
+  if(!pid_status.first) { }
+  return pid_status.second._get_unsigned_integer();
+
+
+}
+
 void Process::set_pid(Node::UnsignedInteger pid) {
   obj_atom_set(Loosh::Atom::pid, Node::create(pid));
 }
@@ -95,6 +103,7 @@ ProcessBranch::ProcessBranch(Node*r) :  m_root(r){
 }
 
 Process* ProcessBranch::create_process(Process& current_process ) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
 
   auto proc =  current_process.create(_get_next_pid());
   auto proc_ptr =  proc.get();
@@ -105,6 +114,10 @@ Process* ProcessBranch::create_process(Process& current_process ) {
 
 
 Process* ProcessBranch::create_kernel() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  AUTO_TRACE();
+  cout << "create kernel\n";
+
   if(m_process->obj_array_size()> 0) {
     auto msg =  "kernel process space has already been created"   ;
     spdlog::error(msg);
@@ -118,7 +131,7 @@ Process* ProcessBranch::create_kernel() {
 }
 
 Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
-  MYLOGGER(trace_function, "LispExpr::frame_current(Node& process)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
 
   auto frames_ref_status = process[Index::Frame];
   //cout << "frame_current(): frames_ref_status " << frames_ref_status << "\n";

@@ -296,6 +296,7 @@ template <typename T> T& get_value() {
 
   // _get
   Integer _get_integer() const;
+  UnsignedInteger _get_unsigned_integer() const;
   Atom _get_atom() const;
   Float _get_float() const;
   Op _get_lisp_op() const;

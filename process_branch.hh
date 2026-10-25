@@ -33,8 +33,8 @@ public:
   unique_ptr<Process> create(UnsignedInteger pid);
   static unique_ptr<Process> create_kernel(ptr_R parent_node);
 
-  UnsignedInteger _get_pid();
-  OpStatus get_pid();
+  UnsignedInteger _get_pid() ;
+  OpStatus get_pid() ;
   Frame* push_frame();
   void  pop_frame();
 

@@ -29,6 +29,7 @@ Interactive::Interactive(Tree* tree, const std::string& hf , const std::string&p
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
   //jli.set_interface(this);
   lisp_lang.add_atoms(move(Atom::atoms_uptr));
+  lisp_lang.interface = this;
 
   
 };

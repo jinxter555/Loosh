@@ -16,6 +16,7 @@ namespace Loosh
 
 class Environment;
 class LispReader;
+class Interactive;
 class Tree;
 
 
@@ -28,8 +29,11 @@ class Lisp : public Lang {
   friend class Tree;
   friend class Interactive;
 
+  friend class Interactive;
   //unique_ptr<LispReader> reader;
-  LispReader& reader;
+  LispReader& reader; // this is the language lexer and parser , not input prompt reader
+
+  Interactive *interface; // user interface with command line, repl prompt, 
 
   Node* m_lisp;
   Node* m_ops;

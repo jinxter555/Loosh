@@ -59,10 +59,17 @@ Node::OpStatus Lisp::build_file_str(const string& input) {
 
 
 Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
 
+  auto kernel =  process_branch.create_kernel();
+
+  
+  cout << "run program!\n";
+  return {true, Node::create()};
 }
 Node::OpStatus Lisp::build_program() {
-
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  return {true, Node::create()};
 }
 
 }
