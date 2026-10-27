@@ -35,6 +35,7 @@ Node::OpStatusRef Node::get_node(UnsignedInteger index) {
   case Type::IMap: {
     IMap& imap = get<IMap>(m_value);
     if (auto it = imap.find(index); it != imap.end())  return {true, *imap[index]};
+    cout << "\n\n" + clean_function_name() + "  Imap: " << _to_str() << "\n\n";
     return {false,
       Error::ref(Error::Type::KeyNotFound,
         clean_function_name() + " (key) " + Loosh::Atom::atom_to_str_imap(index) +" not found: " + _to_str(m_type)

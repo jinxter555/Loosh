@@ -38,6 +38,7 @@ unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
 
   proc->obj_atom_set(Loosh::Atom::parent_pid, Node::create(UnsignedInteger(0l)));
   proc->obj_atom_set(Loosh::Atom::pid, Node::create(UnsignedInteger(0l)));
+  proc->obj_atom_add(Loosh::Atom::frame, Node::create(Node::Type::Vector));
   proc->set_parent(parent_node);
 
   cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
