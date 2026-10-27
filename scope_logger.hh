@@ -62,9 +62,10 @@ std::string clean_function_name_ns(const std::source_location& location = std::s
 #define MYLOGGER_MSG(x, y)
 #endif
 
-#define SLOG_FUNC_INFO   10
-#define SLOG_TO_STR      5000
-
-#define SLOG_NODE_OP      5000
+#define SLOG_FUNC_INFO      1000
+#define SLOG_FUNC_PROCESS   2000
+#define SLOG_FUNC_EVAL      3000
+#define SLOG_TO_STR         4000
+#define SLOG_NODE_OP        5000
 
 #endif

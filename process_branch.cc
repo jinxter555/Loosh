@@ -16,7 +16,7 @@ namespace Loosh
 Process::Process() : Environment(Node::Type::MetaObject) {}
 
 unique_ptr<Process> Process::create(UnsignedInteger pid) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   auto proc = make_unique<Process>();
   proc->obj_atom_add(Loosh::Atom::pid, Node::create(pid));
   proc->obj_atom_add(Loosh::Atom::parent_pid, Node::create(_get_pid()));
@@ -29,7 +29,7 @@ unique_ptr<Process> Process::create(UnsignedInteger pid) {
 
 
 unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
 
@@ -46,7 +46,7 @@ unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
 }
 
 Node::UnsignedInteger Process::_get_pid() {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   auto pid_status = obj_atom_get(Loosh::Atom::pid);
   if(!pid_status.first) { }
   return pid_status.second._get_unsigned_integer();
@@ -55,12 +55,12 @@ Node::UnsignedInteger Process::_get_pid() {
 }
 
 void Process::set_pid(Node::UnsignedInteger pid) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   obj_atom_set(Loosh::Atom::pid, Node::create(pid));
 }
 
 Frame *Process::push_frame() {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
   cout << "process push from *this: " << _to_str() << "\n\n";
@@ -78,7 +78,7 @@ Frame *Process::push_frame() {
   return ptr;
 }
 void Process::pop_frame() {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
   auto frame_branch_status = obj_atom_get(Loosh::Atom::frame);
@@ -119,7 +119,7 @@ ProcessBranch::ProcessBranch(Node*r) :  m_root(r){
 }
 
 Process* ProcessBranch::create_process(Process& current_process ) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
 
   auto proc =  current_process.create(_get_next_pid());
   auto proc_ptr =  proc.get();
@@ -130,7 +130,7 @@ Process* ProcessBranch::create_process(Process& current_process ) {
 
 
 Process* ProcessBranch::create_kernel() {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   AUTO_TRACE();
   cout << "create kernel\n";
 
@@ -148,7 +148,7 @@ Process* ProcessBranch::create_kernel() {
 }
 
 Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
 
   auto frames_ref_status = process[Index::Frame];
   //cout << "frame_current(): frames_ref_status " << frames_ref_status << "\n";
@@ -168,6 +168,7 @@ Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
 
 
 Node::UnsignedInteger ProcessBranch::_get_next_pid() const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   return m_process->obj_array_size();
 }
 

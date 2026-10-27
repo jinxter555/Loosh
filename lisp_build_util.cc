@@ -2,6 +2,7 @@
 #include "lisp.hh"
 #include "lisp_reader.hh"
 #include "my_helpers.hh"
+#include "interactive.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -62,7 +63,11 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
 
   auto kernel =  process_branch.create_kernel();
+  
 
+  while(true) {
+    interface->read(kernel);
+  }
   
   cout << "run program!\n";
   return {true, Node::create()};

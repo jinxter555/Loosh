@@ -15,7 +15,7 @@ unique_ptr<Scope> Scope::create()  {
 }
 
 unique_ptr<Scope> Scope::create(Node& frame)  {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   Node::Vector cc_vec(Index::count); 
 
   auto scope = make_unique<Scope>();
