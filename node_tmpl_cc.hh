@@ -58,7 +58,10 @@ const T& Node::unwrap_value() const {
 //    string msg =  "template type: " +  Node::_to_str(tmpl_type)  + " != " + Node::_to_str(m_type);
 //    cout << "node::unwrap_value<T>: "  << msg <<"\n";
     if( tmpl_type != m_type) {
+      cerr << "2 not same type! node::unwrap_value<Node>\n";
       string msg =  "Runtime error: template type: " +  Node::_to_str(tmpl_type)  + " != " + Node::_to_str(m_type);
+      cerr << "2 not same type! node::unwrap_value<Node> " + msg + "\n\n";
+      
       throw runtime_error(clean_function_name() + ":" + msg );
     }
     return get<T>(m_value); 
@@ -121,6 +124,7 @@ template <typename T> Node::Type Node::get_tmpl_type() const  {
   else if constexpr (is_same_v<T, bool>) return Type::Bool;
   else if constexpr (is_same_v<T, Error>) return Type::Error;
   else if constexpr (is_same_v<T, Integer>) return Type::Integer;
+  else if constexpr (is_same_v<T, UnsignedInteger>) return Type::UnsignedInteger;
   else if constexpr (is_same_v<T, Float>) return Type::Float;
   else if constexpr (is_same_v<T, string>) return Type::String;
   else if constexpr (is_same_v<T, List>) return Type::List;

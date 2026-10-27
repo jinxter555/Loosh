@@ -2,6 +2,7 @@
 #include "atom.hh"
 #include "node.hh"
 
+#include "trace_guard.hh"
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
@@ -45,6 +46,13 @@ void Lang::add_atoms(unique_ptr<Node>atoms) {
   atoms->set_parent(m_root);
   m_atoms = atoms.get();
   m_root->obj_data_add(LOOSH_ATOMS, move(atoms));
+  cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
+}
+
+void Lang::print_atoms() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
+
+  cout << "lang::print_atoms(): " << m_atoms->_to_str() << "\n";
 }
 
 //------------------------------------------------------------------------

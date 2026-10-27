@@ -282,8 +282,9 @@ template <typename T> T& get_value() {
   template <typename T> const T& unwrap_value() const;
   template <typename T> T& unwrap_value() ;
 
-  template <typename T> const T& unwrap_value(Integer index) const;
-  template <typename T> T& unwrap_value(Integer index) ;
+  template <typename T> const T& unwrap_value(UnsignedInteger index) const;
+  template <typename T> T& unwrap_value(UnsignedInteger index) ;
+
 
   template <typename T=Node> const T& unwrap_value(const string& key) const;
   template <typename T=Node> T& unwrap_value(const string& key) ;
@@ -385,20 +386,27 @@ template <typename T> T& get_value() {
 //  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
 //  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
 
+  IMap&  obj_get_imap();
+  Map&  obj_get_map();
+  Vector&  obj_get_vector();
+
   OpStatus obj_info_add(const string&key, unique_ptr<Node> child);
   OpStatus obj_info_set(const string&key, unique_ptr<Node> child);
   OpStatusRef obj_info_get(const string&key);
+  UnsignedInteger obj_info_size();
 
 
   OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
   OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
+  UnsignedInteger obj_data_size();
 
   OpStatus obj_atom_add(const UnsignedInteger key, unique_ptr<Node> child);
   OpStatus obj_atom_set(const UnsignedInteger key, unique_ptr<Node> child);
   OpStatusRef obj_atom_get(const UnsignedInteger key);
+  UnsignedInteger _obj_atom_size();
 
   OpStatus obj_array_push_back(ptr_U);
-  OpStatusRef obj_array_get(Integer);
+  OpStatusRef obj_array_get(UnsignedInteger);
   UnsignedInteger obj_array_size() const;
 
 
@@ -441,6 +449,7 @@ private:
   static MetaObject create_meta_vec();
   static SimpleObject create_simple_vec();
 
+  string to_str_meta() const ;
 
 };
 

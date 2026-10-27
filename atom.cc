@@ -1,5 +1,9 @@
 #include "atom.hh"
 
+#include "trace_guard.hh"
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 namespace Loosh 
 {
   
@@ -20,17 +24,22 @@ Node::UnsignedInteger Atom::str_to_atom(const string& input) {
 
 
 
-string Atom::atom_to_str(Node::UnsignedInteger v) {
-  auto &atom_ref = atoms->unwrap_value<Node::IMap>();
-  return atom_ref[v]->_to_str();
+string Atom::atom_to_str(Node::UnsignedInteger key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  MYLOGGER_MSG(trace_function, string("index: ") + to_string(key), SLOG_NODE_OP+30)
+  auto &imap = atoms->obj_get_imap();
+  cout << "atoms: " << atoms->_to_str() << "\n";
+  cout << "atom: index key: "  << key << "\n";
+
+  return ":" + imap[key]->_to_str();
+  //auto &atom_ref = atoms->unwrap_value<Node::IMap>();
+  //return atom_ref[key]->_to_str();
 }
 
-string Atom::atom_to_str_imap(Node::UnsignedInteger v) {
-  auto &atom_ref = atoms->unwrap_value<Node::IMap>();
-  //if (auto it = Atoms.find(v); it != Atoms.end()) 
-  if (auto it = atom_ref.find(v); it != atom_ref.end()) 
-    return atom_ref[v]->_to_str();
-  return  to_string(v)+"i";
+string Atom::atom_to_str_imap(Node::UnsignedInteger key) {
+  auto atom_ref_status = atoms->obj_atom_get(key);
+  if(!atom_ref_status.first)  return  to_string(key)+"i";
+  return ":" + atom_ref_status.second._to_str();
 }
 
 string Atom::unqiue_name(const string& input) {

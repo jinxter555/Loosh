@@ -273,6 +273,16 @@ Node::OpStatus Node::get_parent() {
 //------------------------------------------------------------------------ 
 
 //------------------------------  Atom
+Node::UnsignedInteger Node::_obj_atom_size() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  //return "nhello";
+  auto &obj = get<VecObject>(m_value);
+  auto &obj_atom  = obj[MetaObjectIndex::IntegerMap]->get_node();
+  return obj_atom._size();
+
+}
+
 Node::OpStatus Node::obj_atom_add(const UnsignedInteger key, unique_ptr<Node> value) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -340,9 +350,14 @@ Node::OpStatusRef Node::obj_atom_get(const UnsignedInteger key) {
         "Unsupported types for addition! " + _to_str(m_type) + " : " + _to_str(m_type))
     };
   }
+  //cout << "obj atom get: " << Loosh::Atom::atom_to_str( key) << "\n";
+  //cout << clean_function_name() << "obj atom get: key " << key << "\n";
 
   auto &obj = get<VecObject>(m_value);
   auto &obj_atom = obj[MetaObjectIndex::IntegerMap];
+ // auto &n1 = obj_atom->get_node();
+ // cout <<  clean_function_name() <<  "n1: " << n1._to_str() << "\n";
+
   return obj_atom->get_node(key);
 }
 
@@ -433,5 +448,27 @@ Node::UnsignedInteger Node::obj_array_size() const {
 
 }
 
+//------------------------------------------------------------------------ obj gets
+Node::IMap& Node::obj_get_imap() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  auto &obj = get<VecObject>(m_value);
+  auto &node = obj[MetaObjectIndex::IntegerMap]->get_node();
+  return node._get_imap_ref();
+}
 
+Node::Map& Node::obj_get_map() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  auto &obj = get<VecObject>(m_value);
+  auto &node = obj[MetaObjectIndex::StringMap]->get_node();
+  return node._get_map_ref();
+}
+Node::Vector& Node::obj_get_vector() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  auto &obj = get<VecObject>(m_value);
+  auto &node = obj[MetaObjectIndex::VectorArray]->get_node();
+  return node._get_vector_ref();
+}
 }

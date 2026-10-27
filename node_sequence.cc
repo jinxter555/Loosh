@@ -1,6 +1,8 @@
 #include "node.hh"
 #include "my_helpers.hh"
 
+#include "atom.hh"
+
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 #include "color_esc.hh"
@@ -35,7 +37,7 @@ Node::OpStatusRef Node::get_node(UnsignedInteger index) {
     if (auto it = imap.find(index); it != imap.end())  return {true, *imap[index]};
     return {false,
       Error::ref(Error::Type::KeyNotFound,
-        "IMap::Operator[] (key) " + to_string(index) +" not found: " + _to_str(m_type)
+        clean_function_name() + " (key) " + Loosh::Atom::atom_to_str_imap(index) +" not found: " + _to_str(m_type)
     )};}
 
   default: {}

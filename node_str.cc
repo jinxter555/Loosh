@@ -59,11 +59,15 @@ string Node::_to_str() const {
 
   case Type::Atom: {
     Integer num = get<Integer>(m_value);
-    return ":" + Loosh::Atom::atom_to_str(num); 
+    return Loosh::Atom::atom_to_str(num); 
   }
   case Type::Integer: {
       Integer num = get<Integer>(m_value);
       return to_string(num); }
+  case Type::UnsignedInteger: {
+      Integer num = get<UnsignedInteger>(m_value);
+      return to_string(num); }
+
   case Type::Float:  {
       ostringstream oss;
       Float num = get<Float>(m_value);
@@ -84,9 +88,10 @@ string Node::_to_str() const {
       auto&  cc_dq= get<DeQue>(m_value);
       return _to_str(cc_dq);}
   case Type::MetaObject:  {
-      auto& cc_vec = get<Vector>(m_value);
-      cout << "Meta: _to_str() and size: " << cc_vec.size() <<"\n";
-      return _to_str(cc_vec);}
+      //auto& cc_vec = get<Vector>(m_value);
+      //cout << "Meta: _to_str() and size: " << cc_vec.size() <<"\n";
+      return to_str_meta();
+  }
   case Type::SimpleObject:  {
       cout << "_to_str() Simple\n";
       auto& cc_vec = get<Vector>(m_value);
@@ -256,7 +261,7 @@ string Node::_to_str(const IMap&cc_imap) {
       if(atom_key_str.back() == 'i')
         outstr =  atom_key_str  + " " + val->_to_str();
       else
-        outstr =  ":" + atom_key_str   + "  " + val->_to_str();
+        outstr =   atom_key_str   + "  " + val->_to_str();
 
     kv_paires.push_back(outstr);
   }
@@ -271,6 +276,17 @@ string Node::_to_str(const IMap&cc_imap) {
 }
 
 
+
+string Node::to_str_meta() const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
+  string result="";
+  auto& cc_vec = get<Vector>(m_value);
+
+  result  += "Map:" + cc_vec[MetaObjectIndex::StringMap]->_to_str() + "\n";
+  result  += "Imap:" + cc_vec[MetaObjectIndex::IntegerMap]->get_node()._to_str() + "\n";
+  result  += "Vector: " + cc_vec[MetaObjectIndex::VectorArray]->get_node()._to_str() + "\n";
+  return result;
+}
 
 
 };

@@ -31,8 +31,9 @@ int main(int argc, char *argv[]) {
   Loosh::Tree of_life;
 
 //  trace_function.open("trace.log", std::ios::out);
-ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
-// ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
+//ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
+//ScopeLogger::set_current_verbose_level(SLOG_TO_STR);
+ScopeLogger::set_current_verbose_level(SLOG_NODE_OP);
 //  MYLOGGER(trace_function, "int main(int, char*[])", __func__, SLOG_FUNC_INFO);
 
   init();

@@ -44,6 +44,7 @@ public:
 
   Lang(Node *r) ;
   void add_atoms(unique_ptr<Node>atoms);
+  void print_atoms();
 
   UnsignedInteger str_to_atom(const string& input);
   string unqiue_name(const string& input);
@@ -55,6 +56,7 @@ public:
   virtual Node::OpStatus run_program(int argc, char *argv[]) =0; // create module structure 
   virtual Node::OpStatus build_program() =0; // create module structure 
   virtual Node::OpStatus build_file_str(const string& input) =0; // create module structure 
+  
 };
 
 }

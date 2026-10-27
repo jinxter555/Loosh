@@ -532,7 +532,9 @@ Node::OpStatusRef Node::operator[](UnsignedInteger index) {
 
     return {false,
       Error::ref(Error::Type::KeyNotFound,
-        "IMap::Operator[] (key) " + to_string(index) +" not found: " + _to_str(m_type)
+        //"IMap::Operator[] (key) " + to_string(index) +" not found: " + _to_str(m_type)
+        //"IMap::Operator[] (key) " + Loosh::Atom::atom_to_str_imap(index) +" not found: " + _to_str(m_type)
+        "IMap::Operator[] (key123) " + Loosh::Atom::atom_to_str(index) +" not found: " + _to_str(m_type)
     )};}
 
   default: {}
