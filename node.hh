@@ -35,7 +35,7 @@ friend class ostream;
 public:
 
   enum class Op  : int
-  { DONE=0, Lparen, Rparen, closurable_begin, closurable_end
+  { done=0, Lparen, Rparen, closurable_begin, closurable_end
   , root, nil, kernel, system, process, branch, namespace_, interpreter
   , class_, private_, new_, delete_, clone, use
   , error, noop

@@ -55,6 +55,10 @@
 /* Tell RE/flex to generate the Lexer inside the LSHLexer namespace */
 #line 14 "lexer.l"
 /* --- Named Definitions Section --- */
+#line 29 "lexer.l"
+//lc_identifier   ([a-z_][a-z0-9_]*)
+//cap             ([A-Z_])
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
@@ -64,7 +68,7 @@
 
 unique_ptr<Loosh::Token> Loosh::Lexer::lex(void)
 {
-  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))";
+  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:(?:[A-Za-z][0-9A-Z_a-z]*)))|((?:\\Qbegin.\\E)(?:(?:[!*+\\x2d/<-?A-Z_a-z](?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|(.)";
   static const reflex::Pattern PATTERN_INITIAL(REGEX_INITIAL);
   if (!has_matcher())
   {
@@ -77,29 +81,78 @@ unique_ptr<Loosh::Token> Loosh::Lexer::lex(void)
           case 0:
             if (matcher().at_end())
             {
-              return unique_ptr<Loosh::Token>();
+#line 66 "lexer.l"
+{ return Token::create(Token::Type::done, std::monostate{}, lineno(), columno()); }
+
+
+
             }
             else
             {
               out().put(matcher().input());
             }
             break;
-          case 1: // rule lexer.l:31: {blank}+ :
-#line 31 "lexer.l"
+          case 1: // rule lexer.l:34: {blank}+ :
+#line 34 "lexer.l"
 { /* Skip spaces, tabs, carriage returns */ }
             break;
-          case 2: // rule lexer.l:32: \n+ :
-#line 32 "lexer.l"
+          case 2: // rule lexer.l:35: \n+ :
+#line 35 "lexer.l"
 { /* Skip standalone newlines */ }
             break;
-          case 3: // rule lexer.l:33: ";".* :
-#line 33 "lexer.l"
+          case 3: // rule lexer.l:36: ";".* :
+#line 36 "lexer.l"
 { /* Skip line comments */ }
 
             break;
-          case 4: // rule lexer.l:36: "(" :
-#line 36 "lexer.l"
-{ return Loosh::Token::create(Token::Type::Lparen, 0, lineno(), columno()); }
+          case 4: // rule lexer.l:39: "(" :
+#line 39 "lexer.l"
+{ return Token::create(Token::Type::Lparen, nullptr, lineno(), columno()); }
+
+            break;
+          case 5: // rule lexer.l:41: ")" :
+#line 41 "lexer.l"
+{ return Token::create(Token::Type::Rparen, monostate{}, lineno(), columno()); }
+
+            break;
+          case 6: // rule lexer.l:43: {float_} :
+#line 43 "lexer.l"
+{ return Token::create(Token::Type::float_,   std::stod(text()),  lineno(), columno()); }
+            break;
+          case 7: // rule lexer.l:44: {integer_} :
+#line 44 "lexer.l"
+{ return Token::create(Token::Type::integer_, std::stoll(text()), lineno(), columno()); }
+
+            break;
+          case 8: // rule lexer.l:46: {dqstring} :
+#line 46 "lexer.l"
+{
+                            std::string str = text();
+                            std::string actual_val = str.substr(1, str.length() - 2);
+                            return Token::create(Token::Type::string_, actual_val, lineno(), columno());
+                        }
+
+            break;
+          case 9: // rule lexer.l:53: {identifier} :
+#line 53 "lexer.l"
+{ return Token::create(Token::Type::identifier, text(), lineno(), columno()); }
+
+            break;
+          case 10: // rule lexer.l:55: "begin."({symbol}) :
+#line 55 "lexer.l"
+{       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
+   auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
+  std::string symbol_text(group1.first, group1.second); // Construct the std::string safely using pointer + length
+  return Token::create(Token::Type::identifier, symbol_text, lineno(), columno());
+
+
+
+}
+
+            break;
+          case 11: // rule lexer.l:64: . :
+#line 64 "lexer.l"
+{ return Token::create(Token::Type::error, text(), lineno(), columno()); }
 
             break;
         }
