@@ -66,7 +66,8 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
   
 
   while(true) {
-    interface->read(kernel);
+    auto input_str = interface->read(kernel);
+    cout << input_str <<endl;
   }
   
   cout << "run program!\n";

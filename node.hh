@@ -35,15 +35,16 @@ friend class ostream;
 public:
 
   enum class Op  : int
-  { root, nil, kernel, system, process, branch, namespace_, interpreter
+  { DONE=0, Lparen, Rparen, closurable_begin, closurable_end
+  , root, nil, kernel, system, process, branch, namespace_, interpreter
   , class_, private_, new_, delete_, clone, use
   , error, noop
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
   , atom, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map, cc_imap
   , typeof_, size, is_atom, is_integer, is_float, is_string, is_list, is_deque, is_vector, is_cc_list, is_hash, is_ihash
-  , var, assign
+  , var, setq, assign
   , car, cdr, map, index, head, tail, body
-  , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_
+  , add, sub, div, slash=div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_
   , read, readline, load, import, require
   , call, send, ret, call_extern, funcall, curry, pipe, spawn, spin, sleep
   , cond, print, printr, loop, eval, while_, return_, exit_, continue_, break_, repeat, for_, do_, if_, iif, case_, match, when
@@ -89,7 +90,7 @@ public:
 // GCObjectId: for Garbage collection
 // MapObjectId: 
   enum class Type { 
-    Null, Bool, Error, Size, Integer, UnsignedInteger, Float, String,
+    Null, Token, Bool, Error, Size, Integer, UnsignedInteger, Float, String,
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Set, Vector, DeQue, Op, 
     ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
@@ -453,6 +454,33 @@ private:
 
 };
 
+
+class MetaNode : public Node {
+  MetaNode() : Node(Type::Vector){}
+  MetaNode(Node::Type t) ;
+
+  enum Index {
+    Info, 
+    StringMap, 
+    VectorArray,
+    IntegerMap,
+    Parent,
+    MetaLock,
+    WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
+    cc_class,
+    count}; // count is last element hack for counting size of this
+  unique_ptr<MetaNode> create();
+
+};
+
+class Token: public Node {
+public:
+  Token() ;
+  //enum class Type {};
+  using Type = Op; 
+  static unique_ptr<Token> create(Type t, Value v, UnsignedInteger l, UnsignedInteger c ) ; 
+
+};
 
 
 extern Node node_null;

@@ -101,6 +101,11 @@ const Node::UnsignedInteger Atom::class_=str_to_atom("class");
 const Node::UnsignedInteger Atom::function_=str_to_atom("function");
 const Node::UnsignedInteger Atom::ops=str_to_atom("ops");
 
+const Node::UnsignedInteger Atom::line=str_to_atom("line");
+const Node::UnsignedInteger Atom::col=str_to_atom("col");
+const Node::UnsignedInteger Atom::value=str_to_atom("value");
+const Node::UnsignedInteger Atom::type=str_to_atom("type");
+
 
 
 };

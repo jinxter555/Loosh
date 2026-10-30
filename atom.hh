@@ -14,7 +14,9 @@ public:
       icase, nosubs, optimize, collate, ecmas, basic, extended, awk, grep, egrep,
       scope, frame, process,
       lang, lisp, atom,
-      pid, parent_pid, parent 
+      pid, parent_pid, parent,
+      line, col, value, type
+
   ;
   static const Node::UnsignedInteger   class_, function_, ops;
   
