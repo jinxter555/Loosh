@@ -23,9 +23,21 @@ float_           (({frac}{exp_opt})|({dseq}{exp}))
 blank           [ \t\r]           
 dqstring        \"([^"\\]|\\.|\\n|\n)*\"
 
-sym_char        [a-zA-Z0-9+\-*/=<>!?_]
-symbol          [a-zA-Z+\-*/=<>!?_]{sym_char}*
-identifier      ([a-zA-Z][a-zA-Z0-9_]*)
+
+/* 1. First character MUST be a letter or underscore (Ruby style) */
+sym_start       [a-zA-Z_]
+
+/* 2. Subsequent characters can be letters, digits, underscores, or special symbols */
+sym_rest        [a-zA-Z0-9+\-*/=<>!?_]
+
+/* 3. Combine them: one start character followed by zero or more rest characters */
+identifier          {sym_start}{sym_rest}*
+
+
+//identifier_an      ([a-zA-Z][a-zA-Z0-9_]*)
+
+
+
 //lc_identifier   ([a-z_][a-z0-9_]*)
 //cap             ([A-Z_])
 
@@ -52,7 +64,7 @@ identifier      ([a-zA-Z][a-zA-Z0-9_]*)
 //{symbol}                { return Token::create(Token::Type::Symbol, text(), lineno(), columno()); }
 {identifier}                { return Token::create(Token::Type::identifier, text(), lineno(), columno()); }
 
-"begin."({symbol})      {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
+"begin."({identifier})      {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
    auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
   std::string symbol_text(group1.first, group1.second); // Construct the std::string safely using pointer + length
   return Token::create(Token::Type::identifier, symbol_text, lineno(), columno());
