@@ -25,9 +25,13 @@ Token::Type Token::type() {
 
 string Token::_to_str() {
   auto &imap = _get_imap_ref();
-  return Lisp::_to_str(
-    imap[Loosh::Atom::type]->_get_op()
-  );
+  auto line =   imap[Loosh::Atom::line]->_to_str();
+  auto col =   imap[Loosh::Atom::col]->_to_str();
+  auto value =   imap[Loosh::Atom::value]->_to_str();
+  auto type = Lisp::_to_str( imap[Loosh::Atom::type]->_get_op());
+  auto result = "line: " + line + " " + "col: " + col  + ",  " +  type +  ": "  + value ;
+  return result;
+
 }
 
 };

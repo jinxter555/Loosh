@@ -68,11 +68,12 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
 
   while(true) {
     auto input_str = interface->read(kernel);
+    if(input_str=="exit") break;
     std::stringstream stream(input_str);
-    Lexer lexer(&stream);
+    Reader::Inline::Lexer lexer(&stream);
         
     for(auto raw_token = lexer.lex(); raw_token->type() != Token::Type::done; raw_token = lexer.lex()) {
-      cout << "row token: " <<  raw_token->_to_str() << "\n";
+      cout << "raw token: " <<  raw_token->_to_str() << "\n";
         
     }
     
