@@ -5,7 +5,10 @@
             "compilerPath": "/usr/bin/clang++-21",
             "intelliSenseMode": "linux-clang-x64",
             "cStandard": "c17",
-            "cppStandard": "c++23" // Updated here
+            "cppStandard": "c++23",  // Updated here
+            "includePath": [
+              "~/.local/include/"
+            ]
         }
     ],
     "version": 4

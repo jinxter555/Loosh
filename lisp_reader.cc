@@ -9,11 +9,11 @@
 
 namespace Loosh 
 {
-ostream& operator<<(ostream& os, const Token& v) {
+ostream& operator<<(ostream& os, const MyToken& v) {
   cout << v.m_value;
   return os;
 }
-ostream& operator<<(ostream& os, list<Token>& l) {
+ostream& operator<<(ostream& os, list<MyToken>& l) {
   for(auto v: l) {
     cout << v << " ";
   }
@@ -87,12 +87,12 @@ string LispReader::extract_single_quoted_string(const string&input, size_t &i) {
 
 
 //------------------------------------------------------------------------ tokenize string  a list of tokens 
-list<Token> LispReader::tokenize(const string& input)  {
+list<MyToken> LispReader::tokenize(const string& input)  {
   MYLOGGER(trace_function, "LispReader::tokenize(string&input)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
 
-  list<Token> tokens;
-  Token token; 
+  list<MyToken> tokens;
+  MyToken token; 
   string token_str;
   bool token_begin = false;
   //for(char c : input) {
@@ -165,7 +165,7 @@ list<Token> LispReader::tokenize(const string& input)  {
 
 }
 
-string LispReader::_to_str(const list<Token>& tokens) {
+string LispReader::_to_str(const list<MyToken>& tokens) {
   string result="[";
  
   //size_t i=0, s=tokens.size();
@@ -177,8 +177,8 @@ string LispReader::_to_str(const list<Token>& tokens) {
 
 
 //------------------------------------------------------------------------ parse sequences of tokens after '('
-Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
-  MYLOGGER(trace_function, "LispReader::sequence(list<Token>&tokens)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus LispReader::parse_sequence(list<MyToken>& tokens) {
+  MYLOGGER(trace_function, "LispReader::sequence(list<MyToken>&tokens)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("tokens: ") + _to_str(tokens), SLOG_FUNC_INFO+30);
   Node::List list;
   bool is_first_element=true;
@@ -234,15 +234,15 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
 }
 
 //------------------------------------------------------------------------ parse a list of tokens
-Node::OpStatus LispReader::parse(list<Token>& tokens) {
-  MYLOGGER(trace_function, "LispReader::parse(list<Token>&tokens)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus LispReader::parse(list<MyToken>& tokens) {
+  MYLOGGER(trace_function, "LispReader::parse(list<MyToken>&tokens)", __func__, SLOG_FUNC_INFO);
   //MYLOGGER_MSG(trace_function, string("lookup input: ") + input, SLOG_FUNC_INFO+30);
 
   if(tokens.empty()) 
     return {false, Node::create_error(Node::Error::Type::Incomplete, "Unexpected EOF parsing LispExpr.")};
 
-  //Token token = tokens.front(); tokens.erase(tokens.begin());
-  Token token_next, token = tokens.front(); tokens.pop_front();
+  //MyToken token = tokens.front(); tokens.erase(tokens.begin());
+  MyToken token_next, token = tokens.front(); tokens.pop_front();
 
   //cout << "token: '" <<  token << "', token_previous: '" << token_previous << "' \n";
 

@@ -48,7 +48,7 @@ identifier          {sym_start}{sym_rest}*
 ";".*                   { /* Skip line comments */ }
 
 //"("                     { return Loosh::Token::create(Token::Type::Lparen, std::monostate{}, lineno(), columno()); }
-"("                     { return Token::create(Token::Type::Lparen, nullptr, lineno(), columno()); }
+"("                     { return Token::create(Token::Type::Lparen, monostate{}, lineno(), columno()); }
 
 ")"                     { return Token::create(Token::Type::Rparen, monostate{}, lineno(), columno()); }
 

@@ -298,6 +298,7 @@ template <typename T> T& get_value() {
 
   // _get
   Integer _get_integer() const;
+  Op _get_op() const;
   UnsignedInteger _get_unsigned_integer() const;
   Atom _get_atom() const;
   Float _get_float() const;
@@ -476,9 +477,11 @@ class MetaNode : public Node {
 class Token: public Node {
 public:
   Token() ;
-  //enum class Type {};
   using Type = Op; 
   static unique_ptr<Token> create(Type t, Value v, UnsignedInteger l, UnsignedInteger c ) ; 
+
+  Type type() ;
+  Value value() ;
 
 };
 

@@ -11,8 +11,8 @@ CXXFLAGS = -g -std=c++23 -I/usr/local/include -DSPDLOG_FMT_EXTERNAL -pthread
 # CXXFLAGS = -g -std=c++23 -I/usr/local/include -pthread
 
 # THE FIX: Point to the compiled library directory in /usr/local
-LDFLAGS  = -L/usr/local/lib
-LDLIBS   = -lCatch2Main -lCatch2 -lfmt -lspdlog -lreadline
+LDFLAGS  = -L/usr/local/lib -L ~/.local/lib
+LDLIBS   = -lCatch2Main -lCatch2 -lfmt -lspdlog -lreadline -lreflex
 
 MAKE=make
 node_o := $(wildcard ../*.o)

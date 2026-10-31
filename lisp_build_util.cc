@@ -3,6 +3,7 @@
 #include "lisp_reader.hh"
 #include "my_helpers.hh"
 #include "interactive.hh"
+#include "lex.yy.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -67,6 +68,17 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
 
   while(true) {
     auto input_str = interface->read(kernel);
+    std::stringstream stream(input_str);
+    Lexer lexer(&stream);
+        
+    for(auto raw_token = lexer.lex(); raw_token->type() != Token::Type::done; raw_token = lexer.lex()) {
+      cout << "row token: " <<  raw_token->_to_str() << "\n";
+        
+    }
+    
+
+
+
     cout << input_str <<endl;
   }
   

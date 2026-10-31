@@ -140,6 +140,11 @@ string Node::_to_str() const {
     Integer i = iptr->load();
     return "Atomic Integer: "  + to_string(i);
   }
+  case Type::Op: {
+    auto  v  = get<Op>(m_value);
+    return "op: "  + to_string(int(v));
+
+  }
 
   default: return "Unknown Node()"; }
 

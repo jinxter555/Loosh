@@ -498,6 +498,7 @@ bool Node::_get_bool() const { return get<bool>(m_value); }
 Node::Op Node::_get_lisp_op() const { return get<Op>(m_value); }
 
 Node::Integer Node::_get_integer() const { return get<Integer>(m_value); }
+Node::Op Node::_get_op() const { return get<Op>(m_value); }
 Node::UnsignedInteger Node::_get_unsigned_integer() const { return get<UnsignedInteger>(m_value); }
 Node::Atom  Node::_get_atom() const { return get<Atom>(m_value); }
 
