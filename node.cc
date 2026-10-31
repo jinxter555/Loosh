@@ -142,6 +142,7 @@ Node::Type Node::value_variant_type() {
     else if constexpr (is_same_v<T, ptr_U>) return Type::Unique;
     else if constexpr (is_same_v<T, Fun>) return Type::Fun;
     else if constexpr (is_same_v<T, Lock>) return Type::Lock;
+    else if constexpr (is_same_v<T, Op>) return Type::Op;
     return Type::Null;
   }, m_value);
 }
