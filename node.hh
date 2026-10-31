@@ -482,6 +482,7 @@ public:
 
   Type type() ;
   Value value() ;
+  string _to_str() ;
 
 };
 

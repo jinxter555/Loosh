@@ -471,4 +471,7 @@ Node::Vector& Node::obj_get_vector() {
   auto &node = obj[MetaObjectIndex::VectorArray]->get_node();
   return node._get_vector_ref();
 }
+
+
+
 }

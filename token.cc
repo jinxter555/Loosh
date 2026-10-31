@@ -1,6 +1,8 @@
 #include "node.hh"
 #include "atom.hh"
+#include "lisp.hh"
 #include <memory>
+
 
 using namespace std;
 namespace Loosh 
@@ -19,6 +21,13 @@ unique_ptr<Token> Token::create(Type t, Value v, UnsignedInteger l, UnsignedInte
 Token::Type Token::type() {
   auto &imap = _get_imap_ref();
   return imap[Loosh::Atom::type]->_get_op();
+}
+
+string Token::_to_str() {
+  auto &imap = _get_imap_ref();
+  return Lisp::_to_str(
+    imap[Loosh::Atom::type]->_get_op()
+  );
 }
 
 };

@@ -10,6 +10,13 @@ namespace Loosh
 void Lisp::set_op_str() {
   //auto m_ops = make_unique<Node>(Node::Type::Map);
 
+  //{ done=0, Lparen, Rparen, closurable_begin, closurable_end
+  m_ops->set("done", Op::done);
+  m_ops->set("Lparen", Op::Lparen);
+  m_ops->set("Rparen", Op::Rparen);
+  m_ops->set("closurable_begin", Op::closurable_begin);
+  m_ops->set("closurable_end", Op::closurable_end);
+
   m_ops->set("kernel", Op::kernel);
   m_ops->set("system", Op::system);
   m_ops->set("process", Op::process);
@@ -151,6 +158,11 @@ Lisp::Op Lisp::str_to_op(const string &input) {
 
 string Lisp::_to_str(Lisp::Op op) {
   switch (op) {
+    case Lisp::Op::done: return "done";
+    case Lisp::Op::Lparen: return "Lparen";
+    case Lisp::Op::Rparen: return "Rparen";
+    case Lisp::Op::closurable_begin: return "closurable_begin";
+    case Lisp::Op::closurable_end: return "closurable_end";
     case Lisp::Op::root: return "root";
     case Lisp::Op::nil: return "nil";
     case Lisp::Op::kernel: return "kernel";
