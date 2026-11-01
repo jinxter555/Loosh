@@ -41,14 +41,16 @@ void Interactive::accept_prompt(const std::string &line) {
   cout << " in interactive:: accept prompt!\n";
   cout << "you have entered: " << line <<"\n";
 
-  auto token_list = lisp_lang.reader.tokenize( lisp_lang.reader.tokenize_preprocess( line)); // list<Token> 
-  auto parsed_tokens_status =  lisp_lang.reader.parse(token_list); // parse 
+  //auto token_list = lisp_lang.reader.tokenize( lisp_lang.reader.tokenize_preprocess( line)); // list<Token> 
+  //auto parsed_tokens_status =  lisp_lang.reader.parse(token_list); // parse 
+/*
   if(!parsed_tokens_status.first) {
     cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
     //return parsed_tokens_status;
   }
 
   auto tokens = Node::create(move(parsed_tokens_status.second->_get_list_ref())); // this extra step maybe uncessary in future
+*/
   /*
   auto input_code_status = lisp_lang.parse_build(*tokens);
   if(input_code_status.first) {

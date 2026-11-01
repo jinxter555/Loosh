@@ -46,7 +46,7 @@ void Lang::add_atoms(unique_ptr<Node>atoms) {
   atoms->set_parent(m_root);
   m_atoms = atoms.get();
   m_root->obj_data_add(LOOSH_ATOMS, move(atoms));
-  cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
+  //cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
 }
 
 void Lang::print_atoms() {

@@ -23,7 +23,7 @@ unique_ptr<Process> Process::create(UnsignedInteger pid) {
   proc->obj_atom_add(Loosh::Atom::frame, Node::create(Node::Type::Vector));
   proc->set_parent(Node::_get_parent()); // _get_parent node
 
-  cout << clean_function_name() << ": *proc:  " << proc->_to_str() << "\n\n";
+  //cout << clean_function_name() << ": *proc:  " << proc->_to_str() << "\n\n";
   return proc;
 }
 
@@ -34,14 +34,14 @@ unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
 
 
   auto proc = make_unique<Process>();
-  cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
+  //cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
 
   proc->obj_atom_set(Loosh::Atom::parent_pid, Node::create(UnsignedInteger(0l)));
   proc->obj_atom_set(Loosh::Atom::pid, Node::create(UnsignedInteger(0l)));
   proc->obj_atom_add(Loosh::Atom::frame, Node::create(Node::Type::Vector));
   proc->set_parent(parent_node);
 
-  cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
+  //cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
   return proc;
 }
 
@@ -63,7 +63,7 @@ Frame *Process::push_frame() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
-  cout << "process push from *this: " << _to_str() << "\n\n";
+  //cout << "process push from *this: " << _to_str() << "\n\n";
   auto frame_branch_status = obj_atom_get(Loosh::Atom::frame);
   if(!frame_branch_status.first){
     string msg = "push  frame error!";
@@ -109,7 +109,7 @@ ProcessBranch::ProcessBranch(Node*r) :  m_root(r){
   }
 
   
-  cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
+  //cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
 
   auto pb = Node::create_meta(m_root);
   m_process= pb.get();
@@ -132,7 +132,7 @@ Process* ProcessBranch::create_process(Process& current_process ) {
 Process* ProcessBranch::create_kernel() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   AUTO_TRACE();
-  cout << "create kernel\n";
+  //cout << "create kernel\n";
 
   if(m_process->obj_array_size()> 0) {
     auto msg =  "kernel process space has already been created"   ;

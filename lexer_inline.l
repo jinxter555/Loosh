@@ -3,10 +3,18 @@
 #include "node.hh"
 
 #include <string>
+
+
+// Silences the internal RE/flex name-hiding bug caused by the nested namespace
+#if defined(__GNUC__) || defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+
 %}
 
 /* Tell RE/flex to generate the Lexer inside the LSHLexer namespace */
-%option namespace="Reader::Inline"
+%option namespace="Loosh::Reader::Inline"
 %option outfile="lex.yy.cc"
 %option header-file="lex.yy.hh"
 %option token-type="unique_ptr<Loosh::Token>"
@@ -34,6 +42,8 @@
 }
 
 //{symbol}                { return Token::create(Token::Type::Symbol, text(), lineno(), columno()); }
+//^{identifier}                { return Loosh::Token::create(Loosh::Token::Type::closurable_begin, text(), lineno(), columno()); }
+
 {identifier}                { return Loosh::Token::create(Loosh::Token::Type::identifier, text(), lineno(), columno()); }
 
 "begin."({identifier})      {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses

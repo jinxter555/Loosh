@@ -23,7 +23,7 @@
 #define REFLEX_OPTION_header_file         "lex.yy.hh"
 #define REFLEX_OPTION_lex                 lex
 #define REFLEX_OPTION_lexer               Lexer
-#define REFLEX_OPTION_namespace           Reader::Inline
+#define REFLEX_OPTION_namespace           Loosh::Reader::Inline
 #define REFLEX_OPTION_outfile             "lex.yy.cc"
 #define REFLEX_OPTION_token_type          unique_ptr<Loosh::Token>
 
@@ -38,6 +38,14 @@
 #include "node.hh"
 
 #include <string>
+
+
+// Silences the internal RE/flex name-hiding bug caused by the nested namespace
+#if defined(__GNUC__) || defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +70,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace Loosh {
 namespace Reader {
 namespace Inline {
 
@@ -95,6 +104,7 @@ class Lexer : public reflex::AbstractLexer<reflex::Matcher> {
   }
 };
 
+} // namespace Loosh
 } // namespace Reader
 } // namespace Inline
 

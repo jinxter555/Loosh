@@ -88,7 +88,7 @@ void Commandline::run(Interactive* interactive) {
 
   { // load closurable for macros
     auto& lisp_reader = interactive->get_reader();
-    lisp_reader.load_closurable(closurable_file_name);
+    //lisp_reader.load_closurable(closurable_file_name);
   }
 
   if(opt_file){
