@@ -14,23 +14,93 @@ namespace Loosh
 LispReader::LispReader() {};
 
 list<unique_ptr<Token>> LispReader::tokenize_lisp(const string& input_str ) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
   list<unique_ptr<Token>> tokens;
   std::stringstream stream(input_str);
   Loosh::Reader::Inline::Lexer lexer(&stream);
 
   for(auto raw_token = lexer.lex(); raw_token->type() != Token::Type::done; raw_token = lexer.lex()) {
-      cout << "raw token: " <<  raw_token->_to_str() << "\n";
+      //cout << "raw token: " <<  raw_token->_to_str() << "\n";
       tokens.push_back(move(raw_token));
   }
 
   return tokens;
 
 };
-
 Node::ptr_U LispReader::parse_lisp(list<unique_ptr<Token>>& tokens) {
-  for(auto &token : tokens ) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  bool has_Lparen = false;
+  auto code = Node::create(Node::Type::Vector);
 
+  if(tokens.front()->type() == Token::Type::Lparen) {
+    tokens.pop_front();
+    has_Lparen = true;
   }
+
+
+  while(! tokens.empty() ) {
+    auto &tok = tokens.front();
+    if(tok->type() == Token::Type::Lparen) {
+      code->push_back( parse_lisp(tokens));
+      continue;
+    }
+    if(tok->type() == Token::Type::Rparen) {
+      if(!has_Lparen) {
+        auto msg =  "missing '(' ";
+        cerr << msg << endl;
+        return nullptr;
+      }
+      tokens.pop_front();
+      return code;
+
+    }
+    code->push_back(move(tok));
+    tokens.pop_front();
+  }
+  if(has_Lparen){
+    auto msg =  "missing ')' ";
+    spdlog::error(clean_function_name() + ": " +  msg);
+    //MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+    cerr << msg << endl;
+    return nullptr;
+  }
+  return code;
+
+}
+
+
+
+
+Node::ptr_U LispReader::parse_lisp2(list<unique_ptr<Token>>& tokens) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  bool has_Lparen = false;
+  auto code = Node::create(Node::Type::Vector);
+  if(tokens.front()->type() == Token::Type::Lparen) {
+    tokens.pop_front();
+    has_Lparen = true;
+  }
+
+
+  for(auto &tok : tokens ) {
+    if(tok->type() == Token::Type::Lparen) {
+      code->push_back( parse_lisp(tokens));
+      continue;
+    }
+    if(tok->type() == Token::Type::Rparen) {
+      tokens.pop_front();
+      return code;
+
+    }
+    code->push_back(move(tok));
+  }
+  if(has_Lparen){
+    auto msg =  "missing ')' ";
+    spdlog::error(clean_function_name() + ": " +  msg);
+    //MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+    cerr << msg << endl;
+    return nullptr;
+  }
+  return code;
 
 }
 

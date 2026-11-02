@@ -37,6 +37,7 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
     auto input_str = interface->read(kernel);
     if(input_str=="exit") break;
     auto tokens  = reader.tokenize_lisp(input_str);
+    auto tree = reader.parse_lisp(tokens);
 
     /*
     std::stringstream stream(input_str);

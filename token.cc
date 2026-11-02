@@ -24,6 +24,7 @@ Token::Type Token::type() {
 }
 
 string Token::_to_str() {
+  if(m_type != Node::Type::IMap) return "";
   auto &imap = _get_imap_ref();
   auto line =   imap[Loosh::Atom::line]->_to_str();
   auto col =   imap[Loosh::Atom::col]->_to_str();
