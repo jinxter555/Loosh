@@ -12,8 +12,9 @@ namespace Loosh
 {
 
 LispReader::LispReader() {};
-vector<unique_ptr<Token>> LispReader::tokenize(const string& input_str ) {
-  vector<unique_ptr<Token>>  tokens;
+
+list<unique_ptr<Token>> LispReader::tokenize_lisp(const string& input_str ) {
+  list<unique_ptr<Token>> tokens;
   std::stringstream stream(input_str);
   Loosh::Reader::Inline::Lexer lexer(&stream);
 
@@ -26,6 +27,12 @@ vector<unique_ptr<Token>> LispReader::tokenize(const string& input_str ) {
 
 };
 
+Node::ptr_U LispReader::parse_lisp(list<unique_ptr<Token>>& tokens) {
+  for(auto &token : tokens ) {
+
+  }
+
+}
 
 
 }

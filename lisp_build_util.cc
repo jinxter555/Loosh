@@ -28,13 +28,15 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
 
   auto kernel =  process_branch.create_kernel();
+
+  interface->load_history();
   
   
 
   while(true) {
     auto input_str = interface->read(kernel);
     if(input_str=="exit") break;
-    auto tokens  = reader.tokenize(input_str);
+    auto tokens  = reader.tokenize_lisp(input_str);
 
     /*
     std::stringstream stream(input_str);
