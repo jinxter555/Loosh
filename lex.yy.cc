@@ -33,6 +33,7 @@
 #line 2 "lexer_inline.l"
 
 #include "node.hh"
+#include "atom.hh"
 
 #include <string>
 
@@ -59,7 +60,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#line 16 "lexer_inline.l"
+#line 17 "lexer_inline.l"
 /* Tell RE/flex to generate the Lexer inside the LSHLexer namespace */
 #line 1 "lexer_generic.l"
 // --- Named Definitions Section ---
@@ -86,7 +87,7 @@
 
 unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 {
-  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|(.)";
+  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:\\Q:\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*))|(.)";
   static const reflex::Pattern PATTERN_INITIAL(REGEX_INITIAL);
   if (!has_matcher())
   {
@@ -99,7 +100,7 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
           case 0:
             if (matcher().at_end())
             {
-#line 57 "lexer_inline.l"
+#line 73 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Type::done, std::monostate{}, lineno(), columno()); }
 
 
@@ -110,40 +111,40 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
               out().put(matcher().input());
             }
             break;
-          case 1: // rule lexer_inline.l:26: {blank}+ :
-#line 26 "lexer_inline.l"
+          case 1: // rule lexer_inline.l:27: {blank}+ :
+#line 27 "lexer_inline.l"
 { /* Skip spaces, tabs, carriage returns */ }
             break;
-          case 2: // rule lexer_inline.l:27: \n+ :
-#line 27 "lexer_inline.l"
+          case 2: // rule lexer_inline.l:28: \n+ :
+#line 28 "lexer_inline.l"
 { /* Skip standalone newlines */ }
             break;
-          case 3: // rule lexer_inline.l:28: ";".* :
-#line 28 "lexer_inline.l"
+          case 3: // rule lexer_inline.l:29: ";".* :
+#line 29 "lexer_inline.l"
 { /* Skip line comments */ }
 
             break;
-          case 4: // rule lexer_inline.l:31: "(" :
-#line 31 "lexer_inline.l"
+          case 4: // rule lexer_inline.l:32: "(" :
+#line 32 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Type::Lparen, monostate{}, lineno(), columno()); }
 
             break;
-          case 5: // rule lexer_inline.l:33: ")" :
-#line 33 "lexer_inline.l"
+          case 5: // rule lexer_inline.l:34: ")" :
+#line 34 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Type::Rparen, monostate{}, lineno(), columno()); }
 
             break;
-          case 6: // rule lexer_inline.l:35: {float_} :
-#line 35 "lexer_inline.l"
+          case 6: // rule lexer_inline.l:36: {float_} :
+#line 36 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Type::float_,   std::stod(text()),  lineno(), columno()); }
             break;
-          case 7: // rule lexer_inline.l:36: {integer_} :
-#line 36 "lexer_inline.l"
+          case 7: // rule lexer_inline.l:37: {integer_} :
+#line 37 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Type::integer_, std::stoll(text()), lineno(), columno()); }
 
             break;
-          case 8: // rule lexer_inline.l:38: {dqstring} :
-#line 38 "lexer_inline.l"
+          case 8: // rule lexer_inline.l:39: {dqstring} :
+#line 39 "lexer_inline.l"
 {
   std::string str = text();
   std::string actual_val = str.substr(1, str.length() - 2);
@@ -151,22 +152,40 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 }
 
             break;
-          case 9: // rule lexer_inline.l:47: {identifier} :
-#line 47 "lexer_inline.l"
-{ return Loosh::Token::create(Loosh::Token::Type::identifier, text(), lineno(), columno()); }
+          case 9: // rule lexer_inline.l:48: ":"({identifier}) :
+#line 48 "lexer_inline.l"
+{       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
+
+
+
+   auto atom_value =  Loosh::Atom::str_to_atom(text());
+   cout << "atom_value: " << atom_value << "\n";
+
+  return Loosh::Token::create(
+    Loosh::Token::Type::atom,
+    Loosh::Node::create(atom_value,  Loosh::Node::Type::Atom),
+    lineno(), columno()
+  );
+}
 
             break;
-          case 10: // rule lexer_inline.l:49: "begin."({identifier}) :
-#line 49 "lexer_inline.l"
+          case 10: // rule lexer_inline.l:62: "begin."({identifier}) :
+#line 62 "lexer_inline.l"
 {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
-   auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
+  auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
   std::string symbol_text(group1.first, group1.second); // Construct the std::string safely using pointer + length
   return Loosh::Token::create(Loosh::Token::Type::identifier, symbol_text, lineno(), columno());
 }
 
+
             break;
-          case 11: // rule lexer_inline.l:55: . :
-#line 55 "lexer_inline.l"
+          case 11: // rule lexer_inline.l:69: {identifier} :
+#line 69 "lexer_inline.l"
+{ return Loosh::Token::create(Loosh::Token::Type::identifier, text(), lineno(), columno()); }
+
+            break;
+          case 12: // rule lexer_inline.l:71: . :
+#line 71 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Type::error, text(), lineno(), columno()); }
 
             break;

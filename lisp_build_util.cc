@@ -37,13 +37,13 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
     auto input_str = interface->read(kernel);
     if(input_str=="exit") break;
     auto tokens  = reader.tokenize_lisp(input_str);
-    cout << "token size before parse: " << tokens.size() << "\n";
+    //cout << "token size before parse: " << tokens.size() << "\n";
     auto tree = reader.parse_lisp(tokens);
     if(tree==nullptr) {
-      cout << "tree is nullptr error";
+      cout << "tree is nullptr error\n";
       continue;
     }
-    cout << "token size after parse: " << tokens.size() << "\n";
+    //cout << "token size after parse: " << tokens.size() << "\n";
     cout << "tree: " <<  tree->_to_str() << "\n\n";
 
     /*

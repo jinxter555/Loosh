@@ -58,7 +58,7 @@ string Node::_to_str() const {
     return "false";}
 
   case Type::Atom: {
-    Integer num = get<Integer>(m_value);
+    Integer num = get<UnsignedInteger>(m_value);
     return Loosh::Atom::atom_to_str(num); 
   }
   case Type::Integer: {

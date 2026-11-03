@@ -24,6 +24,7 @@ void Lisp::set_op_str() {
   m_ops->set("namespace", Op::namespace_);
   m_ops->set("nil",   Op::nil);
   m_ops->set("root",   Op::root);
+  m_ops->set("atom",   Op::atom);
   m_ops->set("new",   Op::new_);
   m_ops->set("delete",   Op::delete_);
   m_ops->set("class",   Op::class_);
@@ -164,6 +165,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::closurable_begin: return "closurable_begin";
     case Lisp::Op::closurable_end: return "closurable_end";
     case Lisp::Op::root: return "root";
+    case Lisp::Op::atom: return "atom";
     case Lisp::Op::nil: return "nil";
     case Lisp::Op::kernel: return "kernel";
     case Lisp::Op::system: return "system";

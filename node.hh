@@ -479,6 +479,7 @@ public:
   Token() ;
   using Type = Op; 
   static unique_ptr<Token> create(Type t, Value v, UnsignedInteger l, UnsignedInteger c ) ; 
+  static unique_ptr<Token> create(Type t, ptr_U , UnsignedInteger l, UnsignedInteger c ) ; 
 
   Type type() ;
   Value value() ;

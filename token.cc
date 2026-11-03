@@ -16,13 +16,27 @@ Token::Token() : Node(Node::Type::IMap) {}
 
 unique_ptr<Token> Token::create(Type t, Value v, UnsignedInteger l, UnsignedInteger c ) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  return create(t, Node::create(move(v)), l, c);
+  
+  /*
   auto token = make_unique<Token>();
   token->add(Loosh::Atom::type, Node::create(t));
   token->add(Loosh::Atom::value, Node::create(move(v)));
   token->add(Loosh::Atom::line, Node::create(l));
   token->add(Loosh::Atom::col, Node::create(c));
   return token;
+  */
 }
+unique_ptr<Token> Token::create(Type t, ptr_U v, UnsignedInteger l, UnsignedInteger c ) { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  auto token = make_unique<Token>();
+  token->add(Loosh::Atom::type, Node::create(t));
+  token->add(Loosh::Atom::value, move(v));
+  token->add(Loosh::Atom::line, Node::create(l));
+  token->add(Loosh::Atom::col, Node::create(c));
+  return token;
+}
+
 
 Token::Type Token::type() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);

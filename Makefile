@@ -21,7 +21,7 @@ objects =  node.o  node_str.o node_out.o node_clone.o scope_logger.o  \
 headers  := (wildcard: *.hh)
 
 #all: test_cc_d $(objects) 
-all: $(objects)  test_cc_d
+all: $(objects) lex.yy.cc  test_cc_d 
 
 
 $(objects): %.o: %.cc 
@@ -30,6 +30,8 @@ $(objects): %.o: %.cc
 test_cc_d:
 	$(MAKE) -C test_cc 
 
+lex.yy.cc: lexer_inline.l lexer_generic.l
+	reflex lexer_inline.l
 
 clean:
 	rm -f out *.o *.gch *.out

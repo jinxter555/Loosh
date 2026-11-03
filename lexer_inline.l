@@ -1,6 +1,7 @@
 
 %top{
 #include "node.hh"
+#include "atom.hh"
 
 #include <string>
 
@@ -44,13 +45,28 @@
 //{symbol}                { return Token::create(Token::Type::Symbol, text(), lineno(), columno()); }
 //^{identifier}                { return Loosh::Token::create(Loosh::Token::Type::closurable_begin, text(), lineno(), columno()); }
 
-{identifier}                { return Loosh::Token::create(Loosh::Token::Type::identifier, text(), lineno(), columno()); }
+":"({identifier})      {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
+
+
+
+   auto atom_value =  Loosh::Atom::str_to_atom(text());
+   cout << "atom_value: " << atom_value << "\n";
+
+  return Loosh::Token::create(
+    Loosh::Token::Type::atom, 
+    Loosh::Node::create(atom_value,  Loosh::Node::Type::Atom),
+    lineno(), columno()
+  );
+}
 
 "begin."({identifier})      {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
-   auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
+  auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
   std::string symbol_text(group1.first, group1.second); // Construct the std::string safely using pointer + length
   return Loosh::Token::create(Loosh::Token::Type::identifier, symbol_text, lineno(), columno());
 }
+
+
+{identifier}                { return Loosh::Token::create(Loosh::Token::Type::identifier, text(), lineno(), columno()); }
 
 .                       { return Loosh::Token::create(Loosh::Token::Type::error, text(), lineno(), columno()); }
 

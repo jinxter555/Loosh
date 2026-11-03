@@ -36,6 +36,7 @@
 #line 2 "lexer_inline.l"
 
 #include "node.hh"
+#include "atom.hh"
 
 #include <string>
 
