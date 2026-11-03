@@ -11,8 +11,8 @@
 using namespace std;
 namespace Loosh 
 {
-Token::Token() : Node(Node::Type::IMap) {}
-//Token::Token() : Node(Node::Type::Token) {}
+//Token::Token() : Node(Node::Type::IMap) {}
+Token::Token() : Node(Node::Type::Token) {}
 
 unique_ptr<Token> Token::create(Type t, Value v, UnsignedInteger l, UnsignedInteger c ) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -34,6 +34,9 @@ unique_ptr<Token> Token::create(Type t, ptr_U v, UnsignedInteger l, UnsignedInte
   token->add(Loosh::Atom::value, move(v));
   token->add(Loosh::Atom::line, Node::create(l));
   token->add(Loosh::Atom::col, Node::create(c));
+
+  auto &imap = token->_get_imap_ref();
+  //cout <<clean_function_name() +  ", token->imap: size()" << imap.size() << "\n";
   return token;
 }
 
@@ -41,13 +44,17 @@ unique_ptr<Token> Token::create(Type t, ptr_U v, UnsignedInteger l, UnsignedInte
 Token::Type Token::type() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   auto &imap = _get_imap_ref();
+  if(!imap.size()) return Token::Type::error;
+  //cout <<clean_function_name() +  ", imap: size()" << imap.size() << "\n";
   return imap[Loosh::Atom::type]->_get_op();
 }
 
 string Token::_to_str() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  //if(m_type != Node::Type::Token) return "Not Token";
+  if(m_type != Node::Type::Token) return "Not Token";
   auto const &imap = get<IMap>(m_value);
+  if(!imap.size()) return "Token{}";
+  //cout <<clean_function_name() +  ", imap: size()" << imap.size() << "\n";
   return _to_str(imap);
 
 }

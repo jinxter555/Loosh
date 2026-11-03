@@ -58,7 +58,11 @@ Node::Node(Type t)
   case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
   case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
 
-  case Type::Token:  // { IMap nm={}; m_value = move(nm); break;}
+  case Type::Token:   { 
+    //cout << "Node::Node(Token)\n";
+    //cout << "node token type: " << _to_str(t) << "\n";
+    IMap nm={}; m_value = move(nm); break;
+  }
   case Type::IMap: { 
     IMap nm={};
     m_value = move(nm);
@@ -233,7 +237,7 @@ Node::IMap& Node::_get_imap_ref() {
   case Type::Unique:  {
     auto &sptr = get<ptr_U>(m_value);
     return sptr->_get_imap_ref(); }
-  //case Type::Token:  
+  case Type::Token:  
   case Type::IMap:  {
     return get<IMap>(m_value);}
   default: {}}
@@ -619,15 +623,20 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 //------------------------------ add
 Node::OpStatus Node::add(const UnsignedInteger key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if (m_type != Type::IMap) {
-    return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-IMap node.")};
-  }        
-  IMap& imap = get<IMap>(m_value);
+  if(m_type == Type::IMap || m_type == Type::Token) {
+    IMap& imap = get<IMap>(m_value);
 
-  if(!imap.try_emplace(key, move(child)).second) {
-    return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + Loosh::Atom::atom_to_str_imap( key) + "' already exists in IMap.")};
+    if(!imap.try_emplace(key, move(child)).second) {
+      return {false, create_error(Error::Type::KeyAlreadyExists, 
+        "Key '" + Loosh::Atom::atom_to_str_imap( key) + "' already exists in IMap.")};
+    }
+    return {true, Node::create(true)};
   }
-  return {true, Node::create(true)};
+
+  auto msg =  "Cannot add key-value to a non-IMap node. m_type: " + Node::_to_str(m_type);
+  cerr << clean_function_name() << ":" <<  msg << "\n";
+  spdlog::error(clean_function_name() + ": " + msg);
+  return {false, create_error(Error::Type::InvalidOperation, msg)};
 
 }
 //------------------------------ add

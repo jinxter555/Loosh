@@ -35,6 +35,7 @@ string Node::_to_str(Type type) {
     case Type::IMap: return "IMap";
     case Type::Set: return "Set";
     case Type::Atom: return "Atom";
+    case Type::Token: return "Token";
     case Type::ObjectId: return "ObjectId";
     case Type::Op: return "Operator";
     case Type::Identifier: return "Identifier";
@@ -103,7 +104,6 @@ string Node::_to_str() const {
 
   case Type::Token: {
       auto& imap = get<IMap>(m_value);
-      return _to_str(imap);
       return Token::_to_str(imap);
   }
   case Type::IMap: {
