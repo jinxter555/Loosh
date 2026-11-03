@@ -190,7 +190,7 @@ public:
 
 
 
-  string _to_str() const ;
+  virtual string _to_str() const ;
 
   static string _to_str(const Map&m) ;
   static string _to_str(const IMap&m) ;
@@ -482,7 +482,8 @@ public:
 
   Type type() ;
   Value value() ;
-  string _to_str() ;
+  string _to_str() const ;
+  static string _to_str(const IMap&) ;
 
 };
 

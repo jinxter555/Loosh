@@ -32,9 +32,9 @@ int main(int argc, char *argv[]) {
 
 //  trace_function.open("trace.log", std::ios::out);
 //ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO);
-ScopeLogger::set_current_verbose_level(SLOG_FUNC_PROCESS);
+//ScopeLogger::set_current_verbose_level(SLOG_FUNC_PROCESS);
 //ScopeLogger::set_current_verbose_level(SLOG_TO_STR);
-//ScopeLogger::set_current_verbose_level(SLOG_NODE_OP);
+ScopeLogger::set_current_verbose_level(SLOG_NODE_OP);
 //  MYLOGGER(trace_function, "int main(int, char*[])", __func__, SLOG_FUNC_INFO);
 
   init();

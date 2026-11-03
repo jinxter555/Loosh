@@ -58,6 +58,7 @@ Node::Node(Type t)
   case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
   case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
 
+  case Type::Token:  // { IMap nm={}; m_value = move(nm); break;}
   case Type::IMap: { 
     IMap nm={};
     m_value = move(nm);
@@ -232,6 +233,7 @@ Node::IMap& Node::_get_imap_ref() {
   case Type::Unique:  {
     auto &sptr = get<ptr_U>(m_value);
     return sptr->_get_imap_ref(); }
+  //case Type::Token:  
   case Type::IMap:  {
     return get<IMap>(m_value);}
   default: {}}

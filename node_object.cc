@@ -1,7 +1,6 @@
 #include "node.hh"
 
 #include "trace_guard.hh"
-
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 

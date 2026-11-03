@@ -101,9 +101,15 @@ string Node::_to_str() const {
       auto& cc_vec = get<Vector>(m_value);
       return _to_str(cc_vec);}
 
+  case Type::Token: {
+      auto& imap = get<IMap>(m_value);
+      return _to_str(imap);
+      return Token::_to_str(imap);
+  }
   case Type::IMap: {
       auto& imap = get<IMap>(m_value);
-      return _to_str(imap);}
+      return _to_str(imap);
+    }
 
   case Type::Map: {
       auto& map = get<Map>(m_value);
