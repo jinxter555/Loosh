@@ -28,10 +28,11 @@
 \n+                     { /* Skip standalone newlines */ }
 ";".*                   { /* Skip line comments */ }
 
-//"("                     { return Loosh::Token::create(Token::Type::Lparen, std::monostate{}, lineno(), columno()); }
 "("                     { return Loosh::Token::create(Loosh::Token::Type::Lparen, monostate{}, lineno(), columno()); }
 
 ")"                     { return Loosh::Token::create(Loosh::Token::Type::Rparen, monostate{}, lineno(), columno()); }
+"+"                     { return Loosh::Token::create(Loosh::Token::Type::add , Loosh::Node::Op::add, lineno(), columno()); }
+"-"                     { return Loosh::Token::create(Loosh::Token::Type::sub , Loosh::Node::Op::sub, lineno(), columno()); }
 
 {float_}                 { return Loosh::Token::create(Loosh::Token::Type::float_,   std::stod(text()),  lineno(), columno()); }
 {integer_}               { return Loosh::Token::create(Loosh::Token::Type::integer_, std::stoll(text()), lineno(), columno()); }

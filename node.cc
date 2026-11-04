@@ -148,7 +148,7 @@ Node::Type Node::value_variant_type() {
     else if constexpr (is_same_v<T, Fun>) return Type::Fun;
     else if constexpr (is_same_v<T, Lock>) return Type::Lock;
     else if constexpr (is_same_v<T, Op>) return Type::Op;
-    return Type::Null;
+    else return Type::Null;
   }, m_value);
 }
 
@@ -173,6 +173,8 @@ Node Node::get_type() const {
   cout << "Node::get_type()\n";
   return m_type; 
 }
+
+Node::ptr_R Node::value() { return this; }
 
 
 //------------------------------------------------------------------------ _get

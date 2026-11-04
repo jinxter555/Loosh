@@ -48,6 +48,15 @@ Token::Type Token::type() {
   //cout <<clean_function_name() +  ", imap: size()" << imap.size() << "\n";
   return imap[Loosh::Atom::type]->_get_op();
 }
+Node::ptr_R Token::value() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  auto &imap = _get_imap_ref();
+  if(!imap.size()) { 
+    cerr <<clean_function_name() +  ", imap: size()" << imap.size() << "returns nullptr\n";
+    return nullptr;
+  }
+  return imap[Loosh::Atom::value].get();
+}
 
 string Token::_to_str() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -60,7 +69,6 @@ string Token::_to_str() const {
 }
 string Token::_to_str(const IMap& imap) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  cout << "imap Node::_to_str(imap) " << Node::_to_str(imap) << "\n";
 
   auto line =   imap.at(Loosh::Atom::line)->_to_str();
   auto col =   imap.at(Loosh::Atom::col)->_to_str();

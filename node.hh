@@ -265,6 +265,7 @@ public:
   Type _get_type() const;
   Type _get_value_type() const;
   Node get_type() const;
+  virtual ptr_R value() ;
 //------------------------------------------------------------------------
 /*
 template <typename T> const T& get_value() const {
@@ -482,7 +483,7 @@ public:
   static unique_ptr<Token> create(Type t, ptr_U , UnsignedInteger l, UnsignedInteger c ) ; 
 
   Type type() ;
-  Value value() ;
+  ptr_R value() override;
   string _to_str() const ;
   static string _to_str(const IMap&) ;
 

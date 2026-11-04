@@ -6,7 +6,9 @@
 #include "node.hh"
 #include "defs.hh"
 #include "my_helpers.hh"
+#include "lisp.hh"
 #include "atom.hh"
+
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -148,7 +150,8 @@ string Node::_to_str() const {
   }
   case Type::Op: {
     auto  v  = get<Op>(m_value);
-    return "op: "  + to_string(int(v));
+    //return "op: "  + to_string(int(v));
+    return "op: "  + Lisp::_to_str(v);
 
   }
 

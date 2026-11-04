@@ -27,4 +27,24 @@ Lisp::Lisp(Tree*t, LispReader&r)
   set_op_str() ;
 }
 
+
+Node::OpStatus Lisp::eval(Node* process, Node* node) {
+  Node *code= node;
+
+  switch(code->m_type) {
+  case Node::Type::Token: {
+    code = code->value();
+    auto ret_status = eval(process, code);
+    if(!ret_status.first) {
+      cerr << "eval token error:" << node->_to_str() << "\n";
+      return ret_status;
+    }
+    return  ret_status;
+  }
+
+  }
+  return {false, Node::create()};
+
+}
+
 };
