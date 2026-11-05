@@ -29,10 +29,15 @@ unique_ptr<Token> Token::create(Op op, Value v, UnsignedInteger l, UnsignedInteg
 unique_ptr<Token> Token::create(Op op, ptr_U v, UnsignedInteger l, UnsignedInteger c ) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   auto token = make_unique<Token>();
-  token->add(Loosh::Atom::op, Node::create(op));
-  token->add(Loosh::Atom::value, move(v));
-  token->add(Loosh::Atom::line, Node::create(l));
-  token->add(Loosh::Atom::col, Node::create(c));
+  auto const &cc_vec  = token->_get_vector_ref();
+
+
+  token->set(static_cast<UnsignedInteger>(Token::Index::value ), move(v));
+  token->set(static_cast<UnsignedInteger>(Token::Index::op),  Node::create(op)) ;
+  token->set(static_cast<UnsignedInteger>(Token::Index::line), Node::create(l));
+  token->set(static_cast<UnsignedInteger>(Token::Index::col), Node::create(c));
+
+  token->op_ptr = cc_vec[ static_cast<UnsignedInteger>(Token::Index::op)].get();
 
   //auto &imap = token->_get_imap_ref();
   //cout <<clean_function_name() +  ", token->imap: size()" << imap.size() << "\n";
@@ -42,38 +47,36 @@ unique_ptr<Token> Token::create(Op op, ptr_U v, UnsignedInteger l, UnsignedInteg
 
 Node::Op Token::_get_op() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  //auto &imap = _get_imap_ref();
-  auto const &imap = get<IMap>(m_value);
-  if(!imap.size()) return Token::Op::error;
-  return imap.at(Loosh::Atom::op)->_get_op();
+  auto const &cc_vec  = get<Vector>(m_value);
+  auto &op = cc_vec[static_cast<UnsignedInteger>(Token::Index::op)];
+  return op->_get_op();
+
 }
 Node::ptr_R Token::value() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  auto &imap = _get_imap_ref();
-  if(!imap.size()) { 
-    cerr <<clean_function_name() +  ", imap: size()" << imap.size() << "returns nullptr\n";
-    return nullptr;
-  }
-  return imap[Loosh::Atom::value].get();
+  auto const &cc_vec  = get<Vector>(m_value);
+  auto &value = cc_vec[static_cast<UnsignedInteger>(Token::Index::op)];
+  return value->value();
 }
 
 string Token::_to_str() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   if(m_type != Node::Type::Token) return "Not Token";
-  auto const &imap = get<IMap>(m_value);
-  if(!imap.size()) return "Token{}";
+  auto const &cc_vec = get<Vector>(m_value);
+  if(!cc_vec.size()) return "Token{}";
   //cout <<clean_function_name() +  ", imap: size()" << imap.size() << "\n";
-  return _to_str(imap);
+  return Token::_to_str(cc_vec);
 
 }
-string Token::_to_str(const IMap& imap) {
+string Token::_to_str(const Vector& cc_vec) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-  auto line =   imap.at(Loosh::Atom::line)->_to_str();
-  auto col =   imap.at(Loosh::Atom::col)->_to_str();
-  auto value =   imap.at(Loosh::Atom::value)->_to_str();
-  auto type = Lisp::_to_str( imap.at(Loosh::Atom::op)->_get_op());
-  auto result =  "Token{line: " + line + " " + "col: " + col  + ",  " +  type +  ": "  + value + "}";
+  auto line =   cc_vec[static_cast<UnsignedInteger>(Token::Index::line)]->_to_str();
+  auto col  =   cc_vec[static_cast<UnsignedInteger>(Token::Index::col)]->_to_str();
+  auto value  =   cc_vec[static_cast<UnsignedInteger>(Token::Index::value)]->_to_str();
+  auto op  =   cc_vec[static_cast<UnsignedInteger>(Token::Index::op)]->_to_str();
+  
+  auto result =  "Token{line: " + line + " " + "col: " + col  + ",  op: " +  op +  ", value: "  + value + "}";
   return result;
 }
 

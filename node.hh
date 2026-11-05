@@ -458,7 +458,8 @@ private:
 
 
 class MetaNode : public Node {
-  MetaNode() : Node(Type::Vector){}
+  //MetaNode() : Node(Type::Vector){}
+  MetaNode() : Node(Vector(MetaNode::Index::count) ){}
   MetaNode(Node::Type t) ;
 
   enum Index {
@@ -476,7 +477,16 @@ class MetaNode : public Node {
 };
 
 class Token: public Node {
+private:
+  Node *op_ptr;
 public:
+  enum class Index : int {
+    value,
+    op,
+    line,
+    col,
+    count
+  };
   Token() ;
   //using Type = Op; 
   static unique_ptr<Token> create(Op t, Value v, UnsignedInteger l, UnsignedInteger c ) ; 
@@ -485,7 +495,7 @@ public:
   Op _get_op() const override;
   ptr_R value() override;
   string _to_str() const ;
-  static string _to_str(const IMap&) ;
+  static string _to_str(const Vector&) ;
 
 };
 

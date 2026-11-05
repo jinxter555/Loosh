@@ -105,8 +105,8 @@ string Node::_to_str() const {
       return _to_str(cc_vec);}
 
   case Type::Token: {
-      auto& imap = get<IMap>(m_value);
-      return Token::_to_str(imap);
+      auto& cc_vec = get<Vector>(m_value);
+      return Token::_to_str(cc_vec);
   }
   case Type::IMap: {
       auto& imap = get<IMap>(m_value);
@@ -151,7 +151,8 @@ string Node::_to_str() const {
   case Type::Op: {
     auto  v  = get<Op>(m_value);
     //return "op: "  + to_string(int(v));
-    return "op: "  + Lisp::_to_str(v);
+    //return "op: "  + Lisp::_to_str(v);
+    return  Lisp::_to_str(v);
 
   }
 

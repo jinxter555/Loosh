@@ -2,6 +2,8 @@
 #include "node_tmpl_cc.hh"
 #include "atom.hh"
 
+#include <cxxabi.h>
+
 
 #include "trace_guard.hh"
 #define SLOG_DEBUG_TRACE_FUNC
@@ -59,9 +61,9 @@ Node::Node(Type t)
   case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
 
   case Type::Token:   { 
-    //cout << "Node::Node(Token)\n";
-    //cout << "node token type: " << _to_str(t) << "\n";
-    IMap nm={}; m_value = move(nm); break;
+    Vector cc_vec(static_cast<int>(Token::Index::count));
+    m_value = move(cc_vec);
+    break;
   }
   case Type::IMap: { 
     IMap nm={};
@@ -169,7 +171,6 @@ Node::Type Node::_get_value_type() const {
 Node Node::get_type() const { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   //AUTO_TRACE();
-  MYLOGGER_MSG(trace_function, "hello:get_type() ", SLOG_FUNC_INFO);
   cout << "Node::get_type()\n";
   return m_type; 
 }
@@ -239,7 +240,6 @@ Node::IMap& Node::_get_imap_ref() {
   case Type::Unique:  {
     auto &sptr = get<ptr_U>(m_value);
     return sptr->_get_imap_ref(); }
-  case Type::Token:  
   case Type::IMap:  {
     return get<IMap>(m_value);}
   default: {}}
@@ -265,6 +265,7 @@ Node::Vector& Node::_get_vector_ref() {
   case Type::Unique:  {
     auto &sptr = get<ptr_U>(m_value);
     return sptr->_get_vector_ref(); }
+  case Type::Token: 
   case Type::Vector:  {
     return get<Vector>(m_value); 
   }
@@ -438,17 +439,55 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   }        
   Map& map= get<Map>(m_value);
   map[key] = move(child);
+
   return {true, create(true)};
 }
 
-Node::OpStatus Node::set(const UnsignedInteger key, unique_ptr<Node> child) {
+Node::OpStatus Node::set(const UnsignedInteger key, unique_ptr<Node> value) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if (m_type != Type::IMap) {
-    return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
-  }        
-  IMap& map= get<IMap>(m_value);
-  map[key] = move(child);
-  return {true, create(true)};
+
+//hello
+  visit([&](auto&& arg) -> OpStatus {
+    //cout << clean_function_name() + ": m_type " << Node::_to_str(m_type) << "\n";
+    using T = decay_t<decltype(arg)>;
+
+
+    /*
+    int status = -1;
+    // Demangle the compiler's internal type string
+    std::unique_ptr<char, void(*)(void*)> demangled(
+        abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status),
+        std::free
+    );
+    std::cout << "The type of T is: " 
+     << (status == 0 ? demangled.get() : typeid(T).name()) 
+     << std::endl;
+*/
+
+
+
+    if constexpr (is_same_v<T, IMap>) {
+      arg[key] = move(value);
+      return {true, create(true)};
+    } else if constexpr (is_same_v<T, Vector>) {
+      if(key < arg.size()) { 
+        arg[key] = move(value);
+        return {true, create(true)};
+      }
+      cerr  << "visit vector: " << "key: "  << key << " not in range!\n";
+      return {false, create_error(Error::Type::IndexOutOfBounds, clean_function_name() + ": Not in range for Set.")};
+    } else if constexpr (is_same_v<T, DeQue>) {
+      return {true, create(true)};
+    } else {
+      return {false, create()};
+    }
+
+  }, m_value);
+  //cout << clean_function_name() << "::::key: "  << key << ", value: " << value->_to_str() << "\n";
+   return {true, create(true)};
+
+
+
 }
 
 //------------------------------------------------------------------------
@@ -527,6 +566,7 @@ Node::OpStatusRef Node::operator[](UnsignedInteger index) {
       return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
     }
     return {true, *cc_vec[index]};}
+  case Type::Token: 
   case Type::Vector: {
     Vector& cc_vec = get<Vector>(m_value);
     UnsignedInteger cc_vec_size =  static_cast<Integer>(cc_vec.size());
@@ -625,7 +665,7 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 //------------------------------ add
 Node::OpStatus Node::add(const UnsignedInteger key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(m_type == Type::IMap || m_type == Type::Token) {
+  if(m_type == Type::IMap) {
     IMap& imap = get<IMap>(m_value);
 
     if(!imap.try_emplace(key, move(child)).second) {
