@@ -14,39 +14,38 @@ namespace Loosh
 //Token::Token() : Node(Node::Type::IMap) {}
 Token::Token() : Node(Node::Type::Token) {}
 
-unique_ptr<Token> Token::create(Type t, Value v, UnsignedInteger l, UnsignedInteger c ) { 
+unique_ptr<Token> Token::create(Op op, Value v, UnsignedInteger l, UnsignedInteger c ) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  return create(t, Node::create(move(v)), l, c);
+  return create(op, Node::create(move(v)), l, c);
   
   /*
   auto token = make_unique<Token>();
-  token->add(Loosh::Atom::type, Node::create(t));
   token->add(Loosh::Atom::value, Node::create(move(v)));
   token->add(Loosh::Atom::line, Node::create(l));
   token->add(Loosh::Atom::col, Node::create(c));
   return token;
   */
 }
-unique_ptr<Token> Token::create(Type t, ptr_U v, UnsignedInteger l, UnsignedInteger c ) { 
+unique_ptr<Token> Token::create(Op op, ptr_U v, UnsignedInteger l, UnsignedInteger c ) { 
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   auto token = make_unique<Token>();
-  token->add(Loosh::Atom::type, Node::create(t));
+  token->add(Loosh::Atom::op, Node::create(op));
   token->add(Loosh::Atom::value, move(v));
   token->add(Loosh::Atom::line, Node::create(l));
   token->add(Loosh::Atom::col, Node::create(c));
 
-  auto &imap = token->_get_imap_ref();
+  //auto &imap = token->_get_imap_ref();
   //cout <<clean_function_name() +  ", token->imap: size()" << imap.size() << "\n";
   return token;
 }
 
 
-Token::Type Token::type() {
+Node::Op Token::_get_op() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  auto &imap = _get_imap_ref();
-  if(!imap.size()) return Token::Type::error;
-  //cout <<clean_function_name() +  ", imap: size()" << imap.size() << "\n";
-  return imap[Loosh::Atom::type]->_get_op();
+  //auto &imap = _get_imap_ref();
+  auto const &imap = get<IMap>(m_value);
+  if(!imap.size()) return Token::Op::error;
+  return imap.at(Loosh::Atom::op)->_get_op();
 }
 Node::ptr_R Token::value() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -73,7 +72,7 @@ string Token::_to_str(const IMap& imap) {
   auto line =   imap.at(Loosh::Atom::line)->_to_str();
   auto col =   imap.at(Loosh::Atom::col)->_to_str();
   auto value =   imap.at(Loosh::Atom::value)->_to_str();
-  auto type = Lisp::_to_str( imap.at(Loosh::Atom::type)->_get_op());
+  auto type = Lisp::_to_str( imap.at(Loosh::Atom::op)->_get_op());
   auto result =  "Token{line: " + line + " " + "col: " + col  + ",  " +  type +  ": "  + value + "}";
   return result;
 }

@@ -38,7 +38,7 @@ public:
   { done=0, Lparen, Rparen, closurable_begin, closurable_end
   , root, nil, kernel, system, process, branch, namespace_, interpreter
   , class_, private_, new_, delete_, clone, use
-  , error, noop
+  , error, noop, op
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
   , atom, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map, cc_imap
   , typeof_, size, is_atom, is_integer, is_float, is_string, is_list, is_deque, is_vector, is_cc_list, is_hash, is_ihash
@@ -299,7 +299,7 @@ template <typename T> T& get_value() {
 
   // _get
   Integer _get_integer() const;
-  Op _get_op() const;
+  virtual Op _get_op() const;
   UnsignedInteger _get_unsigned_integer() const;
   Atom _get_atom() const;
   Float _get_float() const;
@@ -478,11 +478,11 @@ class MetaNode : public Node {
 class Token: public Node {
 public:
   Token() ;
-  using Type = Op; 
-  static unique_ptr<Token> create(Type t, Value v, UnsignedInteger l, UnsignedInteger c ) ; 
-  static unique_ptr<Token> create(Type t, ptr_U , UnsignedInteger l, UnsignedInteger c ) ; 
+  //using Type = Op; 
+  static unique_ptr<Token> create(Op t, Value v, UnsignedInteger l, UnsignedInteger c ) ; 
+  static unique_ptr<Token> create(Op t, ptr_U , UnsignedInteger l, UnsignedInteger c ) ; 
 
-  Type type() ;
+  Op _get_op() const override;
   ptr_R value() override;
   string _to_str() const ;
   static string _to_str(const IMap&) ;

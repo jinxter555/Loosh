@@ -39,12 +39,31 @@ Node::OpStatus Lisp::eval(Node* process, Node* node) {
       cerr << "eval token error:" << node->_to_str() << "\n";
       return ret_status;
     }
-    return  ret_status;
-  }
+    return  ret_status;}
+  case Node::Type::Vector: {
+    auto &cc_vec = node->_get_vector_ref();
+    eval(process, cc_vec);
 
   }
+  default: {}}
   return {false, Node::create()};
-
 }
+
+Node::OpStatus Lisp::eval(Node* process, Node::Vector& cc_vec_code){
+  auto op_node = cc_vec_code[0].get();
+  /*
+  //auto op_node_status = eval(process, op_node);
+  if(!op_node_status.first ) {
+    cerr << "eval token error:" << op_node->_to_str() << "\n";
+    return op_node_status;
+
+  }
+  //auto op = 
+  //switch(op_node->)
+*/
+}
+
+
+
 
 };

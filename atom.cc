@@ -97,6 +97,8 @@ const Node::UnsignedInteger Atom::parent=str_to_atom(":parent");
 const Node::UnsignedInteger Atom::lang=str_to_atom(":lang");
 const Node::UnsignedInteger Atom::lisp=str_to_atom(":lisp");
 const Node::UnsignedInteger Atom::atom=str_to_atom(":atom");
+const Node::UnsignedInteger Atom::op=str_to_atom(":op");
+const Node::UnsignedInteger Atom::noop=str_to_atom(":noop");
 
 
 const Node::UnsignedInteger Atom::class_=str_to_atom(":class");

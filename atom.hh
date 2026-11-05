@@ -13,7 +13,7 @@ public:
       match, extract, replace, full, part,
       icase, nosubs, optimize, collate, ecmas, basic, extended, awk, grep, egrep,
       scope, frame, process,
-      lang, lisp, atom,
+      lang, lisp, atom, op, noop,
       pid, parent_pid, parent,
       line, col, value, type
 

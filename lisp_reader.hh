@@ -21,10 +21,12 @@ friend class Lisp;
 private:
 public:
   LispReader();
-  list<unique_ptr<Token>> tokenize_lisp(const string& input);  // turn everything in to a stream of tokens
-  Node::List tokenize_lsh(const string& input);  // turn everything in to a stream of tokens
-  Node::ptr_U parse_lisp(list<unique_ptr<Token>>& tokens);  // turn everything in to a stream of tokens
-  Node::ptr_U parse_lisp2(list<unique_ptr<Token>>& tokens);  // turn everything in to a stream of tokens
+  // list<unique_ptr<Token>> tokenize_lisp(const string& input);  // turn everything in to a stream of tokens
+  Node::List tokenize_lisp(const string& input);  // turn everything in to a stream of tokens
+  //Node::List tokenize_lsh(const string& input);  // turn everything in to a stream of tokens
+  //Node::ptr_U parse_lisp(list<unique_ptr<Token>>& tokens);  // turn everything in to a stream of tokens
+  Node::ptr_U parse_lisp(Node::List& tokens);  // turn everything in to a stream of tokens
+  //Node::ptr_U tokens_to_vector(list<unique_ptr<Token>>& tokens);  // turn everything in to a stream of tokens
 
 };
 
