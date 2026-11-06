@@ -47,7 +47,7 @@ Node::OpStatus Lisp::eval(Node* process, Node* node) {
     return  ret_status;}
   case Node::Type::Vector: {
     auto &cc_vec = node->_get_vector_ref();
-    eval(process, cc_vec);
+    return eval(process, cc_vec, 0);
   }
   case Node::Type::Integer: {
     cout << "integer: " <<  code->_get_integer() << "\n";
@@ -61,9 +61,9 @@ Node::OpStatus Lisp::eval(Node* process, Node* node) {
   return {false, Node::create()};
 }
 
-Node::OpStatus Lisp::eval(Node* process, Node::Vector& cc_vec_code){
+Node::OpStatus Lisp::eval(Node* process, Node::Vector& cc_vec_code, UnsignedInteger start){
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
-  auto vptr =  cc_vec_code[0].get();
+  auto vptr =  cc_vec_code[start].get();
   auto op_node_result = eval(process, vptr);
   /*
   //auto op_node_status = eval(process, op_node);
@@ -75,6 +75,7 @@ Node::OpStatus Lisp::eval(Node* process, Node::Vector& cc_vec_code){
   //auto op = 
   //switch(op_node->)
 */
+  return {true, Node::create(true)};
 }
 
 

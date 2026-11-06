@@ -54,7 +54,7 @@ public:
 
 
   Node::OpStatus eval(Node* process, Node* code);
-  Node::OpStatus eval(Node* process, Node::Vector& cc_vec_code);
+  Node::OpStatus eval(Node* process, Node::Vector& cc_vec_code, UnsignedInteger start);
 
 
 
