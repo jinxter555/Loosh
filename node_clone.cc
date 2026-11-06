@@ -30,6 +30,11 @@ unique_ptr<Node> Node::clone() const {
       if(m_type == Type::ObjectId) uptr->type_set_object_id();
       return uptr; }
 
+    else if constexpr (is_same_v<U, Op>) {
+      auto uptr = create(arg); // create a new objec with same value
+      return uptr;
+    }
+
     else if constexpr (is_same_v<U, string>) {
       auto uptr = create(arg); // create a new objec with same value
       uptr->m_type = m_type;

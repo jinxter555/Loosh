@@ -50,23 +50,27 @@ Node::OpStatus Lisp::eval(Node& process, Node& code) {
   }
   case Node::Type::Integer: {
     cout << "integer: " <<  code._get_integer() << "\n";
-    return {true, Node::create(code._get_integer())};
-  }
-  case Node::Type::Op: {
-    cout << "op: " <<  code._to_str() << "\n";
-    return {true, Node::create(true)};
+    //return {true, Node::create(code._get_integer())};
+    break;
   }
   default: {}}
-  return {false, Node::create()};
+  
+  return {true, code.clone()};
+  //return {false, Node::create()};
 }
 
 Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec_code, UnsignedInteger start){
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
   if(cc_vec_code.size() == 0) return {true, Node::create()};
 
-  auto vptr =  cc_vec_code[start].get();
-  auto op_node_status = eval(process, *vptr);
+  auto op_node_status = eval(process, *cc_vec_code[start]);
   switch(op_node_status.second->m_type) {
+  case Node::Type::Op: {
+    cout << "op status: " <<  op_node_status << "\n";
+    //return {true, Node::create(true)};
+    break;
+  }
+
 
   }
   /*
