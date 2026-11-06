@@ -10,7 +10,7 @@ objects =  node.o  node_str.o node_out.o node_clone.o scope_logger.o  \
 	node_map.o node_sequence.o node_object.o \
 	trace_guard.o tree.o atom.o lang.o \
 	lisp.o  lisp_keywords.o lisp_reader.o  lisp_lookups.o \
-	lisp_build_util.o \
+	lisp_build_util.o  lisp_eval_math.o \
   prompt.o  interactive.o  commandline.o\
 	process_branch.o  frame.o scope.o environment.o  lex.yy.o token.o
 

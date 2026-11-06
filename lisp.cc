@@ -36,7 +36,7 @@ Node::OpStatus Lisp::eval(Node& process, Node& code) {
 
   switch(code.m_type) {
   case Node::Type::Token: {
-    cout << "eval token " <<  code._to_str() << "\n";
+    //cout << "eval token " <<  code._to_str() << "\n";
     auto value = code.value();
     auto ret_status = eval(process, *value);
     if(!ret_status.first) {
@@ -59,30 +59,34 @@ Node::OpStatus Lisp::eval(Node& process, Node& code) {
   //return {false, Node::create()};
 }
 
-Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec_code, UnsignedInteger start){
+Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec, UnsignedInteger start){
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
-  if(cc_vec_code.size() == 0) return {true, Node::create()};
+  if(cc_vec.size() == 0) return {true, Node::create()};
 
-  auto op_node_status = eval(process, *cc_vec_code[start]);
-  switch(op_node_status.second->m_type) {
-  case Node::Type::Op: {
-    cout << "op status: " <<  op_node_status << "\n";
+  auto op_node_status = eval(process, *cc_vec[start]);
+
+  if(op_node_status.second->m_type != Node::Type::Op) {
+    string msg = "first element of list is not a lisp operator  " ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+  }
+
+  switch(op_node_status.second->_get_op()) {
+  case Node::Op::add: {
+    cout << "op status add: " <<  op_node_status << "\n";
+    auto add_result_status = add(process, cc_vec, start+1) ;
+    cout << "add result status : " <<  add_result_status << "\n";
+    return add_result_status;
+  }
+  case Node::Op::sub: {
+    cout << "op status sub: " <<  op_node_status << "\n";
     //return {true, Node::create(true)};
     break;
   }
+  default:{}}
 
 
-  }
-  /*
-  //auto op_node_status = eval(process, op_node);
-  if(!op_node_status.first ) {
-    cerr << "eval token error:" << op_node->_to_str() << "\n";
-    return op_node_status;
-
-  }
-  //auto op = 
-  //switch(op_node->)
-*/
   return {true, Node::create(true)};
 }
 

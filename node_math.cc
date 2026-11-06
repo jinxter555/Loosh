@@ -13,6 +13,8 @@ namespace Loosh
 
 //------------------------------------------------------------------------
 Node Node::operator+(const Node &other) const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+
   return visit([&](auto&& lhs, auto&& rhs) -> Node {
     using L = decay_t<decltype(lhs)>;
     using R = decay_t<decltype(rhs)>;
