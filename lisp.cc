@@ -30,41 +30,45 @@ Lisp::Lisp(Tree*t, LispReader&r)
 }
 
 
-Node::OpStatus Lisp::eval(Node* process, Node* node) {
+Node::OpStatus Lisp::eval(Node& process, Node& code) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
 
-  Node *code= node;
 
-  switch(code->m_type) {
+  switch(code.m_type) {
   case Node::Type::Token: {
-    cout << "eval token " <<  code->_to_str() << "\n";
-    code = code->value();
-    auto ret_status = eval(process, code);
+    cout << "eval token " <<  code._to_str() << "\n";
+    auto value = code.value();
+    auto ret_status = eval(process, *value);
     if(!ret_status.first) {
-      cerr << "eval token error:" << node->_to_str() << "\n";
+      cerr << "eval token error:" << code._to_str() << "\n";
       return ret_status;
     }
     return  ret_status;}
   case Node::Type::Vector: {
-    auto &cc_vec = node->_get_vector_ref();
+    auto &cc_vec = code._get_vector_ref();
     return eval(process, cc_vec, 0);
   }
   case Node::Type::Integer: {
-    cout << "integer: " <<  code->_get_integer() << "\n";
-    return {true, Node::create(code->_get_integer())};
+    cout << "integer: " <<  code._get_integer() << "\n";
+    return {true, Node::create(code._get_integer())};
   }
   case Node::Type::Op: {
-    cout << "123op: " <<  code->_to_str() << "\n";
+    cout << "op: " <<  code._to_str() << "\n";
     return {true, Node::create(true)};
   }
   default: {}}
   return {false, Node::create()};
 }
 
-Node::OpStatus Lisp::eval(Node* process, Node::Vector& cc_vec_code, UnsignedInteger start){
+Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec_code, UnsignedInteger start){
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+  if(cc_vec_code.size() == 0) return {true, Node::create()};
+
   auto vptr =  cc_vec_code[start].get();
-  auto op_node_result = eval(process, vptr);
+  auto op_node_status = eval(process, *vptr);
+  switch(op_node_status.second->m_type) {
+
+  }
   /*
   //auto op_node_status = eval(process, op_node);
   if(!op_node_status.first ) {

@@ -53,10 +53,11 @@ public:
   Op str_to_op(const string &input) ; // convert lisp string op keyword string 
 
 
-  Node::OpStatus eval(Node* process, Node* code);
-  Node::OpStatus eval(Node* process, Node::Vector& cc_vec_code, UnsignedInteger start);
+  Node::OpStatus eval(Node& process, Node& code);
+  Node::OpStatus eval(Node& process, Node::Vector& cc_vec_code, UnsignedInteger start);
 
 
+  Node::OpStatus add(Node& process, const  Vector& vector, UnsignedInteger start) ;
 
   //-- utilies to communicate with out side. aka interactive 
   Node::OpStatus run_program(int argc, char *argv[]) override; // create module structure 
