@@ -55,7 +55,7 @@ Node::Op Token::_get_op() const {
 Node::ptr_R Token::value() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   auto const &cc_vec  = get<Vector>(m_value);
-  auto &value = cc_vec[static_cast<UnsignedInteger>(Token::Index::op)];
+  auto &value = cc_vec[static_cast<UnsignedInteger>(Token::Index::value)];
   return value->value();
 }
 

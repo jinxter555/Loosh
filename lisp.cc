@@ -37,6 +37,7 @@ Node::OpStatus Lisp::eval(Node* process, Node* node) {
 
   switch(code->m_type) {
   case Node::Type::Token: {
+    cout << "eval token " <<  code->_to_str() << "\n";
     code = code->value();
     auto ret_status = eval(process, code);
     if(!ret_status.first) {
