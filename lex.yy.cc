@@ -87,7 +87,7 @@
 
 unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 {
-  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:\\Q+\\E))|((?:\\Q-\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:\\Q:\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*))|(.)";
+  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:\\Q+\\E))|((?:\\Q-\\E))|((?:\\Q*\\E))|((?:\\Q/\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:\\Q:\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*))|(.)";
   static const reflex::Pattern PATTERN_INITIAL(REGEX_INITIAL);
   if (!has_matcher())
   {
@@ -100,7 +100,7 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
           case 0:
             if (matcher().at_end())
             {
-#line 71 "lexer_inline.l"
+#line 73 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::done, std::monostate{}, lineno(), columno()); }
 
 
@@ -140,19 +140,27 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
           case 7: // rule lexer_inline.l:35: "-" :
 #line 35 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::sub , Loosh::Node::Op::sub, lineno(), columno()); }
+            break;
+          case 8: // rule lexer_inline.l:36: "*" :
+#line 36 "lexer_inline.l"
+{ return Loosh::Token::create(Loosh::Token::Op::mul , Loosh::Node::Op::mul, lineno(), columno()); }
+            break;
+          case 9: // rule lexer_inline.l:37: "/" :
+#line 37 "lexer_inline.l"
+{ return Loosh::Token::create(Loosh::Token::Op::div , Loosh::Node::Op::div, lineno(), columno()); }
 
             break;
-          case 8: // rule lexer_inline.l:37: {float_} :
-#line 37 "lexer_inline.l"
+          case 10: // rule lexer_inline.l:39: {float_} :
+#line 39 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::float_,   std::stod(text()),  lineno(), columno()); }
             break;
-          case 9: // rule lexer_inline.l:38: {integer_} :
-#line 38 "lexer_inline.l"
+          case 11: // rule lexer_inline.l:40: {integer_} :
+#line 40 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::integer_, std::stoll(text()), lineno(), columno()); }
 
             break;
-          case 10: // rule lexer_inline.l:40: {dqstring} :
-#line 40 "lexer_inline.l"
+          case 12: // rule lexer_inline.l:42: {dqstring} :
+#line 42 "lexer_inline.l"
 {
   std::string str = text();
   std::string actual_val = str.substr(1, str.length() - 2);
@@ -160,8 +168,8 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 }
 
             break;
-          case 11: // rule lexer_inline.l:49: ":"({identifier}) :
-#line 49 "lexer_inline.l"
+          case 13: // rule lexer_inline.l:51: ":"({identifier}) :
+#line 51 "lexer_inline.l"
 {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
   auto atom_value =  Loosh::Atom::str_to_atom(text());
   cout << "atom_value: " << atom_value << "\n";
@@ -174,8 +182,8 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 }
 
             break;
-          case 12: // rule lexer_inline.l:60: "begin."({identifier}) :
-#line 60 "lexer_inline.l"
+          case 14: // rule lexer_inline.l:62: "begin."({identifier}) :
+#line 62 "lexer_inline.l"
 {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
   auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
   std::string symbol_text(group1.first, group1.second); // Construct the std::string safely using pointer + length
@@ -184,13 +192,13 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 
 
             break;
-          case 13: // rule lexer_inline.l:67: {identifier} :
-#line 67 "lexer_inline.l"
+          case 15: // rule lexer_inline.l:69: {identifier} :
+#line 69 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::identifier, text(), lineno(), columno()); }
 
             break;
-          case 14: // rule lexer_inline.l:69: . :
-#line 69 "lexer_inline.l"
+          case 16: // rule lexer_inline.l:71: . :
+#line 71 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno()); }
 
             break;

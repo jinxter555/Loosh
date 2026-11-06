@@ -33,6 +33,8 @@
 ")"                     { return Loosh::Token::create(Loosh::Token::Op::Rparen, monostate{}, lineno(), columno()); }
 "+"                     { return Loosh::Token::create(Loosh::Token::Op::add , Loosh::Node::Op::add, lineno(), columno()); }
 "-"                     { return Loosh::Token::create(Loosh::Token::Op::sub , Loosh::Node::Op::sub, lineno(), columno()); }
+"*"                     { return Loosh::Token::create(Loosh::Token::Op::mul , Loosh::Node::Op::mul, lineno(), columno()); }
+"/"                     { return Loosh::Token::create(Loosh::Token::Op::div , Loosh::Node::Op::div, lineno(), columno()); }
 
 {float_}                 { return Loosh::Token::create(Loosh::Token::Op::float_,   std::stod(text()),  lineno(), columno()); }
 {integer_}               { return Loosh::Token::create(Loosh::Token::Op::integer_, std::stoll(text()), lineno(), columno()); }

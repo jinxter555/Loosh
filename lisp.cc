@@ -75,14 +75,21 @@ Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec, UnsignedInteger s
   switch(op_node_status.second->_get_op()) {
   case Node::Op::add: {
     cout << "op status add: " <<  op_node_status << "\n";
-    auto add_result_status = add(process, cc_vec, start+1) ;
-    cout << "add result status : " <<  add_result_status << "\n";
-    return add_result_status;
+    auto result_status = add(process, cc_vec, start+1) ;
+    cout << "add result status : " <<  result_status << "\n";
+    return result_status;
   }
   case Node::Op::sub: {
     cout << "op status sub: " <<  op_node_status << "\n";
     //return {true, Node::create(true)};
     break;
+  }
+  case Node::Op::mul: {
+    cout << "op status mul: " <<  op_node_status << "\n";
+    auto result_status = mul(process, cc_vec, start+1) ;
+
+    cout << "mul result status : " <<  result_status << "\n";
+    return result_status;
   }
   default:{}}
 

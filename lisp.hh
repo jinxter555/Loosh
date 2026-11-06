@@ -58,6 +58,7 @@ public:
 
 
   Node::OpStatus add(Node& process, const  Vector& vector, UnsignedInteger start) ;
+  Node::OpStatus mul(Node& process, const  Vector& vector, UnsignedInteger start) ;
 
   //-- utilies to communicate with out side. aka interactive 
   Node::OpStatus run_program(int argc, char *argv[]) override; // create module structure 
