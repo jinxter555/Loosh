@@ -85,7 +85,7 @@ bool Meta::set_parent(ptr_R parent) {
     return false;
   }
   auto &obj = get<Vector>(m_value);
-  obj[Index::Parent] = create(parent);
+  obj[Index::Parent] = Node::create(parent);
   return true;
 }
 

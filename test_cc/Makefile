@@ -23,17 +23,20 @@ headers  := (wildcard: *.hh)
 
 #all:  test_scope_1.out # test_node_1.out 
 # all:  test_obj_1.out main.out # test_node_1.out test_node_2.out   
-all:  main.out   test_node_1.out test_node_2.out   
+all:  main.out  test_meta_1.out  # test_node_1.out test_node_2.out    
 
 main.out : main.o $(node_o)
 	$(CC) $^ -o $@ -lreadline
 
 # Added $(LDFLAGS) before objects, ensuring libraries link cleanly at the end
 test_node_1.out : test_node_1.o $(node_o)
-	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS) -lreadline
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS) 
 
 test_node_2.out : test_node_2.o $(node_o)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+
+test_meta_1.out : test_meta_1.o $(node_o)
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS) 
 
 test_obj_1.out : test_obj_1.o $(node_o)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)

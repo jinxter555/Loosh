@@ -472,7 +472,7 @@ public:
     WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
     cc_class,
     count}; // count is last element hack for counting size of this
-  unique_ptr<Meta> create(ptr_R  parent=nullptr);
+  static unique_ptr<Meta> create(ptr_R  parent=nullptr);
   static Vector create_vec();
   bool set_parent(ptr_R parent);
 
