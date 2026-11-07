@@ -99,13 +99,14 @@ Node::OpStatus Meta::array_push_back(ptr_U v) {
     string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(msg);
-    return {false, Node::create(false)};
+    return {false, Node::create()};
   }
 
   auto &obj = get<Vector>(m_value);
-  obj.push_back(move(v));
+  auto &obj_array  = obj[VectorArray];
+  obj_array->push_back(move(v));
 
-  return {false, Node::create(false)};
+  return {true, Node::create()};
 }
 
 Node::UnsignedInteger Meta::array_size() const {
@@ -120,7 +121,8 @@ Node::UnsignedInteger Meta::array_size() const {
   }
 
   const auto &obj = get<Vector>(m_value);
-  return obj.size();
+  auto &obj_array  = obj[Index::VectorArray];
+  return obj_array->_size();
 
 }
 
@@ -139,9 +141,14 @@ Node::OpStatusRef Meta::array_get(UnsignedInteger key) {
   if( obj_array->_size() > key) {
     return {true, *obj[key]};
   }
+  string msg = "Index out of bound";
+  cerr << clean_function_name() <<  ":" + msg << "\n";
+  spdlog::error(msg);
+  throw std::bad_typeid();
 
 }
-//------------------------------  Atom
+//------------------------------------------------------------------------ Atom
+//------------------------------  size
 Node::UnsignedInteger Meta::atom_size() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -152,6 +159,7 @@ Node::UnsignedInteger Meta::atom_size() {
 
 }
 
+//------------------------------  add
 Node::OpStatus Meta::atom_add(const UnsignedInteger key, unique_ptr<Node> value) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -176,6 +184,7 @@ Node::OpStatus Meta::atom_add(const UnsignedInteger key, unique_ptr<Node> value)
   return {true, Node::create(true)};
 }
 
+//------------------------------  set
 Node::OpStatus Meta::atom_set(const UnsignedInteger key, unique_ptr<Node> value) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -192,7 +201,7 @@ Node::OpStatus Meta::atom_set(const UnsignedInteger key, unique_ptr<Node> value)
   auto &obj_atom  = obj[AtomMap];
 
   if(!obj_atom->set(key, move(value)).first) {
-    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + Loosh::Atom::atom_to_str_imap(key) + "' already exists in map.")};
+    return {false, Node::create_error(Node::Error::Type::Unknown, "Key '" + Loosh::Atom::atom_to_str_imap(key) + " unknown set atom error ")};
   }
 
   //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
@@ -202,7 +211,165 @@ Node::OpStatusRef Meta::atom_get(const UnsignedInteger key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  if (m_type != Type::MetaObject) {
+  if (m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return{false, 
+      Error::ref(Error::Type::InvalidOperation, 
+        "Not a Meta Object! " + Node::_to_str(m_type) + " : " + Node::_to_str(m_type))
+    };
+  }
+  //cout << "obj atom get: " << Loosh::Atom::atom_to_str( key) << "\n";
+  //cout << clean_function_name() << "obj atom get: key " << key << "\n";
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_atom = obj[AtomMap];
+ // auto &n1 = obj_atom->get_node();
+ // cout <<  clean_function_name() <<  "n1: " << n1._to_str() << "\n";
+
+  return obj_atom->get_node(key);
+}
+
+//------------------------------------------------------------------------ Info
+//------------------------------  size
+Node::UnsignedInteger Meta::info_size() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  //return "nhello";
+  auto &obj = get<Vector>(m_value);
+  auto &obj_info  = obj[Info];
+  return obj_info->_size();
+
+}
+
+//------------------------------  add
+Node::OpStatus Meta::info_add(const UnsignedInteger key, unique_ptr<Node> value) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is not a Meta Object!";
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_info  = obj[Info];
+
+  if(!obj_info->add(key, move(value)).first) {
+    auto key_vstr = Loosh::Atom::atom_to_str_imap(key);
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key_vstr + "' already exists in map.")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+  return {true, Node::create(true)};
+}
+
+//------------------------------  set
+Node::OpStatus Meta::info_set(const UnsignedInteger key, unique_ptr<Node> value) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is not a Meta Object!";
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+    //throw system_error();
+  }
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_info  = obj[Info];
+
+  if(!obj_info->set(key, move(value)).first) {
+    return {false, Node::create_error(Node::Error::Type::Unknown, "Key '" + Loosh::Atom::atom_to_str_imap(key) + " unknown set atom error ")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+  return {true, Node::create(true)};
+}
+Node::OpStatusRef Meta::info_get(const UnsignedInteger key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if (m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return{false, 
+      Error::ref(Error::Type::InvalidOperation, 
+        "Not a Meta Object! " + Node::_to_str(m_type) + " : " + Node::_to_str(m_type))
+    };
+  }
+  //cout << "obj atom get: " << Loosh::Atom::atom_to_str( key) << "\n";
+  //cout << clean_function_name() << "obj atom get: key " << key << "\n";
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_info = obj[Info];
+ // auto &n1 = obj_atom->get_node();
+ // cout <<  clean_function_name() <<  "n1: " << n1._to_str() << "\n";
+
+  return obj_info->get_node(key);
+}
+
+//------------------------------------------------------------------------ object data add, set, get
+Node::OpStatus Meta::data_add(const string&key, unique_ptr<Node> value) { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is not a Meta Object!";
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+  }
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_data = obj[MetaObjectIndex::StringMap]->get_node();
+
+  if(!obj_data.add(key, move(value)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+  return {true, Node::create(true)};
+}
+
+
+//------------------------------  set
+Node::OpStatus Meta::data_set(const string&key, unique_ptr<Node> value) { 
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is not a Meta Object!";
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create_error(Node::Error::Type::IndexWrongType, msg)};
+  }
+
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_data = obj[MetaObjectIndex::StringMap]->get_node();
+
+  if(!obj_data.set(key, move(value)).second) {
+    return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  }
+
+  //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
+
+  return {true, Node::create(true)};
+}
+
+//------------------------------ 
+Node::OpStatusRef Meta::data_get(const string&key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if (m_type != Type::Meta) {
     string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(msg);
@@ -211,15 +378,26 @@ Node::OpStatusRef Meta::atom_get(const UnsignedInteger key) {
         "Unsupported types for addition! " + Node::_to_str(m_type) + " : " + Node::_to_str(m_type))
     };
   }
-  //cout << "obj atom get: " << Loosh::Atom::atom_to_str( key) << "\n";
-  //cout << clean_function_name() << "obj atom get: key " << key << "\n";
 
   auto &obj = get<Vector>(m_value);
-  auto &obj_atom = obj[MetaObjectIndex::IntegerMap];
- // auto &n1 = obj_atom->get_node();
- // cout <<  clean_function_name() <<  "n1: " << n1._to_str() << "\n";
+  auto &obj_data = obj[MetaObjectIndex::StringMap];
+  return obj_data->get_node(key);
 
-  return obj_atom->get_node(key);
+}
+Node::UnsignedInteger Meta::data_size() const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    throw std::bad_typeid();
+  }
+
+  const auto &obj = get<Vector>(m_value);
+  return obj.size();
+
 }
 
 }

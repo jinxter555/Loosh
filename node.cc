@@ -361,32 +361,6 @@ Node::ptr_R Node::_get_ptr_r() {
   
 }
 
-/*
-Node::ptr_R Node::_get_meta_ptr_r() {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  AUTO_TRACE();
-
-  switch(m_type) {
-  case Type::MetaPtr: {
-    auto meta_ptr_r = get<ptr_R>(m_value);
-    if(meta_ptr_r->m_type == Type::Map) {
-      string msg = "Raw, meta_ptr_w is not a Map!";
-      spdlog::warn(clean_function_name() + ": " + msg);
-      MYLOGGER_MSG(trace_function, "Warning: "  + msg, SLOG_NODE_OP)
-    }
-    return meta_ptr_r;
-  }
-  default: {}}
-
-  auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::m_type " 
-  + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
-
-  spdlog::error(clean_function_name() + ": " + msg);
-  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
-  throw std::bad_typeid();
-}
-  
-*/
 
 
 Node::ptr_U Node::_get_ptr_u() {
@@ -469,7 +443,7 @@ Node::OpStatus Node::set(const UnsignedInteger key, unique_ptr<Node> value) {
 
   }, m_value);
   //cout << clean_function_name() << "::::key: "  << key << ", value: " << value->_to_str() << "\n";
-   return {true, create(true)};
+   return {false, create()};
 
 
 }
@@ -803,11 +777,12 @@ Node::UnsignedInteger Node::_size() const  {
     if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
       is_same_v<T, Vector> || is_same_v<T, Map> || is_same_v<T, IMap>) {
       return arg.size();
-    } 
-    auto msg =  "Not a Node::(container) m_type " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
-    spdlog::error(clean_function_name() + ": " +  msg);
-    MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
+    } else {
+      auto msg =  "Not a Node::(container) m_type " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
+      spdlog::error(clean_function_name() + ": " +  msg);
+      MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+      throw std::bad_typeid();
+    }
   }, m_value);
 }
 

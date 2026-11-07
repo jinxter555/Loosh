@@ -482,13 +482,13 @@ public:
   OpStatus info_add(UnsignedInteger key, unique_ptr<Node> child);
   OpStatus info_set(UnsignedInteger key, unique_ptr<Node> child);
   OpStatusRef info_get(UnsignedInteger key);
-  UnsignedInteger obj_info_size();
+  UnsignedInteger info_size();
 
 
   OpStatus data_add(const string&key, unique_ptr<Node> child);
   OpStatus data_set(const string&key, unique_ptr<Node> child);
-  OpStatusRef get_get(const string&key);
-  UnsignedInteger data_size();
+  OpStatusRef data_get(const string&key);
+  UnsignedInteger data_size() const;
 
   OpStatus atom_add(UnsignedInteger key, unique_ptr<Node> child);
   OpStatus atom_set(UnsignedInteger key, unique_ptr<Node> child);
