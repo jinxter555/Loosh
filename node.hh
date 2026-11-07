@@ -479,6 +479,28 @@ public:
   string _to_str() const ;
   static string _to_str(const Vector&) ;
 
+  OpStatus info_add(UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus info_set(UnsignedInteger key, unique_ptr<Node> child);
+  OpStatusRef info_get(UnsignedInteger key);
+  UnsignedInteger obj_info_size();
+
+
+  OpStatus data_add(const string&key, unique_ptr<Node> child);
+  OpStatus data_set(const string&key, unique_ptr<Node> child);
+  OpStatusRef get_get(const string&key);
+  UnsignedInteger data_size();
+
+  OpStatus atom_add(UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus atom_set(UnsignedInteger key, unique_ptr<Node> child);
+  OpStatusRef atom_get(UnsignedInteger key);
+  UnsignedInteger atom_size();
+
+  OpStatus array_push_back(ptr_U);
+  OpStatusRef array_get(UnsignedInteger);
+  UnsignedInteger array_size() const ;
+
+
+
 };
 
 class Token: public Node {

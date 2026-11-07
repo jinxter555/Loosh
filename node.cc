@@ -447,25 +447,9 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
 Node::OpStatus Node::set(const UnsignedInteger key, unique_ptr<Node> value) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-//hello
   visit([&](auto&& arg) -> OpStatus {
     //cout << clean_function_name() + ": m_type " << Node::_to_str(m_type) << "\n";
     using T = decay_t<decltype(arg)>;
-
-
-    /*
-    int status = -1;
-    // Demangle the compiler's internal type string
-    std::unique_ptr<char, void(*)(void*)> demangled(
-        abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status),
-        std::free
-    );
-    std::cout << "The type of T is: " 
-     << (status == 0 ? demangled.get() : typeid(T).name()) 
-     << std::endl;
-*/
-
-
 
     if constexpr (is_same_v<T, IMap>) {
       arg[key] = move(value);
@@ -486,7 +470,6 @@ Node::OpStatus Node::set(const UnsignedInteger key, unique_ptr<Node> value) {
   }, m_value);
   //cout << clean_function_name() << "::::key: "  << key << ", value: " << value->_to_str() << "\n";
    return {true, create(true)};
-
 
 
 }
