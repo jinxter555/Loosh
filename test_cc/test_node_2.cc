@@ -22,8 +22,9 @@ using namespace Loosh;
 
 TEST_CASE("node") {
   Node::Error::init();
-  trace_function.open("trace.log", std::ios::out);
+  //trace_function.open("trace.log", std::ios::out);
   ScopeLogger::set_current_verbose_level(SLOG_NODE_OP);
+  MYLOGGER(trace_function, "int main(int, char*[])", __func__, SLOG_NODE_OP);
 
   spdlog::set_pattern("%^[%l]%$ %v");
 
@@ -122,7 +123,6 @@ TEST_CASE("node") {
   }
 }
 
-/*
 TEST_CASE("list") {
   Node::Error::init();
   trace_function.open("trace.log", std::ios::out);
@@ -162,4 +162,3 @@ TEST_CASE("map") {
   REQUIRE_THROWS_AS(tm4.push_front(Node::create(5555l)), std::bad_typeid);
 
 }
-  */

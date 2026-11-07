@@ -94,11 +94,12 @@ void ScopeLogger::msg(const string& msg, int verbose_level) {
 
 
 void ScopeLogger::set_current_stack_level() {
-  if(levels.size() == 0 )  {
+  if(levels.size() == 0 || levels.empty())  {
     current_level = 0;
     levels.push_back(1);
   } else {
     current_level = levels.back();
+    cout << "levels: " << levels.size() << "\n";
     levels.push_back(current_level+1);
   }
 }

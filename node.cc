@@ -598,6 +598,7 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
   default: {
     auto msg =  "Cannot add element to a non-Node::__Sequence__, type: " + _to_str(m_type)  + ", Node::m_value: " +  _to_str();
     spdlog::error(clean_function_name() + ": " + msg);
+    cerr << clean_function_name() +":" + msg << "\n";
     MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
     throw std::bad_typeid();
   }}

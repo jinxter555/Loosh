@@ -8,10 +8,10 @@
 #include "../scope_logger.hh"
 
 #include "../node_tmpl_cc.hh"
+
+
 #include "../interactive.hh"
-
 std::fstream trace_function("trace.log", std::ios::out);
-
 Loosh::Interactive *it_ptr;
 
 using namespace  std;
@@ -24,7 +24,7 @@ TEST_CASE("check node 2") {
     Node::Error::init();
 
 
-  trace_function.open("trace.log", std::ios::out);
+  //trace_function.open("trace.log", std::ios::out);
   //ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
   ScopeLogger::set_current_verbose_level(SLOG_NODE_OP);
 
