@@ -8,8 +8,11 @@
 #include "../scope_logger.hh"
 
 #include "../node_tmpl_cc.hh"
+#include "../interactive.hh"
 
+std::fstream trace_function("trace.log", std::ios::out);
 
+Loosh::Interactive *it_ptr;
 
 using namespace  std;
 using namespace Loosh;

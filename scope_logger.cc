@@ -72,7 +72,8 @@ ScopeLogger::~ScopeLogger() {
   const std::string reset("\033[0m");
   out << reset;
 
-  levels.pop_back();
+  if(!levels.empty())
+    levels.pop_back();
 
   if(id_log > SLOG_MAX_LEVEL && SLOG_MAX_LEVEL!=0) {
     cerr << "Logger Error: Program has reach max level:" << SLOG_MAX_LEVEL << " !\n";
