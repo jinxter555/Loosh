@@ -31,6 +31,7 @@ string Node::_to_str(Type type) {
     case Type::List: return "List";
     case Type::Vector: return "Vector";
     case Type::DeQue: return "DeQue";
+    case Type::Meta: return "Meta";
     case Type::MetaObject: return "Meta Object";
     case Type::SimpleObject: return "Simple Object";
     case Type::Map: return "Map";
@@ -107,6 +108,10 @@ string Node::_to_str() const {
   case Type::Token: {
       auto& cc_vec = get<Vector>(m_value);
       return Token::_to_str(cc_vec);
+  }
+  case Type::Meta: {
+      auto& cc_vec = get<Vector>(m_value);
+      return Meta::_to_str(cc_vec);
   }
   case Type::IMap: {
       auto& imap = get<IMap>(m_value);

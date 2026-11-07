@@ -57,6 +57,7 @@ Node::Node(Type t)
     m_value = move(nm);
     break;}
 
+  case Type::Meta: break;
   case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
   case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
 

@@ -92,7 +92,7 @@ public:
   enum class Type { 
     Null, Token, Bool, Error, Size, Integer, UnsignedInteger, Float, String,
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Set, Vector, DeQue, Op, 
-    ControlFlow, Atom, ObjectId, MetaObject, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
+    ControlFlow, Atom, ObjectId, MetaObject, Meta, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
   enum MetaObjectIndex {
@@ -457,22 +457,26 @@ private:
 };
 
 
-class MetaNode : public Node {
-  //MetaNode() : Node(Type::Vector){}
-  MetaNode() : Node(Vector(MetaNode::Index::count) ){}
-  MetaNode(Node::Type t) ;
+class Meta: public Node {
+public:
+  Meta();
+  Meta(Node::Type t) ;
 
   enum Index {
     Info, 
     StringMap, 
     VectorArray,
-    IntegerMap,
+    AtomMap,
     Parent,
     MetaLock,
     WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
     cc_class,
     count}; // count is last element hack for counting size of this
-  unique_ptr<MetaNode> create();
+  unique_ptr<Meta> create();
+  static Vector create_vec();
+
+  string _to_str() const ;
+  static string _to_str(const Vector&) ;
 
 };
 
