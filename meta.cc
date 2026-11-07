@@ -67,4 +67,27 @@ string Meta::_to_str(const Vector& cc_vec)  {
 
 }
 
+unique_ptr<Meta> Meta::create(ptr_R parent) {
+  auto obj = make_unique<Meta>();
+  obj->set_parent(parent);
+  return obj;
+}
+
+//------------------------------------------------------------------------ 
+bool Meta::set_parent(ptr_R parent) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a Meta Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return false;
+  }
+  auto &obj = get<VecObject>(m_value);
+  obj[Index::Parent] = create(parent);
+  return true;
+}
+
+
 }

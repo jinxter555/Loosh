@@ -472,8 +472,9 @@ public:
     WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
     cc_class,
     count}; // count is last element hack for counting size of this
-  unique_ptr<Meta> create();
+  unique_ptr<Meta> create(ptr_R  parent=nullptr);
   static Vector create_vec();
+  bool set_parent(ptr_R parent);
 
   string _to_str() const ;
   static string _to_str(const Vector&) ;
@@ -506,15 +507,9 @@ public:
 
 extern Node node_null;
 
-
-
-
-
 };
 
-
 //#include "node_tmpl_cc.hh"
-
 
 ostream& operator<<(ostream& os, const Loosh::Node& v) ;
 ostream& operator<<(ostream& os, const Loosh::Node::OpStatus& s) ;
