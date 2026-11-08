@@ -49,6 +49,7 @@ string Atom::unqiue_name(const string& input) {
   return input + to_string(hashed_value);
 }
 
+const Node::UnsignedInteger Atom::nil=str_to_atom(":nil");
 const Node::UnsignedInteger Atom::fun=str_to_atom(":fun");
 const Node::UnsignedInteger Atom::server=str_to_atom(":server");
 const Node::UnsignedInteger Atom::accept=str_to_atom(":accept");

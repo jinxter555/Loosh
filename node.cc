@@ -40,8 +40,9 @@ Loosh::Node::Node(Value v, Type t)
 
 //Node::Node(Map v, Type t)  { }
 
-Node::Node(Type t)
-  : m_type(t) {
+Node::Node(Type t) : m_type(t) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+
   switch(t) {
   case Type::Null: m_value= {}; break;
   case Type::Bool: m_value=true; break;
@@ -89,7 +90,9 @@ Node::Node(Type t)
   case Type::AtomicInteger: { 
     m_value = make_unique<atomic<Integer>>(0);
     break;}
-
+  case Type::Atom: {
+    m_value = Loosh::Atom::nil;
+    break;}
   default: {
     m_value = monostate{};
     m_type = Type::Null;
@@ -624,20 +627,22 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 //------------------------------ add
 Node::OpStatus Node::add(const UnsignedInteger key, unique_ptr<Node> child) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  if(m_type == Type::IMap) {
-    IMap& imap = get<IMap>(m_value);
 
-    if(!imap.try_emplace(key, move(child)).second) {
-      return {false, create_error(Error::Type::KeyAlreadyExists, 
+  return visit([&](auto&& arg) -> OpStatus {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, IMap>){
+      if(!arg.try_emplace(key, move(child)).second) {
+        return {false, create_error(Error::Type::KeyAlreadyExists, 
         "Key '" + Loosh::Atom::atom_to_str_imap( key) + "' already exists in IMap.")};
+      }
+      return {true, Node::create(true)};
+    } else {
+      auto msg =  "Not an IMap: type: " + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
+      spdlog::error(clean_function_name() + ": " +  msg);
+      MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+      throw std::bad_typeid();
     }
-    return {true, Node::create(true)};
-  }
-
-  auto msg =  "Cannot add key-value to a non-IMap node. m_type: " + Node::_to_str(m_type);
-  cerr << clean_function_name() << ":" <<  msg << "\n";
-  spdlog::error(clean_function_name() + ": " + msg);
-  return {false, create_error(Error::Type::InvalidOperation, msg)};
+  }, m_value );
 
 }
 //------------------------------ add

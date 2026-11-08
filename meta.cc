@@ -36,6 +36,7 @@ Node::Vector Meta::create_vec() {
   cc_vec[Index::VectorArray] = Node::create(Node::Type::Vector);
   cc_vec[Index::StringMap] = Node::create(Node::Type::Map);
   cc_vec[Index::MetaLock] = Node::create(Node::Type::Lock);
+  //cc_vec[Index::cc_class] = Node::create(Loosh::Atom::class_);
   cc_vec[Index::cc_class] = Node::create(Node::Type::Atom);
   cc_vec[Index::WalkerCount] = Node::create(Node::Type::AtomicInteger);
 
