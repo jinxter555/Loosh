@@ -107,7 +107,7 @@ Node::OpStatus Meta::array_push_back(ptr_U v) {
 }
 
 
-//------------------------------ push front
+//------------------------------ pop front
 Node::OpStatus Meta::array_pop_front() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -124,7 +124,24 @@ Node::OpStatus Meta::array_pop_front() {
   return obj_array->pop_front();
 }
 
-//------------------------------ push back
+
+//------------------------------ pop back
+Node::OpStatus Meta::array_pop_back() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create()};
+  }
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_array  = obj[VectorArray];
+  return obj_array->pop_back();
+}
+
 
 
 //------------------------------ 

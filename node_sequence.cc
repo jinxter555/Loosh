@@ -170,8 +170,35 @@ Node::OpStatusRef Node::front() {
 
 
 Node::OpStatus Node::pop_back() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  return visit([&](auto&& arg) -> OpStatus {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, Vector>){
+      //cout << clean_function_name()  + ":" <<  value->_to_str() << "\n";
+      auto back = move(arg.back());
+      arg.pop_back();
+      return {true, move(back)}; 
 
+    } else if constexpr (is_same_v<T, List>){
+      auto back = move(arg.back());
+      arg.pop_back();
+      return {true, move(back)}; 
+
+    } else if constexpr (is_same_v<T, DeQue>){
+      auto back  = move(arg.back());
+      arg.pop_back();
+      return {true, move(back)}; 
+
+    } else {
+      string msg =  "Cannot pop_back() element to a non-Node::__Sequence__ node Node::type: " + _to_str(m_type) + ", Node::value: " +  _to_str() ;
+      spdlog::error(clean_function_name() + ": " + msg);
+      MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+      cerr << clean_function_name() + ": " + msg << "\n";
+      throw std::bad_typeid();
+    }
+  }, m_value);
 }
+
 Node::OpStatus Node::pop_front() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   return visit([&](auto&& arg) -> OpStatus {
@@ -180,6 +207,7 @@ Node::OpStatus Node::pop_front() {
       //cout << clean_function_name()  + ":" <<  value->_to_str() << "\n";
       auto msg = "Warning!: Node::pop_front() with vector object";
       MYLOGGER_MSG(trace_function, msg, SLOG_FUNC_INFO);
+      spdlog::error(clean_function_name() + ": " + msg);
       cerr << msg << "\n";
       auto front = move(arg.front());
        arg.erase(arg.begin());

@@ -60,7 +60,12 @@ TEST_CASE("check meta 1") {
   cout << "m1->array_front():\n" << m1->array_front() << "\n";
   cout << "m1->array_get(1):\n" << m1->array_get(1) << "\n";
   auto m1_pf = m1->array_pop_front();
-  cout << "m1:\n" << m1->_to_str() << "\n";
+  cout << "m1->array_pop_front:\n" << m1->_to_str() << "\n";
+  cout << "m1_pf: " << m1_pf << "\n\n";
+
+  auto m2_pb = m1->array_pop_back();
+  cout << "m1->array_pop_back:\n" << m1->_to_str() << "\n";
+  cout << "m2_pb: " << m2_pb << "\n";
 
   /* -- this won't work since Meta obj use cc_vec to store Index::AtomMap
   auto m2 = Meta::create();
