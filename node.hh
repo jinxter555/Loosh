@@ -496,7 +496,13 @@ public:
   UnsignedInteger atom_size();
 
   OpStatus array_push_back(ptr_U);
+  OpStatus array_push_front(ptr_U);
+
+  OpStatus array_pop_back();
+  OpStatus array_pop_front();
+
   OpStatusRef array_back();
+  OpStatusRef array_front();
   OpStatusRef array_get(UnsignedInteger);
   UnsignedInteger array_size() const ;
 

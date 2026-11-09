@@ -51,8 +51,16 @@ TEST_CASE("check meta 1") {
   m1->array_push_back(Node::create(3.14159));
   m1->array_push_back(Node::create("hello"));
   m1->array_push_back(Node::create("world"));
+  m1->array_push_back(Node::create("axis"));
   cout << "m1:\n" << m1->_to_str() << "\n";
-  cout << "m1->back():\n" << m1->array_back() << "\n";
+
+  m1->array_push_front(Node::create("mundi"));
+  cout << "m1:\n" << m1->_to_str() << "\n";
+  cout << "m1->array_back():\n" << m1->array_back() << "\n";
+  cout << "m1->array_front():\n" << m1->array_front() << "\n";
+  cout << "m1->array_get(1):\n" << m1->array_get(1) << "\n";
+  auto m1_pf = m1->array_pop_front();
+  cout << "m1:\n" << m1->_to_str() << "\n";
 
   /* -- this won't work since Meta obj use cc_vec to store Index::AtomMap
   auto m2 = Meta::create();

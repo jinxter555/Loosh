@@ -68,6 +68,26 @@ bool Meta::set_parent(ptr_R parent) {
 
 
 //------------------------------------------------------------------------  array
+//------------------------------ push front
+Node::OpStatus Meta::array_push_front(ptr_U v) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create()};
+  }
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_array  = obj[VectorArray];
+  obj_array->push_front(move(v));
+
+  return {true, Node::create()};
+}
+
+//------------------------------ push back
 Node::OpStatus Meta::array_push_back(ptr_U v) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -85,6 +105,29 @@ Node::OpStatus Meta::array_push_back(ptr_U v) {
 
   return {true, Node::create()};
 }
+
+
+//------------------------------ push front
+Node::OpStatus Meta::array_pop_front() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, Node::create()};
+  }
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_array  = obj[VectorArray];
+  return obj_array->pop_front();
+}
+
+//------------------------------ push back
+
+
+//------------------------------ 
 
 Node::UnsignedInteger Meta::array_size() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -110,6 +153,13 @@ Node::OpStatusRef Meta::array_back() {
     return obj_array->back();
   return {false, node_null};
 }
+Node::OpStatusRef Meta::array_front() {
+  const auto &obj = get<Vector>(m_value);
+  auto &obj_array  = obj[VectorArray];
+  if(obj_array->_size())
+    return obj_array->front();
+  return {false, node_null};
+}
 
 Node::OpStatusRef Meta::array_get(UnsignedInteger key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
@@ -124,7 +174,7 @@ Node::OpStatusRef Meta::array_get(UnsignedInteger key) {
   const auto &obj = get<Vector>(m_value);
   auto &obj_array  = obj[VectorArray];
   if( obj_array->_size() > key) {
-    return {true, *obj[key]};
+    return  (*obj_array)[key];
   }
   string msg = "Index out of bound";
   cerr << clean_function_name() <<  ":" + msg << "\n";
