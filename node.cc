@@ -92,7 +92,8 @@ Node::Node(Type t) : m_type(t) {
     break;}
   case Type::Atom: {
     m_value = Loosh::Atom::nil;
-    break;}
+    break;
+  }
   default: {
     m_value = monostate{};
     m_type = Type::Null;

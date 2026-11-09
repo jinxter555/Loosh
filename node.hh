@@ -463,7 +463,7 @@ public:
   Meta(Node::Type t) ;
 
   enum Index {
-    Info, 
+    InfoMap, 
     StringMap, 
     VectorArray,
     AtomMap,
@@ -496,6 +496,7 @@ public:
   UnsignedInteger atom_size();
 
   OpStatus array_push_back(ptr_U);
+  OpStatusRef array_back();
   OpStatusRef array_get(UnsignedInteger);
   UnsignedInteger array_size() const ;
 

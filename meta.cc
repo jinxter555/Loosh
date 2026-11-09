@@ -31,44 +31,20 @@ Node::Vector Meta::create_vec() {
 
 
   cc_vec[Index::Parent] = nullptr;
-  cc_vec[Index::Info] = Node::create(Node::Type::IMap);
+  cc_vec[Index::InfoMap] = Node::create(Node::Type::IMap);
   cc_vec[Index::AtomMap] = Node::create(Node::Type::IMap);
   cc_vec[Index::VectorArray] = Node::create(Node::Type::Vector);
   cc_vec[Index::StringMap] = Node::create(Node::Type::Map);
   cc_vec[Index::MetaLock] = Node::create(Node::Type::Lock);
-  //cc_vec[Index::cc_class] = Node::create(Loosh::Atom::class_);
   cc_vec[Index::cc_class] = Node::create(Node::Type::Atom);
   cc_vec[Index::WalkerCount] = Node::create(Node::Type::AtomicInteger);
 
   return cc_vec;
 }
 
-string Meta::_to_str() const {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
-  string result="";
-  auto& cc_vec = get<Vector>(m_value);
-
-  result  += "Map:" + cc_vec[Index::StringMap]->_to_str() + "\n";
-  //result  += "Atom:" + cc_vec[Index::AtomMap]->get_node()._to_str() + "\n";
-  result  += "Atom:" + cc_vec[Index::AtomMap]->_to_str() + "\n";
-  //result  += "Vector: " + cc_vec[Index::VectorArray]->get_node()._to_str() + "\n";
-  result  += "Vector: " + cc_vec[Index::VectorArray]->_to_str() + "\n";
-  return result;
-}
-
-string Meta::_to_str(const Vector& cc_vec)  {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
-  string result;
-  result  += "Map:" + cc_vec[Index::StringMap]->_to_str() + "\n";
-  //result  += "Atom:" + cc_vec[Index::AtomMap]->get_node()._to_str() + "\n";
-  result  += "Atom:" + cc_vec[Index::AtomMap]->_to_str() + "\n";
-  //result  += "Vector: " + cc_vec[Index::VectorArray]->get_node()._to_str() + "\n";
-  result  += "Vector: " + cc_vec[Index::VectorArray]->_to_str() + "\n";
-  return result;
-
-}
 
 unique_ptr<Meta> Meta::create(ptr_R parent) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
   auto obj = make_unique<Meta>();
   obj->set_parent(parent);
   return obj;
@@ -125,6 +101,14 @@ Node::UnsignedInteger Meta::array_size() const {
   auto &obj_array  = obj[Index::VectorArray];
   return obj_array->_size();
 
+}
+
+Node::OpStatusRef Meta::array_back() {
+  const auto &obj = get<Vector>(m_value);
+  auto &obj_array  = obj[VectorArray];
+  if(obj_array->_size())
+    return obj_array->back();
+  return {false, node_null};
 }
 
 Node::OpStatusRef Meta::array_get(UnsignedInteger key) {
@@ -239,7 +223,7 @@ Node::UnsignedInteger Meta::info_size() {
   AUTO_TRACE();
   //return "nhello";
   auto &obj = get<Vector>(m_value);
-  auto &obj_info  = obj[Info];
+  auto &obj_info  = obj[InfoMap];
   return obj_info->_size();
 
 }
@@ -258,7 +242,7 @@ Node::OpStatus Meta::info_add(const UnsignedInteger key, unique_ptr<Node> value)
   }
 
   auto &obj = get<Vector>(m_value);
-  auto &obj_info  = obj[Info];
+  auto &obj_info  = obj[InfoMap];
 
   if(!obj_info->add(key, move(value)).first) {
     auto key_vstr = Loosh::Atom::atom_to_str_imap(key);
@@ -283,7 +267,7 @@ Node::OpStatus Meta::info_set(const UnsignedInteger key, unique_ptr<Node> value)
   }
 
   auto &obj = get<Vector>(m_value);
-  auto &obj_info  = obj[Info];
+  auto &obj_info  = obj[InfoMap];
 
   if(!obj_info->set(key, move(value)).first) {
     return {false, Node::create_error(Node::Error::Type::Unknown, "Key '" + Loosh::Atom::atom_to_str_imap(key) + " unknown set atom error ")};
@@ -309,7 +293,7 @@ Node::OpStatusRef Meta::info_get(const UnsignedInteger key) {
   //cout << clean_function_name() << "obj atom get: key " << key << "\n";
 
   auto &obj = get<Vector>(m_value);
-  auto &obj_info = obj[Info];
+  auto &obj_info = obj[InfoMap];
  // auto &n1 = obj_atom->get_node();
  // cout <<  clean_function_name() <<  "n1: " << n1._to_str() << "\n";
 
@@ -401,4 +385,30 @@ Node::UnsignedInteger Meta::data_size() const {
 
 }
 
+string Meta::_to_str() const {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
+  string result="";
+  auto& cc_vec = get<Vector>(m_value);
+  return _to_str(cc_vec);
+
+  /*
+  result  += "Map:" + cc_vec[Index::StringMap]->_to_str() + "\n";
+  //result  += "Atom:" + cc_vec[Index::AtomMap]->get_node()._to_str() + "\n";
+  result  += "Atom:" + cc_vec[Index::AtomMap]->_to_str() + "\n";
+  //result  += "Vector: " + cc_vec[Index::VectorArray]->get_node()._to_str() + "\n";
+  result  += "Vector: " + cc_vec[Index::VectorArray]->_to_str() + "\n";
+  return result;
+  */
+}
+
+string Meta::_to_str(const Vector& cc_vec)  {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
+  string result;
+  result  += "Map:" + cc_vec[Index::StringMap]->_to_str() + "\n";
+  result  += "Atom:" + cc_vec[Index::AtomMap]->_to_str() + "\n";
+  result  += "Info:" + cc_vec[Index::InfoMap]->_to_str() + "\n";
+  result  += "Vector: " + cc_vec[Index::VectorArray]->_to_str() + "\n";
+  return result;
+
+}
 }

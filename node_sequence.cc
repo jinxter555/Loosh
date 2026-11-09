@@ -84,68 +84,63 @@ Node::OpStatus Node::push_front(unique_ptr<Node> node_uptr) {
 }
 
 //----------------------------------- push_back
-Node::OpStatus Node::push_back(unique_ptr<Node> node_uptr) {
+Node::OpStatus Node::push_back(unique_ptr<Node> value) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  return visit([&](auto&& arg) -> OpStatus {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, Vector>){
+      //cout << clean_function_name()  + ":" <<  value->_to_str() << "\n";
+      arg.push_back(move(value));
+      return {true, create(true)}; 
 
-  switch(m_type) {
-  case Type::List: {
-    List& cc_list = get<List>(m_value);
-    cc_list.push_back(move(node_uptr)); 
-    return {true, create(true)}; 
+    } else if constexpr (is_same_v<T, List>){
+      arg.push_back(move(value));
+      return {true, create(true)}; 
+
+    } else if constexpr (is_same_v<T, DeQue>){
+      arg.push_back(move(value));
+      return {true, create(true)}; 
+
+    } else {
+      string msg =  "Cannot push_back() element to a non-Node::__Sequence__ node Node::type: " + _to_str(m_type) + ", Node::value: " +  _to_str() ;
+      spdlog::error(clean_function_name() + ": " + msg);
+      MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+      cerr << clean_function_name() + ": " + msg << "\n";
+      throw std::bad_typeid();
+
     }
+  }, m_value);
 
-  case Type::DeQue: {
-    DeQue& cc_dq = get<DeQue>(m_value);
-    cc_dq.push_back(move(node_uptr));
-    return {true, create(true)}; 
-    }
 
-  case Type::Vector: {
-    Vector& cc_vec= get<Vector>(m_value);
-    cc_vec.push_back(move(node_uptr));
-    return {true, create(true)}; 
-    }
-
-  default: {}}
-
-  string msg =  "Cannot push_back() element to a non-Node::__Sequence__ node Node::type: " + _to_str(m_type) + ", Node::value: " +  _to_str() ;
-  spdlog::error(clean_function_name() + ": " + msg);
-  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
-  cerr << clean_function_name() + ": " + msg << "\n";
-  throw std::bad_typeid();
 }
 
 Node::OpStatusRef Node::back() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
 
-  switch(m_type) {
-  case Type::List: {
-    List& cc_list = get<List>(m_value);
-    auto &retv = cc_list.back(); 
-    return {true, *retv};
+  return visit([&](auto&& arg) -> OpStatusRef {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, Vector>){
+      //cout << clean_function_name()  + ":" <<  value->_to_str() << "\n";
+      return {true, *arg.back()};
+
+    } else if constexpr (is_same_v<T, List>){
+      return {true, *arg.back()};
+
+    } else if constexpr (is_same_v<T, DeQue>){
+      return {true, *arg.back()};
+
+    } else {
+      string msg =  "Cannot get back() element to a non-Node::__Sequence__ node Node::type: " + _to_str(m_type) + ", Node::value: " +  _to_str() ;
+      spdlog::error(clean_function_name() + ": " + msg);
+      MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+      cerr << clean_function_name() + ": " + msg << "\n";
+      throw std::bad_typeid();
+
     }
+  }, m_value);
 
-  case Type::DeQue: {
-    DeQue& cc_dq = get<DeQue>(m_value);
-    auto &retv = cc_dq.back();
-    return {true, *retv};
-    }
 
-  case Type::Vector: {
-    Vector& cc_vec= get<Vector>(m_value);
-    auto &retv = cc_vec.back();
-    return {true, *retv}; 
-    }
-
-  default: {}}
-
-  string msg =  "back() element of a non-Node::__Sequence__ node Node::type: " + _to_str(m_type) + ", Node::value: " +  _to_str() ;
-  spdlog::error(clean_function_name() + ": " + msg);
-  MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
-  cerr << clean_function_name() + ": " + msg << "\n";
-  throw std::bad_typeid();
 }
-
 
 
 Node::OpStatus Node::pop_front() {

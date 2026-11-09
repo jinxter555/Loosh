@@ -29,23 +29,36 @@ TEST_CASE("check meta 1") {
   //ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
   ScopeLogger::set_current_verbose_level(SLOG_NODE_OP);
 
-  auto a1 = Node::create(Node::Type::IMap);
-  
-  
-  a1->add(Atom::noop, Node::create("noop operation"));
-  a1->add(Atom::line, Node::create(123));
-  a1->add(Atom::col, Node::create(555));
-  cout << "a1: " << a1->_to_str() << "\n\n";
 
-  /*
   unique_ptr<Meta> m1 = Meta::create();
-  cout << "m1: " << m1->_to_str() << "\n";
+  cout << "m1:\n" << m1->_to_str() << "\n";
 
-  m1->atom_add(Atom::noop, Node::create("noop operation"));
-  m1->atom_add(Atom::line, Node::create(123));
-  m1->atom_add(Atom::col, Node::create(555));
-  cout << "m1: " << m1->_to_str() << "\n";
-*/
+  m1->atom_add(Atom::noop, Node::create("noop operation atom"));
+  m1->atom_add(Atom::line, Node::create(111));
+  m1->atom_add(Atom::col, Node::create(777));
+  cout << "m1:\n" << m1->_to_str() << "\n";
 
+  m1->data_add("noop", Node::create("noop operation data"));
+  m1->data_add("line", Node::create(112));
+  m1->data_add("col", Node::create(778));
+  cout << "m1:\n" << m1->_to_str() << "\n";
 
+  m1->info_add(Atom::noop, Node::create("noop operation info"));
+  m1->info_add(Atom::line, Node::create(113));
+  m1->info_add(Atom::col, Node::create(779));
+  cout << "m1:\n" << m1->_to_str() << "\n";
+
+  m1->array_push_back(Node::create(3.14159));
+  m1->array_push_back(Node::create("hello"));
+  m1->array_push_back(Node::create("world"));
+  cout << "m1:\n" << m1->_to_str() << "\n";
+  cout << "m1->back():\n" << m1->array_back() << "\n";
+
+  /* -- this won't work since Meta obj use cc_vec to store Index::AtomMap
+  auto m2 = Meta::create();
+  m2->add(Atom::noop, Node::create("noop operation m2"));
+  m2->add(Atom::line, Node::create(2345));
+  m2->add(Atom::col, Node::create(888));
+  cout << "meta: m2 add: " << m2->_to_str() << "\n\n";
+  */
 }
