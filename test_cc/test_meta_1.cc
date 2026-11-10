@@ -31,6 +31,7 @@ TEST_CASE("check meta 1") {
 
 
   unique_ptr<Meta> m1 = Meta::create();
+  m1->set_name("root node name");
   cout << "m1:\n" << m1->_to_str() << "\n";
 
   m1->atom_add(Atom::noop, Node::create("noop operation atom"));
@@ -74,4 +75,18 @@ TEST_CASE("check meta 1") {
   m2->add(Atom::col, Node::create(888));
   cout << "meta: m2 add: " << m2->_to_str() << "\n\n";
   */
+  auto m2 = m1->create_child("my child");
+
+  m2->data_add("hello", Node::create("world"));
+  auto m2_ptr_r = m2.get();
+  m1->array_push_back(move(m2));
+  cout << "m2: " << m2_ptr_r->_to_str() << "\n\n";
+
+  cout << "m1:\n" << m1->_to_str() << "\n";
+
+
+
+
+
+
 }

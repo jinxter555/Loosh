@@ -510,7 +510,7 @@ Node::Op Node::_get_lisp_op() const { return get<Op>(m_value); }
 Node::Integer Node::_get_integer() const { return get<Integer>(m_value); }
 Node::Op Node::_get_op() const { return get<Op>(m_value); }
 Node::UnsignedInteger Node::_get_unsigned_integer() const { return get<UnsignedInteger>(m_value); }
-Node::Atom  Node::_get_atom() const { return get<Atom>(m_value); }
+Node::Atom_t  Node::_get_atom() const { return get<Atom_t>(m_value); }
 
 Node::Float Node::_get_float() const { return get<Float>(m_value); }
 
@@ -727,7 +727,7 @@ bool Node::_is_in_range(UnsignedInteger index) {
   return false;
 }
 
-bool Node::_has_atom(Atom key) {
+bool Node::_has_atom(Atom_t key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 

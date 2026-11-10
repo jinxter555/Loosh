@@ -49,6 +49,17 @@ unique_ptr<Meta> Meta::create(ptr_R parent) {
   obj->set_parent(parent);
   return obj;
 }
+unique_ptr<Meta> Meta::create_child(const string &name) {
+  auto child = create(this);
+  if(name!="") child->set_name(name);
+  
+  return child;
+}
+
+bool Meta::set_name(const string& name) {
+  info_add(Atom::name, Node::create(name));
+  return true;
+}
 
 //------------------------------------------------------------------------ 
 bool Meta::set_parent(ptr_R parent) {

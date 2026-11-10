@@ -93,6 +93,7 @@ const Node::UnsignedInteger Atom::process=str_to_atom(":process");
 const Node::UnsignedInteger Atom::pid=str_to_atom(":pid");
 const Node::UnsignedInteger Atom::parent_pid=str_to_atom(":parent_pid");
 const Node::UnsignedInteger Atom::parent=str_to_atom(":parent");
+const Node::UnsignedInteger Atom::name=str_to_atom(":name");
 
 
 const Node::UnsignedInteger Atom::lang=str_to_atom(":lang");

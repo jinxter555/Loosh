@@ -120,7 +120,7 @@ public:
 
   using Integer = LOOSH_T_LONG; 
   using UnsignedInteger = unsigned LOOSH_T_LONG;
-  using Atom = UnsignedInteger; 
+  using Atom_t = UnsignedInteger; 
   using Float = double;
 
   using List = list<unique_ptr<Node>>;
@@ -301,7 +301,7 @@ template <typename T> T& get_value() {
   Integer _get_integer() const;
   virtual Op _get_op() const;
   UnsignedInteger _get_unsigned_integer() const;
-  Atom _get_atom() const;
+  Atom_t _get_atom() const;
   Float _get_float() const;
   Op _get_lisp_op() const;
   bool _get_bool() const;
@@ -339,7 +339,7 @@ template <typename T> T& get_value() {
   //
   OpStatus is_in_range(const Integer index); // if integer is in range of a sequence, vector, list or deque
   OpStatus has_key(const string&key);
-  OpStatus has_atom(const Atom key);
+  OpStatus has_atom(const Atom_t key);
 
     bool empty_container() const;
 
@@ -427,7 +427,7 @@ template <typename T> T& get_value() {
   OpStatus lock_release() const;
   LockMode lock_get_state(const Lock &) ;
 
-  static Node::Atom _get_obj_type(Node* env_ptr);
+  static Node::Atom_t _get_obj_type(Node* env_ptr);
   static Node::OpStatus get_obj_type(Node* env_ptr);
 
 
@@ -473,8 +473,10 @@ public:
     cc_class,
     count}; // count is last element hack for counting size of this
   static unique_ptr<Meta> create(ptr_R  parent=nullptr);
+  unique_ptr<Meta> create_child(const string& name="");
   static Vector create_vec();
   bool set_parent(ptr_R parent);
+  bool set_name(const string& name);
 
   string _to_str() const ;
   static string _to_str(const Vector&) ;

@@ -12,9 +12,9 @@ public:
       read_binary, write_binary, is_open, got_text, echo, initialize, finalize,
       match, extract, replace, full, part,
       icase, nosubs, optimize, collate, ecmas, basic, extended, awk, grep, egrep,
-      scope, frame, process,
+      scope, frame, process, 
       lang, lisp, atom, op, noop,
-      pid, parent_pid, parent,
+      pid, parent_pid, parent, name,
       line, col, value, type
 
   ;
