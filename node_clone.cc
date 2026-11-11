@@ -26,9 +26,18 @@ unique_ptr<Node> Node::clone() const {
 
     else if constexpr (is_same_v<U, Integer>) {
       auto uptr = create(arg); // create a new objec with same value
+      return uptr; }
+
+    else if constexpr (is_same_v<U, UnsignedInteger>) {
+      auto uptr = create(arg); // create a new objec with same value
       if(m_type == Type::Atom) uptr->type_set_atom();
       if(m_type == Type::ObjectId) uptr->type_set_object_id();
       return uptr; }
+
+    else if constexpr (is_same_v<U, Op>) {
+      auto uptr = create(arg); // create a new objec with same value
+      return uptr;
+    }
 
     else if constexpr (is_same_v<U, Op>) {
       auto uptr = create(arg); // create a new objec with same value

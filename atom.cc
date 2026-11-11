@@ -28,13 +28,11 @@ string Atom::atom_to_str(Node::UnsignedInteger key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   MYLOGGER_MSG(trace_function, string("index: ") + to_string(key), SLOG_NODE_OP+30)
   auto &imap = atoms->atom_imap_get();
-  cout << "atoms: " << atoms->_to_str() << "\n";
-  cout << "atom: index key: "  << key << "\n";
-
+  //cout << "atom: index key: "  << key << "\n";
+  //cout << "atoms: " << atoms->_to_str() << "\n";
   //return ":" + imap[key]->_to_str();
+
   return imap[key]->_to_str();
-  //auto &atom_ref = atoms->unwrap_value<Node::IMap>();
-  //return atom_ref[key]->_to_str();
 }
 
 string Atom::atom_to_str_imap(Node::UnsignedInteger key) {

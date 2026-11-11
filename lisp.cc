@@ -51,13 +51,11 @@ Node::OpStatus Lisp::eval(Node& process, Node& code) {
   }
   case Node::Type::Integer: {
     cout << "integer: " <<  code._get_integer() << "\n";
-    //return {true, Node::create(code._get_integer())};
     break;
   }
   default: {}}
   
   return {true, code.clone()};
-  //return {false, Node::create()};
 }
 
 Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec, UnsignedInteger start){
@@ -65,6 +63,7 @@ Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec, UnsignedInteger s
   if(cc_vec.size() == 0) return {true, Node::create()};
 
   auto op_node_status = eval(process, *cc_vec[start]);
+
 
   if(op_node_status.second->m_type != Node::Type::Op) {
     string msg = "first element of list is not a lisp operator  " ;
