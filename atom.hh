@@ -25,8 +25,8 @@ public:
 
 
 
-static Node::ptr_U atoms_uptr;
-static Node::ptr_R atoms;
+static unique_ptr<Meta> atoms_uptr;
+static Meta* atoms;
 
 static  Node::UnsignedInteger str_to_atom(const string& input);
 static  string unqiue_name(const string& input);

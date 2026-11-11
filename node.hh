@@ -20,6 +20,7 @@ using namespace std;
 namespace Loosh 
 {
 
+class Meta;
 
 class Node {
 friend class Tree;
@@ -314,7 +315,7 @@ template <typename T> T& get_value() {
   List& _get_list_ref() ;
   ptr_R _get_ptr_r() ;
   ptr_U _get_ptr_u() ;
-  //ptr_R _get_meta_ptr_r() ;
+  virtual Meta* get_meta() ;
 
   vector<string> get_map_keys();
   vector<string> get_imap_keys();
@@ -389,6 +390,7 @@ template <typename T> T& get_value() {
 //  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
 //  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
 
+/*
   IMap&  obj_get_imap();
   Map&  obj_get_map();
   Vector&  obj_get_vector();
@@ -414,6 +416,8 @@ template <typename T> T& get_value() {
 
 
   OpStatusRef obj_data_get(const string&key);
+*/
+
 //------------------------------ 
 
   bool set_parent(ptr_R parent);
@@ -478,6 +482,11 @@ public:
   bool set_parent(ptr_R parent);
   bool set_name(const string& name);
 
+  Meta* _get_parent();
+  OpStatus get_parent();
+
+  Meta* get_meta() ;
+
   string _to_str() const ;
   static string _to_str(const Vector&) ;
 
@@ -485,6 +494,7 @@ public:
   OpStatus info_set(UnsignedInteger key, unique_ptr<Node> child);
   OpStatusRef info_get(UnsignedInteger key);
   UnsignedInteger info_size();
+  IMap&  info_imap_get();
 
 
   OpStatus data_add(const string&key, unique_ptr<Node> child);
@@ -496,6 +506,7 @@ public:
   OpStatus atom_set(UnsignedInteger key, unique_ptr<Node> child);
   OpStatusRef atom_get(UnsignedInteger key);
   UnsignedInteger atom_size();
+  IMap&  atom_imap_get();
 
   OpStatus array_push_back(ptr_U);
   OpStatus array_push_front(ptr_U);

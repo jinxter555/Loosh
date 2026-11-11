@@ -32,9 +32,9 @@ class Lang  {
 private:
 protected:
   static std::hash<std::string> hasher;
-  Node* m_root;
-  Node* m_atoms;
-  Node* m_lang;
+  Meta* m_root;
+  Meta* m_lang;
+  Meta* m_atoms;
   ProcessBranch process_branch;
   //static unordered_map<UnsignedInteger , string> Atoms;
   //static IMap Atoms;
@@ -42,8 +42,8 @@ protected:
 public:
   //using OpStatus = pair<bool, unique_ptr<Node>>;
 
-  Lang(Node *r) ;
-  void add_atoms(unique_ptr<Node>atoms);
+  Lang(Meta *r) ;
+  void add_atoms(unique_ptr<Meta>atoms);
   void print_atoms();
 
   UnsignedInteger str_to_atom(const string& input);

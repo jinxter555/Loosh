@@ -17,15 +17,16 @@ namespace Loosh
 Lisp::Lisp(Tree*t, LispReader&r)
   : Lang(t->get_root()), reader(r) {
 
-  auto lisp = m_root->create_meta();
+  auto lisp = m_root->create();
   m_lisp = lisp.get();
 
-  auto ops = lisp->create(Node::Type::Map);
+  //auto ops = lisp->create(Node::Type::Map);
+  auto ops = Node::create(Node::Type::Map);
   m_ops = ops.get();
 
-  m_lisp->obj_atom_add(Atom::ops, move(ops));
+  m_lisp->atom_add(Atom::ops, move(ops));
+  m_lang->atom_add(Atom::lisp, move(lisp));
 
-  m_lang->obj_atom_add(Atom::lisp, move(lisp));
   set_op_str() ;
 }
 

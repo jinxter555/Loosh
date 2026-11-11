@@ -35,9 +35,9 @@ class Lisp : public Lang {
 
   Interactive *interface; // user interface with command line, repl prompt, 
 
-  Node* m_lisp;
+  Meta* m_lisp;
   Node* m_ops;
-  Node* m_process; // process branch
+  Meta* m_process; // process branch
 
 public:
   using Op=Node::Op;

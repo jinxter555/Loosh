@@ -77,6 +77,34 @@ bool Meta::set_parent(ptr_R parent) {
   return true;
 }
 
+Meta* Meta::_get_parent() {
+
+  auto &obj = get<Vector>(m_value);
+  auto &obj_array  = obj[Index::Parent];
+  return static_cast<Meta*>(obj_array.get());
+}
+
+Node::OpStatus Node::get_parent() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if (m_type != Type::MetaObject) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    return {false, create(false)};
+  }
+
+  auto &obj = get<VecObject>(m_value);
+  auto ptr = obj[MetaObjectIndex::Parent]->_get_ptr_r();
+  return {true, Node::create(ptr)};
+}
+
+
+
+//------------------------------------------------------------------------ 
+Meta* Meta::get_meta() { return this; }
+
 
 //------------------------------------------------------------------------  array
 //------------------------------ push front
@@ -270,6 +298,9 @@ Node::OpStatus Meta::atom_set(const UnsignedInteger key, unique_ptr<Node> value)
   //cout << "obj_meta_add(), map_ptr_r: " << Node::_to_str( *map_ptr_r) << "\n";
   return {true, Node::create(true)};
 }
+
+
+
 Node::OpStatusRef Meta::atom_get(const UnsignedInteger key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
@@ -293,6 +324,24 @@ Node::OpStatusRef Meta::atom_get(const UnsignedInteger key) {
 
   return obj_atom->get_node(key);
 }
+
+Node::IMap & Meta::atom_imap_get() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if (m_type != Type::Meta) {
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
+    cerr << clean_function_name() <<  ":" + msg << "\n";
+    spdlog::error(msg);
+    throw system_error();
+  }
+
+  auto &obj = get<Vector>(m_value);
+  return  obj[AtomMap]->_get_imap_ref();
+}
+
+
+
 
 //------------------------------------------------------------------------ Info
 //------------------------------  size

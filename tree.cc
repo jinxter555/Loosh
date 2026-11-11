@@ -4,17 +4,21 @@ using namespace std;
 namespace Loosh 
 {
 //------------------------------------------------------------------------
-Tree::Tree() { root = Node::create(Node::Type::MetaObject); }
+Tree::Tree() { root = Meta::create(); }
 
-Tree::Tree(unique_ptr<Node> root_node) 
-: root(move(root_node)) { 
+Tree::Tree(unique_ptr<Meta> r) 
+: root(move(r)) { 
   if(!root || root->m_type == Node::Type::Null) {
-    root = Node::create_meta();
+    root = Meta::create();
   }
 }
+Meta* Tree::get_root() {
+  return root.get();
+}
 
+/*
 
-Node* Tree::get_branch(const vector<string>&path ) const {
+Meta* Tree::get_branch(const vector<string>&path ) const {
   if(path.empty()) return root.get();
 
   Node* current = root.get();
@@ -80,10 +84,6 @@ Node::OpStatus Tree::delete_branch(const vector<string>&path) {
   return parent_node->delete_key(key_to_delete);
 }
 
-Node* Tree::get_root() {
-  return root.get();
-}
-
 
 Tree::OpStatus Tree::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
   return root->set(path, move(child), override);
@@ -95,4 +95,5 @@ void Tree::print() const {
 //  root->print();
 }
 
+*/
 }

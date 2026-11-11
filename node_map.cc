@@ -115,13 +115,14 @@ Node::OpStatusRef Node::get_node(const string&key) {
     Node::Lock& lock = get<Node::Lock>(m_value);
     return lock.m_node->get_node(key);
   }
-*/
 
   case Type::MetaObject:  {
     return obj_data_get(key); }
-
   case Type::SimpleObject:  {
     return obj_data_get(key); }
+
+*/
+
   default: {}
   }
 

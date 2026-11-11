@@ -59,8 +59,8 @@ Node::Node(Type t) : m_type(t) {
     break;}
 
   case Type::Meta: break;
-  case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
-  case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
+  //case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
+  //case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
 
   case Type::Token:   { 
     Vector cc_vec(static_cast<int>(Token::Index::count));
@@ -380,6 +380,7 @@ Node::ptr_U Node::_get_ptr_u() {
 
 }
 
+Meta* Node::get_meta() {return nullptr; }
 
 
 //------------------------------------------------------------------------

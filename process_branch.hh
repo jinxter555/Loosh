@@ -34,7 +34,7 @@ public:
   static unique_ptr<Process> create_kernel(ptr_R parent_node);
 
   UnsignedInteger _get_pid() ;
-  OpStatus get_pid() ;
+  Node::OpStatus get_pid() ;
   Frame* push_frame();
   void  pop_frame();
 
@@ -44,12 +44,12 @@ public:
 
 // process under root->process->[0..max_pid_count]
 class ProcessBranch {
-  Node* m_root;
-  Node* m_process; // this branch from root. root->process->[0..max]
+  Meta* m_root;
+  Meta* m_process; // this branch from root. root->process->[0..max]
 public:
   class Index { public: enum { Pid, PPid, Frame, count}; };
 
-  ProcessBranch(Node*r);
+  ProcessBranch(Meta*r);
 
   Process* create_kernel() ;
   Process* create_process(Process&proc) ;

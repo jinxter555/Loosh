@@ -5,7 +5,7 @@ using namespace  std;
 namespace Loosh 
 {
 
-class Environment : public Node {
+class Environment : public  Meta{
   friend class Lisp;
 private:
 public:

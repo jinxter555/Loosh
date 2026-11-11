@@ -18,24 +18,16 @@ namespace Loosh
 std::hash<string> Lang::hasher;
 
 
-Lang::Lang(Node *r) : m_root(r), process_branch(r) {
-  if(r->m_type != Node::Type::MetaObject) {
-    auto msg =  "Lang::Lang(Node* root) not a MetaObject "   ;
-    //spdlog::error(clean_function_name() + ": " +  msg);
-    spdlog::error(msg);
-   // MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
-    throw std::bad_typeid();
-  }
-
-  auto lang = Node::create_meta(m_root);
+Lang::Lang(Meta *r) : m_root(r), process_branch(r) {
+  auto lang = Meta::create(m_root);
   m_lang = lang.get();
-  m_root->obj_atom_add(Atom::lang, move(lang));
+  m_root->atom_add(Atom::lang, move(lang));
 }
 
-void Lang::add_atoms(unique_ptr<Node>atoms) {
+void Lang::add_atoms(unique_ptr<Meta>atoms) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP)
 
-  if(atoms->m_type != Node::Type::MetaObject){
+  if(atoms->m_type != Node::Type::Meta){
     string msg =  "Lang::add_atoms(Node* root) not a MetaObject "   ;
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(clean_function_name() + ": " +  msg);
@@ -45,7 +37,7 @@ void Lang::add_atoms(unique_ptr<Node>atoms) {
 
   atoms->set_parent(m_root);
   m_atoms = atoms.get();
-  m_root->obj_data_add(LOOSH_ATOMS, move(atoms));
+  m_root->data_add(LOOSH_ATOMS, move(atoms));
   //cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
 }
 
@@ -58,7 +50,7 @@ void Lang::print_atoms() {
 //------------------------------------------------------------------------
 UnsignedInteger Lang::str_to_atom(const string& str_value) {
   UnsignedInteger hashed_value = hasher(str_value);
-  m_atoms->obj_atom_add(hashed_value,  Node::create(str_value));
+  m_atoms->atom_add(hashed_value,  Node::create(str_value));
   return hashed_value;
 }
 

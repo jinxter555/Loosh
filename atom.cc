@@ -9,15 +9,15 @@ namespace Loosh
   
 std::hash<string> Atom::hasher;
 
-Node::ptr_U Atom::atoms_uptr = Node::create_meta();
-Node::ptr_R Atom::atoms = Atom::atoms_uptr.get();
+unique_ptr<Meta> Atom::atoms_uptr = Meta::create();
+Meta* Atom::atoms = Atom::atoms_uptr.get();
 
 //------------------------------------------------------------------------
 Node::UnsignedInteger Atom::str_to_atom(const string& input) {
   Node::UnsignedInteger hashed_value = hasher(input);
   //Atoms[hash_value] = input;
   //Atoms->add(hash_value,  Node::create(input));
-  atoms->obj_atom_add(hashed_value,  Node::create(input));
+  atoms->atom_add(hashed_value,  Node::create(input));
   //Atoms[hash_value] = Node::create(input);
   return hashed_value;
 }
@@ -27,7 +27,7 @@ Node::UnsignedInteger Atom::str_to_atom(const string& input) {
 string Atom::atom_to_str(Node::UnsignedInteger key) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   MYLOGGER_MSG(trace_function, string("index: ") + to_string(key), SLOG_NODE_OP+30)
-  auto &imap = atoms->obj_get_imap();
+  auto &imap = atoms->atom_imap_get();
   cout << "atoms: " << atoms->_to_str() << "\n";
   cout << "atom: index key: "  << key << "\n";
 
@@ -38,7 +38,7 @@ string Atom::atom_to_str(Node::UnsignedInteger key) {
 }
 
 string Atom::atom_to_str_imap(Node::UnsignedInteger key) {
-  auto atom_ref_status = atoms->obj_atom_get(key);
+  auto atom_ref_status = atoms->atom_get(key);
   if(!atom_ref_status.first)  return  to_string(key)+"i";
   //return ":" + atom_ref_status.second._to_str();
   return atom_ref_status.second._to_str();

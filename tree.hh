@@ -10,6 +10,7 @@ namespace Loosh
 {
 
 class Node;
+class Meta;
 
 class Tree {
 friend class Lisp;
@@ -18,21 +19,24 @@ using OpStatus = pair<bool, unique_ptr<Node>>;
 using OpStatusRef = pair<bool, Node&>;
 
 protected:
-  unique_ptr<Node> root;
+  unique_ptr<Meta> root;
 public:
   Tree();
-  Tree(unique_ptr<Node> root_node);
-  Node* get_root() ;
-  OpStatus set_branch(const vector<string>&path, unique_ptr<Node>child);
+  Tree(unique_ptr<Meta> r);
+  Meta* get_root() ;
+  /*
+  OpStatus set_branch(const vector<string>&path, unique_ptr<Meta>child);
   OpStatus delete_branch(const vector<string>&path);
-  Node* get_branch(const vector<string>&path) const ;
+  Meta* get_branch(const vector<string>&path) const ;
 
   // use Node methods
-  OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
+  OpStatus set(const vector<string>&path, unique_ptr<Meta>child, bool override=false);
   OpStatusRef get_node(const vector<string>&path);
   void print() const;
+  */
 };
 
+/*
 class TreeWalker {
 private:
   Tree *root;
@@ -43,5 +47,5 @@ public:
 
 
 };
-
+*/
 }
