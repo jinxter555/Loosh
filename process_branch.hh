@@ -24,14 +24,16 @@ namespace Loosh
 //class Process : public Environment {
 class Process : public Environment {
   friend class ProcessBranch;
+  Frame* frame;
 private:
   void set_pid(UnsignedInteger pid);
+  void set_ppid(UnsignedInteger ppid);
 
 public:
   Process();
   //unique_ptr<Process> create();
-  unique_ptr<Process> create(UnsignedInteger pid);
-  static unique_ptr<Process> create_kernel(ptr_R parent_node);
+  static unique_ptr<Process> create(UnsignedInteger new_pid, UnsignedInteger ppid);
+  //static unique_ptr<Process> create_kernel(ptr_R parent_node);
 
   UnsignedInteger _get_pid() ;
   Node::OpStatus get_pid() ;
@@ -46,6 +48,7 @@ public:
 class ProcessBranch {
   Meta* m_root;
   Meta* m_process; // this branch from root. root->process->[0..max]
+  Node::UnsignedInteger pid_current = 0 ;
 public:
   class Index { public: enum { Pid, PPid, Frame, count}; };
 
@@ -56,7 +59,7 @@ public:
   //static unique_ptr<Node> create_process(Node&process_branch) ;
   static Node::OpStatusRef frame_current(Node&process)  ;
 
-  Node::UnsignedInteger _get_next_pid() const;
+  Node::UnsignedInteger _get_next_pid() ;
 
 
 };

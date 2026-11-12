@@ -10,7 +10,6 @@ class Environment : public  Meta{
 private:
 public:
   Environment();
-  Environment(Node::Type t) ;
   enum class Type { Parent, Scope, Frame, Process, Program };
 
 

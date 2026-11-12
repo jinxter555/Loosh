@@ -12,7 +12,7 @@ using namespace  std;
 namespace Loosh 
 {
 
-Frame::Frame() :Environment(Node::Type::Vector) {}
+Frame::Frame() :Environment() {}
 
 unique_ptr<Node> Frame::create() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)

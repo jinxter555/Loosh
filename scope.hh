@@ -9,9 +9,9 @@ namespace Loosh
 {
 class Scope : public Environment {
 private:
-  Node *m_var, *m_immute, *m_arg ;
+  Node *m_var, *m_immute, *m_arg, *m_retv ;
 public :
-  enum Index {Immute, Arg, Var, count};
+  enum Index {Immute, Arg, Var, RetV, count};
 
   Scope();
   static unique_ptr<Scope> create() ;

@@ -1,4 +1,3 @@
-
 #pragma once
 #include "defs.hh"
 #include "environment.hh"

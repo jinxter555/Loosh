@@ -9,7 +9,7 @@ using namespace  std;
 namespace Loosh 
 {
 
-Scope::Scope() : Environment(Node::Type::Vector) {}
+Scope::Scope() : Environment() {}
 unique_ptr<Scope> Scope::create()  {
   return make_unique<Scope>();
 }
@@ -23,10 +23,12 @@ unique_ptr<Scope> Scope::create(Node& frame)  {
   cc_vec[Index::Arg] = Node::create(Node::Type::IMap);
   cc_vec[Index::Immute] = Node::create(Node::Type::IMap);
   cc_vec[Index::Var] = Node::create(Node::Type::IMap);
+  cc_vec[Index::RetV] = Node::create();
 
   scope->m_arg =   cc_vec[Index::Arg].get();
   scope->m_immute =   cc_vec[Index::Immute].get();
   scope->m_var =   cc_vec[Index::Var].get();
+  scope->m_retv =   cc_vec[Index::RetV].get();
 
   frame.push_back(Node::create(move(cc_vec)));
   return scope;

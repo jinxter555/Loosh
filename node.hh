@@ -490,20 +490,20 @@ public:
   string _to_str() const ;
   static string _to_str(const Vector&) ;
 
-  OpStatus info_add(UnsignedInteger key, unique_ptr<Node> child);
-  OpStatus info_set(UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus info_add(UnsignedInteger key, unique_ptr<Node> );
+  OpStatus info_set(UnsignedInteger key, unique_ptr<Node> );
   OpStatusRef info_get(UnsignedInteger key);
   UnsignedInteger info_size();
   IMap&  info_imap_get();
 
 
-  OpStatus data_add(const string&key, unique_ptr<Node> child);
-  OpStatus data_set(const string&key, unique_ptr<Node> child);
+  OpStatus data_add(const string&key, unique_ptr<Node> );
+  OpStatus data_set(const string&key, unique_ptr<Node> );
   OpStatusRef data_get(const string&key);
   UnsignedInteger data_size() const;
 
-  OpStatus atom_add(UnsignedInteger key, unique_ptr<Node> child);
-  OpStatus atom_set(UnsignedInteger key, unique_ptr<Node> child);
+  OpStatus atom_add(UnsignedInteger key, unique_ptr<Node> );
+  OpStatus atom_set(UnsignedInteger key, unique_ptr<Node> );
   OpStatusRef atom_get(UnsignedInteger key);
   UnsignedInteger atom_size();
   IMap&  atom_imap_get();

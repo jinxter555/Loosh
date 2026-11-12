@@ -89,7 +89,7 @@ const Node::UnsignedInteger Atom::scope=str_to_atom(":scope");
 const Node::UnsignedInteger Atom::frame=str_to_atom(":frame");
 const Node::UnsignedInteger Atom::process=str_to_atom(":process");
 const Node::UnsignedInteger Atom::pid=str_to_atom(":pid");
-const Node::UnsignedInteger Atom::parent_pid=str_to_atom(":parent_pid");
+const Node::UnsignedInteger Atom::ppid =str_to_atom(":ppid");
 const Node::UnsignedInteger Atom::parent=str_to_atom(":parent");
 const Node::UnsignedInteger Atom::name=str_to_atom(":name");
 

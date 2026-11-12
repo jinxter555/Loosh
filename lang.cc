@@ -19,7 +19,8 @@ std::hash<string> Lang::hasher;
 
 
 Lang::Lang(Meta *r) : m_root(r), process_branch(r) {
-  auto lang = Meta::create(m_root);
+  //auto lang = Meta::create(m_root);
+  auto lang = m_root->create(m_root);
   m_lang = lang.get();
   m_root->atom_add(Atom::lang, move(lang));
 }
@@ -37,7 +38,8 @@ void Lang::add_atoms(unique_ptr<Meta>atoms) {
 
   atoms->set_parent(m_root);
   m_atoms = atoms.get();
-  m_root->data_add(LOOSH_ATOMS, move(atoms));
+  //m_root->data_add(LOOSH_ATOMS, move(atoms));
+  m_root->atom_add(Atom::atom, move(atoms));
   //cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
 }
 

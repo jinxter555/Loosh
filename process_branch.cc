@@ -13,30 +13,30 @@ namespace Loosh
 
 //------------------------------------------------------------------------ 
 
-Process::Process() : Environment(Node::Type::Meta) {}
+Process::Process() : Environment() {}
 
-unique_ptr<Process> Process::create(UnsignedInteger pid) {
+// pid comes from ProcessBranch 
+unique_ptr<Process> Process::create(UnsignedInteger new_pid, UnsignedInteger ppid) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   auto proc = make_unique<Process>();
-  proc->atom_add(Loosh::Atom::pid, Node::create(pid));
-  proc->atom_add(Loosh::Atom::parent_pid, Node::create(_get_pid()));
+  proc->atom_add(Loosh::Atom::pid, Node::create(new_pid));
+  proc->atom_add(Loosh::Atom::ppid, Node::create(ppid));
   proc->atom_add(Loosh::Atom::frame, Node::create(Node::Type::Vector));
-  proc->set_parent(Meta::_get_parent()); // _get_parent node
-
+  //proc->set_parent(Meta::_get_parent()); // _get_parent node
   //cout << clean_function_name() << ": *proc:  " << proc->_to_str() << "\n\n";
   return proc;
 }
 
+/*
 
 unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
-
   auto proc = make_unique<Process>();
   //cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
 
-  proc->atom_set(Loosh::Atom::parent_pid, Node::create(UnsignedInteger(0l)));
+  proc->atom_set(Loosh::Atom::ppid, Node::create(UnsignedInteger(0l)));
   proc->atom_set(Loosh::Atom::pid, Node::create(UnsignedInteger(0l)));
   proc->atom_add(Loosh::Atom::frame, Node::create(Node::Type::Vector));
   proc->set_parent(parent_node);
@@ -44,6 +44,7 @@ unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
   //cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
   return proc;
 }
+*/
 
 Node::UnsignedInteger Process::_get_pid() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
@@ -57,6 +58,10 @@ Node::UnsignedInteger Process::_get_pid() {
 void Process::set_pid(Node::UnsignedInteger pid) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   atom_set(Loosh::Atom::pid, Node::create(pid));
+}
+void Process::set_ppid(Node::UnsignedInteger ppid) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
+  atom_set(Loosh::Atom::ppid, Node::create(ppid));
 }
 
 Frame *Process::push_frame() {
@@ -102,26 +107,18 @@ unique_ptr<Process> Process::create()
  */
 //------------------------------------------------------------------------ 
 ProcessBranch::ProcessBranch(Meta*r) :  m_root(r){
-  /*
-  if(r->m_type != Node::Type::MetaObject) {
-    auto msg =  "Lang::Lang(Node* root) not a MetaObject "   ;
-    spdlog::error(msg);
-    throw std::bad_typeid();
-  }
-  */
-  //cout << clean_function_name() << ": *m_root:  " << m_root->_to_str() << "\n\n";
 
-  auto pb = Meta::create(m_root);
+  //auto pb = Meta::create(m_root);
+  auto pb = m_root->create_child("process branch");
   m_process = pb.get();
   m_root->atom_add(Atom::process, move(pb));
-
 
 }
 
 Process* ProcessBranch::create_process(Process& current_process ) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
 
-  auto proc =  current_process.create(_get_next_pid());
+  auto proc =  current_process.create(_get_next_pid(), current_process._get_pid());
   auto proc_ptr =  proc.get();
   m_process->array_push_back(move(proc));
   return proc_ptr;
@@ -139,11 +136,12 @@ Process* ProcessBranch::create_kernel() {
     spdlog::error(msg);
     throw std::bad_typeid();
   }
-  auto proc = Process::create_kernel(m_process);
+  auto proc = Process::create(_get_next_pid(), 0 );
   proc->push_frame()->push_scope();
   auto ptr = proc.get();
 
-  m_process->array_push_back(move(proc));
+  //m_process->atom_add(proc->_get_pid(),  move(proc));
+  m_process->atom_add(0,  move(proc));
   return ptr; //return static_cast<Process*>(ptr);
 }
 
@@ -167,9 +165,9 @@ Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {
 }
 
 
-Node::UnsignedInteger ProcessBranch::_get_next_pid() const {
+Node::UnsignedInteger ProcessBranch::_get_next_pid() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
-  return m_process->array_size();
+  return pid_current++;
 }
 
 //------------------------------------------------------------------------ 
