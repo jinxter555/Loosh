@@ -93,6 +93,9 @@ const Node::UnsignedInteger Atom::ppid =str_to_atom(":ppid");
 const Node::UnsignedInteger Atom::parent=str_to_atom(":parent");
 const Node::UnsignedInteger Atom::name=str_to_atom(":name");
 
+const Node::UnsignedInteger Atom::frame_vec=str_to_atom(":frame_vec");
+const Node::UnsignedInteger Atom::scope_vec=str_to_atom(":scope_vec");
+
 
 const Node::UnsignedInteger Atom::lang=str_to_atom(":lang");
 const Node::UnsignedInteger Atom::lisp=str_to_atom(":lisp");

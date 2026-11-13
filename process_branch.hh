@@ -24,7 +24,7 @@ namespace Loosh
 //class Process : public Environment {
 class Process : public Environment {
   friend class ProcessBranch;
-  Frame* frame;
+  Node* frame_vec;
 private:
   void set_pid(UnsignedInteger pid);
   void set_ppid(UnsignedInteger ppid);
@@ -55,7 +55,7 @@ public:
   ProcessBranch(Meta*r);
 
   Process* create_kernel() ;
-  Process* create_process(Process&proc) ;
+  Process* create_process(Process&current_process) ;
   //static unique_ptr<Node> create_process(Node&process_branch) ;
   static Node::OpStatusRef frame_current(Node&process)  ;
 

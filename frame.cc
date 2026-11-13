@@ -23,6 +23,7 @@ unique_ptr<Node> Frame::create() {
 Node::ptr_R Frame::push_scope() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   AUTO_TRACE();
+  //auto scope = make_unique<Scope>();
   auto scope = make_unique<Scope>();
   auto ptr = scope.get();
   push_back(move(scope));

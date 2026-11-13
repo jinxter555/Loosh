@@ -15,7 +15,6 @@ public :
 
   Scope();
   static unique_ptr<Scope> create(ptr_R parent_node=nullptr) ;
-  static unique_ptr<Scope> create(Node &frame) ;
   unique_ptr<Scope> create_child() ;
 
   Node::OpStatus var_add(Node& table, const string&name, Node::ptr_U) ;

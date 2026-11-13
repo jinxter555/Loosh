@@ -21,30 +21,19 @@ unique_ptr<Process> Process::create(UnsignedInteger new_pid, UnsignedInteger ppi
   auto proc = make_unique<Process>();
   proc->atom_add(Loosh::Atom::pid, Node::create(new_pid));
   proc->atom_add(Loosh::Atom::ppid, Node::create(ppid));
-  proc->atom_add(Loosh::Atom::frame, Node::create(Node::Type::Vector));
+
+  auto frame_uptr = Node::create(Node::Type::Vector);
+  proc->frame_vec = frame_uptr.get();
+
+  proc->atom_add(Loosh::Atom::frame_vec, move(frame_uptr));
+
+
   //proc->set_parent(Meta::_get_parent()); // _get_parent node
   //cout << clean_function_name() << ": *proc:  " << proc->_to_str() << "\n\n";
+
   return proc;
 }
 
-/*
-
-unique_ptr<Process> Process::create_kernel(ptr_R parent_node ) {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
-  AUTO_TRACE();
-
-  auto proc = make_unique<Process>();
-  //cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
-
-  proc->atom_set(Loosh::Atom::ppid, Node::create(UnsignedInteger(0l)));
-  proc->atom_set(Loosh::Atom::pid, Node::create(UnsignedInteger(0l)));
-  proc->atom_add(Loosh::Atom::frame, Node::create(Node::Type::Vector));
-  proc->set_parent(parent_node);
-
-  //cout << clean_function_name() << ": *proc: " << proc->_to_str() << "\n\n";
-  return proc;
-}
-*/
 
 Node::UnsignedInteger Process::_get_pid() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
@@ -69,7 +58,7 @@ Frame *Process::push_frame() {
   AUTO_TRACE();
 
   //cout << "process push from *this: " << _to_str() << "\n\n";
-  auto frame_branch_status = atom_get(Loosh::Atom::frame);
+  auto frame_branch_status = atom_get(Loosh::Atom::frame_vec);
   if(!frame_branch_status.first){
     string msg = "push  frame error!";
     cerr << clean_function_name() <<  ":" + msg << "\n";
@@ -86,7 +75,7 @@ void Process::pop_frame() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
-  auto frame_branch_status = atom_get(Loosh::Atom::frame);
+  auto frame_branch_status = atom_get(Loosh::Atom::frame_vec);
   if(!frame_branch_status.first){
     string msg = "pop  frame error!";
     cerr << clean_function_name() <<  ":" + msg << "\n";
@@ -119,7 +108,8 @@ Process* ProcessBranch::create_process(Process& current_process ) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
 
   auto pid = _get_next_pid();
-  auto proc =  current_process.create(pid, current_process._get_pid());
+  //auto proc =  current_process.create(pid, current_process._get_pid());
+  auto proc =  Process::create(pid, current_process._get_pid());
   auto ptr =  proc.get();
   m_process->atom_add(pid,  move(proc));
   return ptr;
