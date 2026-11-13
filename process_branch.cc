@@ -22,10 +22,18 @@ unique_ptr<Process> Process::create(UnsignedInteger new_pid, UnsignedInteger ppi
   proc->atom_add(Loosh::Atom::pid, Node::create(new_pid));
   proc->atom_add(Loosh::Atom::ppid, Node::create(ppid));
 
-  auto frame_uptr = Node::create(Node::Type::Vector);
-  proc->frame_vec = frame_uptr.get();
+  auto frame_vec= Node::create(Node::Type::Vector);
+  auto frame = Frame::create();
 
-  proc->atom_add(Loosh::Atom::frame_vec, move(frame_uptr));
+  auto scope = Scope::create();
+  frame->array_push_back(move(scope));
+  frame_vec->push_back(move(frame));
+
+
+
+  proc->frame_vec = frame_vec.get();
+
+  proc->atom_add(Loosh::Atom::frame_vec, move(frame_vec));
 
 
   //proc->set_parent(Meta::_get_parent()); // _get_parent node
@@ -57,32 +65,16 @@ Frame *Process::push_frame() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
-  //cout << "process push from *this: " << _to_str() << "\n\n";
-  auto frame_branch_status = atom_get(Loosh::Atom::frame_vec);
-  if(!frame_branch_status.first){
-    string msg = "push  frame error!";
-    cerr << clean_function_name() <<  ":" + msg << "\n";
-    spdlog::error(msg);
-    throw std::system_error();
-  }
-
   auto frame = make_unique<Frame>();
   auto ptr = frame.get();
-  frame_branch_status.second.push_back(move(frame));
+  frame_vec->push_back(move(frame));
   return ptr;
 }
 void Process::pop_frame() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS);
   AUTO_TRACE();
 
-  auto frame_branch_status = atom_get(Loosh::Atom::frame_vec);
-  if(!frame_branch_status.first){
-    string msg = "pop  frame error!";
-    cerr << clean_function_name() <<  ":" + msg << "\n";
-    spdlog::error(msg);
-    throw std::system_error();
-  }
-  frame_branch_status.second.pop_back();
+  frame_vec->pop_back();
 }
 
 /*

@@ -14,11 +14,15 @@ namespace Loosh
 
 Frame::Frame() :Environment() {}
 
-unique_ptr<Node> Frame::create() {
+unique_ptr<Frame> Frame::create(ptr_R parent_node) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   AUTO_TRACE();
-  return make_unique<Frame>();
+  auto frame = make_unique<Frame>();
+  frame->set_parent(parent_node);
+  return frame;
 }
+
+unique_ptr<Frame> Frame::create_child() { return create(this); }
 
 Node::ptr_R Frame::push_scope() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
@@ -26,7 +30,7 @@ Node::ptr_R Frame::push_scope() {
   //auto scope = make_unique<Scope>();
   auto scope = make_unique<Scope>();
   auto ptr = scope.get();
-  push_back(move(scope));
+  array_push_back(move(scope));
   return ptr;
 }
 void Frame::pop_scope() {
@@ -38,7 +42,7 @@ void Frame::pop_scope() {
     spdlog::error(msg);
     throw std::system_error();
   }
-  pop_back();
+  array_pop_back();
 }
 
 

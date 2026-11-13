@@ -12,7 +12,8 @@ public :
   enum Index {Immute, Arg, Var, count};
 
   Frame();
-  static unique_ptr<Node> create() ;
+  static unique_ptr<Frame> create(ptr_R parent_node=nullptr) ;
+  unique_ptr<Frame> create_child() ;
 
 
 

@@ -20,8 +20,8 @@ namespace Loosh
 {
 
   class Frame;
+  class Scope;
 
-//class Process : public Environment {
 class Process : public Environment {
   friend class ProcessBranch;
   Node* frame_vec;
@@ -31,14 +31,19 @@ private:
 
 public:
   Process();
-  //unique_ptr<Process> create();
   static unique_ptr<Process> create(UnsignedInteger new_pid, UnsignedInteger ppid);
-  //static unique_ptr<Process> create_kernel(ptr_R parent_node);
 
   UnsignedInteger _get_pid() ;
   Node::OpStatus get_pid() ;
+
   Frame* push_frame();
+  Frame* current_frame();
   void  pop_frame();
+
+  Scope *push_scope();
+  Scope *current_scope();
+  void  pop_scope();
+
 
 
 
