@@ -20,6 +20,7 @@ public :
   ptr_R push_scope();
   void pop_scope();
   UnsignedInteger scope_size() const;
+  Scope* scope_current();
 
 };
 

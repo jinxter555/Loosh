@@ -15,7 +15,8 @@ public:
       scope, frame, process, 
       lang, lisp, atom, op, noop,
       pid, ppid, parent, name,
-      line, col, value, type
+      line, col, value, type,
+      arg, immute, var, retv
 
   ;
   static const Node::UnsignedInteger   class_, function_, ops;

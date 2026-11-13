@@ -333,6 +333,7 @@ template <typename T> T& get_value() {
   OpStatus push_back(unique_ptr<Node>node);
   OpStatusRef front();
   OpStatusRef back();
+  OpStatus resize(UnsignedInteger);
 
 
   UnsignedInteger _size() const ;
@@ -513,6 +514,8 @@ public:
 
   OpStatus array_pop_back();
   OpStatus array_pop_front();
+
+  OpStatus array_resize(UnsignedInteger );
 
   OpStatusRef array_back();
   OpStatusRef array_front();

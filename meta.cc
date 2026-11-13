@@ -182,6 +182,14 @@ Node::OpStatus Meta::array_pop_back() {
 }
 
 
+Node::OpStatus Meta::array_resize(UnsignedInteger s) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  auto &obj = get<Vector>(m_value);
+  auto &obj_array  = obj[VectorArray];
+  obj_array->resize(s);
+  return {true, create()};
+}
 
 //------------------------------ 
 

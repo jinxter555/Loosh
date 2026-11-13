@@ -118,10 +118,11 @@ ProcessBranch::ProcessBranch(Meta*r) :  m_root(r){
 Process* ProcessBranch::create_process(Process& current_process ) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
 
-  auto proc =  current_process.create(_get_next_pid(), current_process._get_pid());
-  auto proc_ptr =  proc.get();
-  m_process->array_push_back(move(proc));
-  return proc_ptr;
+  auto pid = _get_next_pid();
+  auto proc =  current_process.create(pid, current_process._get_pid());
+  auto ptr =  proc.get();
+  m_process->atom_add(pid,  move(proc));
+  return ptr;
 
 }
 
@@ -129,20 +130,22 @@ Process* ProcessBranch::create_process(Process& current_process ) {
 Process* ProcessBranch::create_kernel() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   AUTO_TRACE();
-  //cout << "create kernel\n";
 
+  //cout << "create kernel\n";
+ /*
   if(m_process->array_size()> 0) {
     auto msg =  "kernel process space has already been created"   ;
     spdlog::error(msg);
     throw std::bad_typeid();
   }
+*/
+
   auto proc = Process::create(_get_next_pid(), 0 );
   proc->push_frame()->push_scope();
   auto ptr = proc.get();
 
-  //m_process->atom_add(proc->_get_pid(),  move(proc));
   m_process->atom_add(0,  move(proc));
-  return ptr; //return static_cast<Process*>(ptr);
+  return ptr; 
 }
 
 Node::OpStatusRef ProcessBranch::frame_current(Node&process)  {

@@ -110,6 +110,10 @@ const Node::UnsignedInteger Atom::col=str_to_atom(":col");
 const Node::UnsignedInteger Atom::value=str_to_atom(":value");
 const Node::UnsignedInteger Atom::type=str_to_atom(":type");
 
+const Node::UnsignedInteger Atom::arg=str_to_atom(":arg");
+const Node::UnsignedInteger Atom::immute=str_to_atom(":immute");
+const Node::UnsignedInteger Atom::var=str_to_atom(":var");
+const Node::UnsignedInteger Atom::retv=str_to_atom(":retv");
 
 
 };
