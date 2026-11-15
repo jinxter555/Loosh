@@ -46,4 +46,7 @@ void Frame::pop_scope() {
 }
 
 
+Node::OpStatusRef Frame::current_scope() { return array_back(); }
+Node::OpStatusRef Frame::front_scope() { return array_front(); }
+
 }

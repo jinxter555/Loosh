@@ -21,6 +21,7 @@ public :
   Node::OpStatus immute_add(Node& table, const string&name, Node::ptr_U) ;
   Node::OpStatus arg_add(Node& table, const string&name, Node::ptr_U) ;
 
+
 };
 
 }

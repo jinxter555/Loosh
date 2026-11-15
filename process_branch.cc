@@ -77,15 +77,14 @@ void Process::pop_frame() {
   frame_vec->pop_back();
 }
 
-/*
-unique_ptr<Process> Process::create() 
-  auto proc = make_unique<Process>();
-  proc->obj_atom_add(Loosh::Atom::pid, Node::create(UnsignedInteger(0)));
-  proc->obj_atom_add(Loosh::Atom::parent_pid, Node::create(UnsignedInteger(0)));
-  proc->set_parent(Node::_get_parent()); // _get_parent node
-  return proc;
+Node::OpStatusRef Process::current_frame() {
+  return  frame_vec->back();
 }
- */
+Node::OpStatusRef Process::current_scope() {
+  auto frame = frame_vec->back();
+}
+
+
 //------------------------------------------------------------------------ 
 ProcessBranch::ProcessBranch(Meta*r) :  m_root(r){
 

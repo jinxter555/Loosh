@@ -37,11 +37,11 @@ public:
   Node::OpStatus get_pid() ;
 
   Frame* push_frame();
-  Frame* current_frame();
+  OpStatusRef current_frame();
   void  pop_frame();
 
   Scope *push_scope();
-  Scope *current_scope();
+  OpStatusRef current_scope();
   void  pop_scope();
 
 

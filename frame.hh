@@ -9,7 +9,7 @@ namespace Loosh
 {
 class Frame : public Environment {
 public :
-  enum Index {Immute, Arg, Var, count};
+  //enum Index {Immute, Arg, Var, count};
 
   Frame();
   static unique_ptr<Frame> create(ptr_R parent_node=nullptr) ;
@@ -21,7 +21,9 @@ public :
   ptr_R push_scope();
   void pop_scope();
   UnsignedInteger scope_size() const;
-  Scope* scope_current();
+  //Scope* scope_current();
+  OpStatusRef current_scope();
+  OpStatusRef front_scope();
 
 };
 

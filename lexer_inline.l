@@ -49,8 +49,21 @@
 //^{identifier}                { return Loosh::Token::create(Loosh::Token::Op::closurable_begin, text(), lineno(), columno()); }
 
 ":"({identifier})      {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
-  auto atom_value =  Loosh::Atom::str_to_atom(text());
-  cout << "atom_value: " << atom_value << "\n";
+  std::string_view atom_match (matcher().begin() + 1, matcher().size() - 1);
+
+
+
+  string atom_text = text();
+  atom_text.erase(0, 1); // Erase ':' character starting at index 0
+
+  
+  //cout << "text(): " << text()<< "\n";
+  //cout << "atom_mtach: " << atom_match << "\n";
+  //cout << "atom_text: " << atom_text << "\n";
+  auto atom_value =  Loosh::Atom::str_to_atom(atom_text);
+  //cout << "atom_value: " << atom_value << "\n";
+  auto atom_str =  Loosh::Atom::atom_to_str(atom_value);
+  //cout << "atom_str: " << atom_str << "\n";
 
   return Loosh::Token::create(
     Loosh::Token::Op::atom, 
@@ -60,8 +73,9 @@
 }
 
 "begin."({identifier})      {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
-  auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
-  std::string symbol_text(group1.first, group1.second); // Construct the std::string safely using pointer + length
+  std::string symbol_text (matcher().begin() + 6, matcher().size() - 6);
+  cout << "symbol_text: " << symbol_text << "\n";
+
   return Loosh::Token::create(Loosh::Token::Op::identifier, symbol_text, lineno(), columno());
 }
 

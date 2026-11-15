@@ -100,7 +100,7 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
           case 0:
             if (matcher().at_end())
             {
-#line 73 "lexer_inline.l"
+#line 87 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::done, std::monostate{}, lineno(), columno()); }
 
 
@@ -171,8 +171,21 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
           case 13: // rule lexer_inline.l:51: ":"({identifier}) :
 #line 51 "lexer_inline.l"
 {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
-  auto atom_value =  Loosh::Atom::str_to_atom(text());
-  cout << "atom_value: " << atom_value << "\n";
+  std::string_view atom_match (matcher().begin() + 1, matcher().size() - 1);
+
+
+
+  string atom_text = text();
+  atom_text.erase(0, 1); // Erase ':' character starting at index 0
+
+
+  //cout << "text(): " << text()<< "\n";
+  //cout << "atom_mtach: " << atom_match << "\n";
+  //cout << "atom_text: " << atom_text << "\n";
+  auto atom_value =  Loosh::Atom::str_to_atom(atom_text);
+  //cout << "atom_value: " << atom_value << "\n";
+  auto atom_str =  Loosh::Atom::atom_to_str(atom_value);
+  //cout << "atom_str: " << atom_str << "\n";
 
   return Loosh::Token::create(
     Loosh::Token::Op::atom,
@@ -182,23 +195,24 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 }
 
             break;
-          case 14: // rule lexer_inline.l:62: "begin."({identifier}) :
-#line 62 "lexer_inline.l"
+          case 14: // rule lexer_inline.l:75: "begin."({identifier}) :
+#line 75 "lexer_inline.l"
 {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
-  auto group1 = matcher()[1]; // matcher()[1] returns the std::pair<const char*, size_t>
-  std::string symbol_text(group1.first, group1.second); // Construct the std::string safely using pointer + length
+  std::string symbol_text (matcher().begin() + 6, matcher().size() - 6);
+  cout << "symbol_text: " << symbol_text << "\n";
+
   return Loosh::Token::create(Loosh::Token::Op::identifier, symbol_text, lineno(), columno());
 }
 
 
             break;
-          case 15: // rule lexer_inline.l:69: {identifier} :
-#line 69 "lexer_inline.l"
+          case 15: // rule lexer_inline.l:83: {identifier} :
+#line 83 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::identifier, text(), lineno(), columno()); }
 
             break;
-          case 16: // rule lexer_inline.l:71: . :
-#line 71 "lexer_inline.l"
+          case 16: // rule lexer_inline.l:85: . :
+#line 85 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno()); }
 
             break;
