@@ -11,22 +11,23 @@
 using namespace std;
 namespace Loosh {
 
-Meta::Meta() : Meta::Node(create_vec()) {
+Meta::Meta() : Node(create_vec()) {
   m_type=Node::Type::Meta;
   
 }
+/*
 Meta::Meta(Node::Type t)  : Node(t) {
   if(t==Node::Type::Meta ) {
     m_value = create_vec();
     return;
   }
-
 }
+*/
 Node::Vector Meta::create_vec() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
-  //MetaObject cc_vec(ObjectIndex::count);
+  //MetaObject cc_vec(Index::count);
   Vector cc_vec(Index::count);
 
 
@@ -84,21 +85,6 @@ Meta* Meta::_get_parent() {
   return static_cast<Meta*>(obj_array.get());
 }
 
-Node::OpStatus Node::get_parent() {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
-  AUTO_TRACE();
-
-  if (m_type != Type::MetaObject) {
-    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not an Object" ;
-    cerr << clean_function_name() <<  ":" + msg << "\n";
-    spdlog::error(msg);
-    return {false, create(false)};
-  }
-
-  auto &obj = get<VecObject>(m_value);
-  auto ptr = obj[MetaObjectIndex::Parent]->_get_ptr_r();
-  return {true, Node::create(ptr)};
-}
 
 
 
@@ -113,7 +99,7 @@ Node::OpStatus Meta::array_push_front(ptr_U v) {
   AUTO_TRACE();
 
   if(m_type != Type::Meta) {
-    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
+    string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a Meta Object" ;
     cerr << clean_function_name() <<  ":" + msg << "\n";
     spdlog::error(msg);
     return {false, Node::create()};
@@ -448,7 +434,7 @@ Node::OpStatus Meta::data_add(const string&key, unique_ptr<Node> value) {
   }
 
   auto &obj = get<Vector>(m_value);
-  auto &obj_data = obj[MetaObjectIndex::StringMap]->get_node();
+  auto &obj_data = obj[Index::StringMap]->get_node();
 
   if(!obj_data.add(key, move(value)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
@@ -473,7 +459,7 @@ Node::OpStatus Meta::data_set(const string&key, unique_ptr<Node> value) {
 
 
   auto &obj = get<Vector>(m_value);
-  auto &obj_data = obj[MetaObjectIndex::StringMap]->get_node();
+  auto &obj_data = obj[Index::StringMap]->get_node();
 
   if(!obj_data.set(key, move(value)).second) {
     return {false, Node::create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
@@ -500,7 +486,7 @@ Node::OpStatusRef Meta::data_get(const string&key) {
   }
 
   auto &obj = get<Vector>(m_value);
-  auto &obj_data = obj[MetaObjectIndex::StringMap];
+  auto &obj_data = obj[Index::StringMap];
   return obj_data->get_node(key);
 
 }

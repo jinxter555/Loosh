@@ -59,12 +59,14 @@ UnsignedInteger Lang::str_to_atom(const string& str_value) {
 
 
 string Lang::atom_to_str(UnsignedInteger v) {
-  auto &atom_ref = m_atoms->unwrap_value<IMap>();
+  //auto &atom_ref = m_atoms->unwrap_value<IMap>();
+  auto &atom_ref = m_atoms->_get_imap_ref();
   return atom_ref[v]->_to_str();
 }
 
 string Lang::atom_to_str_imap(UnsignedInteger v) {
-  auto &atom_ref = m_atoms->unwrap_value<IMap>();
+  //auto &atom_ref = m_atoms->unwrap_value<IMap>();
+  auto &atom_ref = m_atoms->_get_imap_ref();
   //if (auto it = Atoms.find(v); it != Atoms.end()) 
   if (auto it = atom_ref.find(v); it != atom_ref.end()) 
     return atom_ref[v]->_to_str();

@@ -41,7 +41,7 @@ public:
   , class_, private_, new_, delete_, clone, use
   , error, noop, op
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
-  , atom, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map, cc_imap
+  , atom, symbol, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map, cc_imap
   , typeof_, size, is_atom, is_integer, is_float, is_string, is_list, is_deque, is_vector, is_cc_list, is_hash, is_ihash
   , var, setq, assign
   , car, cdr, map, index, head, tail, body
@@ -93,19 +93,9 @@ public:
   enum class Type { 
     Null, Token, Bool, Error, Size, Integer, UnsignedInteger, Float, String,
     Identifier, Identifier_g,  Tuple, List, Map, IMap, Set, Vector, DeQue, Op, 
-    ControlFlow, Atom, ObjectId, MetaObject, Meta, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
+    ControlFlow, Atom, Symbol, ObjectId, MetaObject, Meta, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
-  enum MetaObjectIndex {
-    Info, 
-    StringMap, 
-    VectorArray,
-    IntegerMap,
-    Parent,
-    MetaLock,
-    WalkerCount,  // number of tree traverse walkers. if > 0, do not delete node
-    cc_class,
-    count}; // count is last element hack for counting size of this
 
   enum ProgramObjectIndex {
     ProgramName,
@@ -122,6 +112,7 @@ public:
   using Integer = LOOSH_T_LONG; 
   using UnsignedInteger = unsigned LOOSH_T_LONG;
   using Atom_t = UnsignedInteger; 
+  using Symbol_t = UnsignedInteger; 
   using Float = double;
 
   using List = list<unique_ptr<Node>>;
@@ -303,6 +294,7 @@ template <typename T> T& get_value() {
   virtual Op _get_op() const;
   UnsignedInteger _get_unsigned_integer() const;
   Atom_t _get_atom() const;
+  Symbol_t _get_symbol() const;
   Float _get_float() const;
   Op _get_lisp_op() const;
   bool _get_bool() const;
@@ -313,6 +305,7 @@ template <typename T> T& get_value() {
   Vector& _get_vector_ref() ;
   DeQue& _get_deque_ref() ;
   List& _get_list_ref() ;
+  Set& _get_set_ref() ;
   ptr_R _get_ptr_r() ;
   ptr_U _get_ptr_u() ;
   virtual Meta* get_meta() ;
@@ -417,7 +410,6 @@ template <typename T> T& get_value() {
 
 
   OpStatusRef obj_data_get(const string&key);
-*/
 
 //------------------------------ 
 
@@ -425,7 +417,7 @@ template <typename T> T& get_value() {
   ptr_R _get_parent();
   OpStatus get_parent();
 //------------------------------ 
-
+*/
 
   OpStatus lock_shared() const;
   OpStatus lock_exclusive() const;
@@ -457,7 +449,6 @@ private:
   static MetaObject create_meta_vec();
   static SimpleObject create_simple_vec();
 
-  string to_str_meta() const ;
 
 };
 
@@ -465,7 +456,7 @@ private:
 class Meta: public Node {
 public:
   Meta();
-  Meta(Node::Type t) ;
+  //Meta(Node::Type t) ;
 
   enum Index {
     InfoMap, 
@@ -522,6 +513,26 @@ public:
   OpStatusRef array_get(UnsignedInteger);
   UnsignedInteger array_size() const ;
 
+
+
+};
+
+
+class Symbols : public Node {
+public:
+  enum Index {
+    ValueArray, // [] -> value
+    NameArray, //  [] -> name str
+    NameMap ,  //  [name string] -> index
+
+
+
+    count
+  };
+  Symbols() {  
+    push_back( Node::create(Node::Type::Vector));
+  }
+  static Vector create_vec();
 
 
 };

@@ -38,6 +38,7 @@ string Node::_to_str(Type type) {
     case Type::IMap: return "IMap";
     case Type::Set: return "Set";
     case Type::Atom: return "Atom";
+    case Type::Symbol: return "Symbol";
     case Type::Token: return "Token";
     case Type::ObjectId: return "ObjectId";
     case Type::Op: return "Operator";
@@ -65,6 +66,11 @@ string Node::_to_str() const {
     Integer num = get<UnsignedInteger>(m_value);
     return Loosh::Atom::atom_to_str(num); 
   }
+  case Type::Symbol: {
+    Integer num = get<UnsignedInteger>(m_value);
+    return "S" + to_string(num); 
+  }
+
   case Type::Integer: {
       Integer num = get<Integer>(m_value);
       return to_string(num); }
@@ -91,11 +97,6 @@ string Node::_to_str() const {
   case Type::DeQue: {
       auto&  cc_dq= get<DeQue>(m_value);
       return _to_str(cc_dq);}
-  case Type::MetaObject:  {
-      //auto& cc_vec = get<Vector>(m_value);
-      //cout << "Meta: _to_str() and size: " << cc_vec.size() <<"\n";
-      return to_str_meta();
-  }
   case Type::SimpleObject:  {
       cout << "_to_str() Simple\n";
       auto& cc_vec = get<Vector>(m_value);
@@ -295,18 +296,6 @@ string Node::_to_str(const IMap&cc_imap) {
   return (outstr);
 }
 
-
-
-string Node::to_str_meta() const {
-  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
-  string result="";
-  auto& cc_vec = get<Vector>(m_value);
-
-  result  += "Map:" + cc_vec[MetaObjectIndex::StringMap]->_to_str() + "\n";
-  result  += "Imap:" + cc_vec[MetaObjectIndex::IntegerMap]->get_node()._to_str() + "\n";
-  result  += "Vector: " + cc_vec[MetaObjectIndex::VectorArray]->get_node()._to_str() + "\n";
-  return result;
-}
 
 
 };

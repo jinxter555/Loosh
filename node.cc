@@ -60,7 +60,6 @@ Node::Node(Type t) : m_type(t) {
 
   case Type::Meta: break;
   //case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
-  //case Type::MetaObject: { m_value = move(create_meta_vec()); break; }
 
   case Type::Token:   { 
     Vector cc_vec(static_cast<int>(Token::Index::count));
@@ -94,6 +93,14 @@ Node::Node(Type t) : m_type(t) {
     m_value = Loosh::Atom::nil;
     break;
   }
+  case Type::Symbol: {
+    m_value = 0ll;
+    break;
+  }
+  case Type::Set: { 
+    m_value = Set();
+    break;}
+
   default: {
     m_value = monostate{};
     m_type = Type::Null;
@@ -512,6 +519,7 @@ Node::Integer Node::_get_integer() const { return get<Integer>(m_value); }
 Node::Op Node::_get_op() const { return get<Op>(m_value); }
 Node::UnsignedInteger Node::_get_unsigned_integer() const { return get<UnsignedInteger>(m_value); }
 Node::Atom_t  Node::_get_atom() const { return get<Atom_t>(m_value); }
+Node::Symbol_t  Node::_get_symbol() const { return get<Symbol_t>(m_value); }
 
 Node::Float Node::_get_float() const { return get<Float>(m_value); }
 
@@ -522,13 +530,6 @@ string Node::_get_str() const { return _to_str(); }
 Node::OpStatusRef Node::operator[](UnsignedInteger index) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   switch(m_type) {
-  case Type::MetaObject: {
-    Vector& cc_vec = get<Vector>(m_value);
-    if(index < 0 || index >= MetaObjectIndex::count) {
-      string msg = "Index " + to_string(index) + " is out of bound for MetaObject count " + to_string(MetaObjectIndex::count) + ".";
-      return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
-    }
-    return {true, *cc_vec[index]};}
   case Type::Token: 
   case Type::Vector: {
     Vector& cc_vec = get<Vector>(m_value);
@@ -671,12 +672,13 @@ Node::OpStatus Node::has_key(const string&key) {
     if (map.find(key) != map.end())  return {true, Node::create(true)};
     return {true, Node::create(false)};
   }
+  /*
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
     auto &map = meta[MetaObjectIndex::StringMap]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return {true, Node::create(true)};
     return {true, Node::create(false)};
-  }
+  }*/
   default: {} }
   return {false, create_error(Error::Type::InvalidOperation, 
       "Can't lookup key '" + key + "' for non map type: type: " + _to_str(m_type)
@@ -692,12 +694,13 @@ bool Node::_has_key(const string&key) {
     if (map.find(key) != map.end()) return true;
     return false;
   }
+  /*
   case Node::Type::MetaObject: {
     auto &meta = get<MetaObject>(m_value);
     auto &map = meta[MetaObjectIndex::StringMap]->unwrap_value<Map>();
     if (map.find(key) != map.end())  return true;
     return false;
-  }
+  }*/
   default: {} }
 
   auto msg =  "Not a Node::__Map__, type: " + _to_str(m_type)  + ", Node::m_value: " +  _to_str();
@@ -743,11 +746,7 @@ bool Node::_has_atom(Atom_t key) {
     auto &imap = get<IMap>(m_value);
     if (imap.find(key) != imap.end())  return true;
   }
-  case Type::MetaObject:{
-    auto &meta = get<MetaObject>(m_value);
-    auto &imap = meta[MetaObjectIndex::IntegerMap]->unwrap_value<IMap>();
-    if (imap.find(key) != imap.end())  return true;
-  }
+
 
   default:{}}
 

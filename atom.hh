@@ -17,7 +17,7 @@ public:
       lang, lisp, atom, op, noop,
       pid, ppid, parent, name,
       line, col, value, type,
-      arg, immute, var, retv
+      arg, immute, var, retv, table
 
   ;
   static const Node::UnsignedInteger   class_, function_, ops;

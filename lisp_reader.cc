@@ -43,25 +43,26 @@ Node::ptr_U LispReader::parse_lisp(Node::List& tokens) {
 
   while(! tokens.empty() ) {
     auto &tok = tokens.front();
-    if(tok->_get_op() == Token::Op::Lparen) {
+    switch(tok->_get_op()) {
+    case Token::Op::Lparen: {
       code->push_back( parse_lisp(tokens));
       continue;
     }
-    if(tok->_get_op() == Token::Op::Rparen) {
+    case Token::Op::Rparen: {
       if(!has_Lparen) {
-        auto msg =  "missing '(' ";
+        auto msg =  "1: missing '(' ";
         cerr << msg << endl;
         return nullptr;
       }
       tokens.pop_front();
       return code;
+    }}
 
-    }
     code->push_back(move(tok));
     tokens.pop_front();
   }
   if(has_Lparen){
-    auto msg =  "missing ')' ";
+    auto msg =  "2: missing ')' ";
     spdlog::error(clean_function_name() + ": " +  msg);
     //MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
     cerr << msg << endl;
