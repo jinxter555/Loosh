@@ -50,6 +50,10 @@ Node::Node(Type t) : m_type(t) {
   case Type::Integer: m_value=0; break;
   case Type::UnsignedInteger: m_value=0; break;
   case Type::Float: m_value=0.0; break;
+  case Type::Identifier_g:
+  case Type::Identifier_m:
+  case Type::Identifier: m_value=""; break;
+
   case Type::String: m_value=""; break;
   //case Type::Error: m_value = {} ; break;
   case Type::Error: m_value = Error{Error::Type::Unknown, "Unknown Init"} ; break;
@@ -60,6 +64,7 @@ Node::Node(Type t) : m_type(t) {
 
   case Type::Meta: break;
   //case Type::SimpleObject: { m_value = move(create_simple_vec()); break; }
+  case Type::Symbols: break;
 
   case Type::Token:   { 
     Vector cc_vec(static_cast<int>(Token::Index::count));
@@ -93,7 +98,9 @@ Node::Node(Type t) : m_type(t) {
     m_value = Loosh::Atom::nil;
     break;
   }
-  case Type::Symbol: {
+  case Type::Lookup_g:  // global symbol
+  case Type::Lookup_m:  // module symbol
+  case Type::Lookup: {
     m_value = 0ll;
     break;
   }
@@ -519,7 +526,7 @@ Node::Integer Node::_get_integer() const { return get<Integer>(m_value); }
 Node::Op Node::_get_op() const { return get<Op>(m_value); }
 Node::UnsignedInteger Node::_get_unsigned_integer() const { return get<UnsignedInteger>(m_value); }
 Node::Atom_t  Node::_get_atom() const { return get<Atom_t>(m_value); }
-Node::Symbol_t  Node::_get_symbol() const { return get<Symbol_t>(m_value); }
+Node::Lookup_t  Node::_get_lookup() const { return get<Lookup_t>(m_value); }
 
 Node::Float Node::_get_float() const { return get<Float>(m_value); }
 

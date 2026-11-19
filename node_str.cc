@@ -38,18 +38,21 @@ string Node::_to_str(Type type) {
     case Type::IMap: return "IMap";
     case Type::Set: return "Set";
     case Type::Atom: return "Atom";
-    case Type::Symbol: return "Symbol";
+    case Type::Lookup: return "Symbol Index Lookup";
+    case Type::Lookup_g: return "Global Symbol Lookup";
+    case Type::Lookup_m: return "Module Symbol Lookup";
     case Type::Token: return "Token";
     case Type::ObjectId: return "ObjectId";
     case Type::Op: return "Operator";
     case Type::Identifier: return "Identifier";
     case Type::Identifier_g: return "Global Identifier";
+    case Type::Identifier_m: return "Module Identifier";
     case Type::Raw: return "RawPtr";
     case Type::Unique: return "UniquePtr";
     case Type::Fun: return "Function";
     default:  return "Unknown Type";
   }
-  return "Unknown Type";
+  //return "Unknown Type";
 }
 
 string Node::_to_str() const {
@@ -66,7 +69,7 @@ string Node::_to_str() const {
     Integer num = get<UnsignedInteger>(m_value);
     return Loosh::Atom::atom_to_str(num); 
   }
-  case Type::Symbol: {
+  case Type::Lookup: {
     Integer num = get<UnsignedInteger>(m_value);
     return "S" + to_string(num); 
   }

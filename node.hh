@@ -92,8 +92,9 @@ public:
 // MapObjectId: 
   enum class Type { 
     Null, Token, Bool, Error, Size, Integer, UnsignedInteger, Float, String,
-    Identifier, Identifier_g,  Tuple, List, Map, IMap, Set, Vector, DeQue, Op, 
-    ControlFlow, Atom, Symbol, ObjectId, MetaObject, Meta, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
+    Identifier, Identifier_g, Identifier_m,  Tuple, List, Map, IMap, Set, Vector, DeQue, Op, 
+    ControlFlow, Atom, Lookup,  Lookup_g, Lookup_m,
+    Symbols, ObjectId, MetaObject, Meta, SimpleObject, Raw, Unique, Fun, AtomicInteger, Lock}; 
 
     // simple object: only Info and data
 
@@ -112,7 +113,7 @@ public:
   using Integer = LOOSH_T_LONG; 
   using UnsignedInteger = unsigned LOOSH_T_LONG;
   using Atom_t = UnsignedInteger; 
-  using Symbol_t = UnsignedInteger; 
+  using Lookup_t = UnsignedInteger; 
   using Float = double;
 
   using List = list<unique_ptr<Node>>;
@@ -294,7 +295,7 @@ template <typename T> T& get_value() {
   virtual Op _get_op() const;
   UnsignedInteger _get_unsigned_integer() const;
   Atom_t _get_atom() const;
-  Symbol_t _get_symbol() const;
+  Lookup_t _get_lookup() const;
   Float _get_float() const;
   Op _get_lisp_op() const;
   bool _get_bool() const;
@@ -327,6 +328,7 @@ template <typename T> T& get_value() {
   OpStatusRef front();
   OpStatusRef back();
   OpStatus resize(UnsignedInteger);
+  OpStatus reserve(UnsignedInteger);
 
 
   UnsignedInteger _size() const ;
@@ -374,50 +376,12 @@ template <typename T> T& get_value() {
   //
   void print(int depth=0) const;
   static void print_value_recursive(const Node& node, int depth=0);
+
+
   //static void print_value(const Value& node, int depth=0);
 
 
 
-
-//------------------------------ node object, aka meta object
-//  Node::OpStatus obj_meta_add(const string& meta_key, const string&key, unique_ptr<Node> child);
-//  Node::OpStatus obj_meta_set(const string& meta_key, const string&key, unique_ptr<Node> child);
-//  Node::OpStatus obj_meta_get(const string& meta_key, const string&key);
-
-/*
-  IMap&  obj_get_imap();
-  Map&  obj_get_map();
-  Vector&  obj_get_vector();
-
-  OpStatus obj_info_add(const string&key, unique_ptr<Node> child);
-  OpStatus obj_info_set(const string&key, unique_ptr<Node> child);
-  OpStatusRef obj_info_get(const string&key);
-  UnsignedInteger obj_info_size();
-
-
-  OpStatus obj_data_add(const string&key, unique_ptr<Node> child);
-  OpStatus obj_data_set(const string&key, unique_ptr<Node> child);
-  UnsignedInteger obj_data_size();
-
-  OpStatus obj_atom_add(const UnsignedInteger key, unique_ptr<Node> child);
-  OpStatus obj_atom_set(const UnsignedInteger key, unique_ptr<Node> child);
-  OpStatusRef obj_atom_get(const UnsignedInteger key);
-  UnsignedInteger _obj_atom_size();
-
-  OpStatus obj_array_push_back(ptr_U);
-  OpStatusRef obj_array_get(UnsignedInteger);
-  UnsignedInteger obj_array_size() const;
-
-
-  OpStatusRef obj_data_get(const string&key);
-
-//------------------------------ 
-
-  bool set_parent(ptr_R parent);
-  ptr_R _get_parent();
-  OpStatus get_parent();
-//------------------------------ 
-*/
 
   OpStatus lock_shared() const;
   OpStatus lock_exclusive() const;
@@ -521,17 +485,17 @@ public:
 class Symbols : public Node {
 public:
   enum Index {
-    ValueArray, // [] -> value
+   // ValueArray, // [] -> value
     NameArray, //  [] -> name str
     NameMap ,  //  [name string] -> index
-
-
-
     count
   };
-  Symbols() {  
-    push_back( Node::create(Node::Type::Vector));
-  }
+  Symbols() ;  
+
+  static unique_ptr<Symbols> create();
+
+  OpStatus add_or_lookup(const string&name);
+  Lookup_t add(const string&name);
   static Vector create_vec();
 
 

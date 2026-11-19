@@ -139,6 +139,24 @@ Node::OpStatus Node::resize(UnsignedInteger s) {
   }, m_value);
 }
 
+Node::OpStatus Node::reserve(UnsignedInteger s) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  return visit([&](auto&& arg) -> OpStatus {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, Vector>){
+      //cout << clean_function_name()  + ":" <<  value->_to_str() << "\n";
+      arg.reserve(s);
+      return {true, create(true)}; 
+
+    } else {
+      string msg =  "Cannot resize( size ) element to a non-Node::__Sequence__ node Node::type: " + _to_str(m_type) + ", Node::value: " +  _to_str() ;
+      spdlog::error(clean_function_name() + ": " + msg);
+      MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_FUNC_INFO);
+      cerr << clean_function_name() + ": " + msg << "\n";
+      throw std::bad_typeid();
+    }
+  }, m_value);
+}
 
 
 //----------------------------------- back

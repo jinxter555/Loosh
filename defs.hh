@@ -2,6 +2,7 @@
 // 
 // CURRENT_ is use by frame stack
 
+
 #define LOOSH_UNIVERSE "universe"
 #define LOOSH_PID "pid"
 #define LOOSH_PPID "ppid"
@@ -81,3 +82,5 @@
 #define LOOSH_SIMPLE_OBJECT_COUNT  2
 
 #define LOOSH_T_LONG long long
+
+#define SYMBOLS_RESERVE_COUNT 16
