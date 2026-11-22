@@ -11,6 +11,7 @@ class Scope : public Environment {
 private:
 public :
   Node *m_table, *m_immute, *m_arg, *m_retv ;
+  Symbols* symbols;
   enum Index {Immute, Arg, Var, RetV, count};
 
   Scope();

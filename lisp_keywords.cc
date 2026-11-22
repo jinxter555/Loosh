@@ -134,27 +134,27 @@ void Lisp::set_op_str() {
 
 }
 
-Lisp::Op Lisp::str_to_op(const string &input) {
+Node::OpStatus Lisp::str_to_op(const string &input) {
   MYLOGGER(trace_function, "LispExpr::keyword_to_op()", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("lookup input: ") + input, SLOG_FUNC_INFO+30);
 
-//  auto m_ops = get_branch(lisp_path_keyword);
-  //auto &m_ops = Lisp::m_ops;
-
-//*
   if(m_ops == nullptr || m_ops->m_type != Node::Type::Map) {
-    cout << "lisp keyworld m_ops type != map\n";
-    return Lisp::Op::error;
+    cerr << "lisp keyworld m_ops type != map\n";
+    throw std::bad_typeid();
+    //return {false, Node::create(Lisp::Op::error)};
   }
-//*/
+
+  if(!m_ops->_has_key(input)) {
+    return {false,  Node::create(Lisp::Op::identifier)};
+  }
 
   auto status = (*m_ops)[input];
   if(!status.first) {
-    MYLOGGER_MSG(trace_function, "Lisp keyword: " + input + " not found , return as scalar", SLOG_FUNC_INFO+30);
-    return Lisp::Op::scalar;
+    MYLOGGER_MSG(trace_function, "Lisp keyword: " + input + " not found , return as identifer", SLOG_FUNC_INFO+30);
+    return {false,  Node::create(Lisp::Op::identifier)};
   }
   auto op = get<Lisp::Op>(status.second.m_value);
-  return op;
+  return {true, Node::create(op)};
 }
 
 string Lisp::_to_str(Lisp::Op op) {

@@ -129,6 +129,9 @@ Node::Lock::Lock(unique_ptr<Node> n, unique_ptr<shared_mutex> m) {
 }
 */
 
+//------------------------------------------------------------------------ set
+void Node::set_value_type(Value v, Type t) { m_value = move(v); m_type = t; }
+
 
 //------------------------------------------------------------------------ create
 unique_ptr<Node> Node::create_error(Error::Type t, const string& msg) {

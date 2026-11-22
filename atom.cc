@@ -118,6 +118,8 @@ const Node::UnsignedInteger Atom::immute=str_to_atom("immute");
 const Node::UnsignedInteger Atom::var=str_to_atom("var");
 const Node::UnsignedInteger Atom::table=str_to_atom("table");
 const Node::UnsignedInteger Atom::retv=str_to_atom("retv");
+const Node::UnsignedInteger Atom::lookup=str_to_atom("lookup");
+const Node::UnsignedInteger Atom::symbols=str_to_atom("symbols");
 
 
 };

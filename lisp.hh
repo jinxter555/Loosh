@@ -35,8 +35,8 @@ class Lisp : public Lang {
 
   Interactive *interface; // user interface with command line, repl prompt, 
 
-  Meta* m_lisp;
-  Node* m_ops;
+  Meta* m_lisp; // tree->lang->lisp->
+  Node* m_ops; // tree->lang->lisp->ops
   Meta* m_process; // process branch
 
 public:
@@ -50,7 +50,7 @@ public:
   Lisp(Tree* t, LispReader& r);
   static string _to_str(Lisp::Op op);
   void set_op_str() ;
-  Op str_to_op(const string &input) ; // convert lisp string op keyword string 
+  Node::OpStatus str_to_op(const string &input) ; // convert lisp string op keyword string 
 
 
   Node::OpStatus eval(Node& process, Node& code);

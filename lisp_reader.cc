@@ -11,7 +11,7 @@
 namespace Loosh 
 {
 
-LispReader::LispReader() {};
+LispReader::LispReader(Lisp* l)  : lisp(l) {};
 
 //list<unique_ptr<Token>> LispReader::tokenize_lisp(const string& input_str ) {
 Node::List LispReader::tokenize_lisp(const string& input_str ) {
@@ -20,6 +20,7 @@ Node::List LispReader::tokenize_lisp(const string& input_str ) {
   Node::List tokens;
   std::stringstream stream(input_str);
   Loosh::Reader::Inline::Lexer lexer(&stream);
+  lexer.set_reader(this);
 
   for(auto raw_token = lexer.lex(); raw_token->_get_op() != Token::Op::done; raw_token = lexer.lex()) {
       //cout << "raw token: " <<  raw_token->_to_str() << "\n";

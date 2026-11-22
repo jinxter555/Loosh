@@ -1,7 +1,7 @@
-
 %top{
 #include "node.hh"
 #include "atom.hh"
+#include "lisp_reader.hh"
 
 #include <string>
 
@@ -22,6 +22,14 @@
 
 %include "lexer_generic.l"
 
+%class{
+public:
+    LispReader* reader = nullptr;
+
+    void set_reader(LispReader* r) {
+        reader = r;
+    }
+}
 %%
 
 {blank}+                { /* Skip spaces, tabs, carriage returns */ }
@@ -80,7 +88,24 @@
 }
 
 
-{identifier}                { return Loosh::Token::create(Loosh::Token::Op::identifier, text(), lineno(), columno()); }
+{identifier}                { 
+  string txt = text();
+  Node::OpStatus lisp_keyword = reader->lisp->str_to_op(txt);
+  if(lisp_keyword.first)  {
+    return Loosh::Token::create(lisp_keyword.second->_get_op(), txt, lineno(), columno()); 
+  }
+  else {
+    return Loosh::Token::create(Loosh::Token::Op::identifier, txt, lineno(), columno()); 
+  } 
+
+
+
+}
+
+
+{sym_op} {
+
+}
 
 .                       { return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno()); }
 

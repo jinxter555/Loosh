@@ -16,9 +16,12 @@ sym_start       [a-zA-Z_]
 
 /* 2. Subsequent characters can be letters, digits, underscores, or special symbols */
 sym_rest        [a-zA-Z0-9+\-*/=<>!?_]
+sym_rest_usable        [a-zA-Z0-9+\-*!?_]
+sym_op        [+\-*/=<>!?_]
 
 /* 3. Combine them: one start character followed by zero or more rest characters */
-identifier          {sym_start}{sym_rest}*
+//identifier          {sym_start}{sym_rest}*
+identifier          {sym_start}{sym_rest_usable}*
 
 
 //identifier_an      ([a-zA-Z][a-zA-Z0-9_]*)

@@ -24,7 +24,7 @@ Node *Interactive::proc_shell=nullptr;
 // histoery_file , prompt string
 
 Interactive::Interactive(Tree* tree, const std::string& hf , const std::string&ps) 
-: LangPrompt(hf, ps) , lisp_lang(tree, reader)
+: LangPrompt(hf, ps) , lisp_lang(tree, lisp_reader), lisp_reader(&lisp_lang)
 {
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
   //jli.set_interface(this);
@@ -149,7 +149,7 @@ void Interactive::print() {
 }
 
 LispReader& Interactive::get_reader() {
-  return reader;
+  return lisp_reader;
 }
 
 

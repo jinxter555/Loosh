@@ -209,6 +209,7 @@ public:
   void set(const Integer, Type );
   void set(const UnsignedInteger, Type );
   void set(const string&, Type );
+  void set_value_type(Value , Type);
 
   // map
   OpStatus set(const string&key, unique_ptr<Node> child);
@@ -295,6 +296,7 @@ template <typename T> T& get_value() {
   virtual Op _get_op() const;
   UnsignedInteger _get_unsigned_integer() const;
   Atom_t _get_atom() const;
+
   Lookup_t _get_lookup() const;
   Float _get_float() const;
   Op _get_lisp_op() const;
@@ -418,6 +420,12 @@ private:
 
 
 class Meta: public Node {
+protected:
+  Node *m_info_map, *m_string_map, *m_vector_array, *m_atom_map,
+    *m_parent,  *m_meta_lock, *m_walker_count, *m_cc_class
+
+   ;
+
 public:
   Meta();
   //Meta(Node::Type t) ;
@@ -448,6 +456,8 @@ public:
 
   OpStatus info_add(UnsignedInteger key, unique_ptr<Node> );
   OpStatus info_set(UnsignedInteger key, unique_ptr<Node> );
+  bool _info_has_atom(UnsignedInteger);
+
   OpStatusRef info_get(UnsignedInteger key);
   UnsignedInteger info_size();
   IMap&  info_imap_get();
@@ -457,15 +467,19 @@ public:
   OpStatus data_set(const string&key, unique_ptr<Node> );
   OpStatusRef data_get(const string&key);
   UnsignedInteger data_size() const;
+  bool _data_has_key(const string&key);
 
   OpStatus atom_add(UnsignedInteger key, unique_ptr<Node> );
   OpStatus atom_set(UnsignedInteger key, unique_ptr<Node> );
   OpStatusRef atom_get(UnsignedInteger key);
   UnsignedInteger atom_size();
   IMap&  atom_imap_get();
+  bool _atom_has_key(const string&key);
 
   OpStatus array_push_back(ptr_U);
   OpStatus array_push_front(ptr_U);
+  
+  bool _array_is_in_range(UnsignedInteger);
 
   OpStatus array_pop_back();
   OpStatus array_pop_front();
@@ -482,21 +496,15 @@ public:
 };
 
 
-class Symbols : public Node {
+// symbols table
+class Symbols : public Meta {
 public:
-  enum Index {
-   // ValueArray, // [] -> value
-    NameArray, //  [] -> name str
-    NameMap ,  //  [name string] -> index
-    count
-  };
   Symbols() ;  
 
   static unique_ptr<Symbols> create();
 
   OpStatus add_or_lookup(const string&name);
   Lookup_t add(const string&name);
-  static Vector create_vec();
 
 
 };

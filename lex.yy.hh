@@ -33,10 +33,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#line 2 "lexer_inline.l"
+#line 1 "lexer_inline.l"
 
 #include "node.hh"
 #include "atom.hh"
+#include "lisp_reader.hh"
 
 #include <string>
 
@@ -76,6 +77,15 @@ namespace Reader {
 namespace Inline {
 
 class Lexer : public reflex::AbstractLexer<reflex::Matcher> {
+#line 25 "lexer_inline.l"
+
+public:
+    LispReader* reader = nullptr;
+
+    void set_reader(LispReader* r) {
+        reader = r;
+    }
+
  public:
   typedef reflex::AbstractLexer<reflex::Matcher> AbstractBaseLexer;
   Lexer(

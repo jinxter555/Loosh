@@ -13,6 +13,16 @@ namespace Loosh {
 
 Meta::Meta() : Node(create_vec()) {
   m_type=Node::Type::Meta;
+  auto &obj = get<Vector>(m_value);
+
+  m_parent        = obj[Index::Parent].get();
+  m_info_map      = obj[Index::InfoMap].get();
+  m_string_map    = obj[Index::StringMap].get();
+  m_vector_array  = obj[Index::VectorArray].get();
+  m_atom_map      = obj[Index::AtomMap].get();
+  m_meta_lock     = obj[Index::MetaLock].get();
+  m_walker_count  = obj[Index::WalkerCount].get();
+  m_cc_class      = obj[Index::cc_class].get();
   
 }
 /*
@@ -183,6 +193,9 @@ Node::UnsignedInteger Meta::array_size() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
+  return m_vector_array->_size();
+
+  /*
   if(m_type != Type::Meta) {
     string msg = "Type: " + Node::_to_str(m_type) + " , Value:"  +  _to_str() + " is Not a MetaObject" ;
     cerr << clean_function_name() <<  ":" + msg << "\n";
@@ -193,7 +206,7 @@ Node::UnsignedInteger Meta::array_size() const {
   const auto &obj = get<Vector>(m_value);
   auto &obj_array  = obj[Index::VectorArray];
   return obj_array->_size();
-
+*/
 }
 
 Node::OpStatusRef Meta::array_back() {
@@ -410,16 +423,18 @@ Node::OpStatusRef Meta::info_get(const UnsignedInteger key) {
         "Not a Meta Object! " + Node::_to_str(m_type) + " : " + Node::_to_str(m_type))
     };
   }
-  //cout << "obj atom get: " << Loosh::Atom::atom_to_str( key) << "\n";
-  //cout << clean_function_name() << "obj atom get: key " << key << "\n";
 
   auto &obj = get<Vector>(m_value);
   auto &obj_info = obj[InfoMap];
- // auto &n1 = obj_atom->get_node();
- // cout <<  clean_function_name() <<  "n1: " << n1._to_str() << "\n";
 
   return obj_info->get_node(key);
 }
+
+ bool Meta::_info_has_atom(UnsignedInteger key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  return m_info_map->_has_atom(key);
+ }
 
 //------------------------------------------------------------------------ object data add, set, get
 Node::OpStatus Meta::data_add(const string&key, unique_ptr<Node> value) { 
@@ -506,6 +521,13 @@ Node::UnsignedInteger Meta::data_size() const {
 
 }
 
+bool Meta::_data_has_key(const string&key) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+  return m_string_map->_has_key(key);
+
+ }
+
 string Meta::_to_str() const {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
   string result="";
@@ -525,7 +547,7 @@ string Meta::_to_str() const {
 string Meta::_to_str(const Vector& cc_vec)  {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_TO_STR)
   string result;
-  result  += "Map:" + cc_vec[Index::StringMap]->_to_str() + "\n";
+  result  += "StringMap:" + cc_vec[Index::StringMap]->_to_str() + "\n";
   result  += "Atom:" + cc_vec[Index::AtomMap]->_to_str() + "\n";
   result  += "Info:" + cc_vec[Index::InfoMap]->_to_str() + "\n";
   result  += "Vector: " + cc_vec[Index::VectorArray]->_to_str() + "\n";

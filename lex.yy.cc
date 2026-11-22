@@ -30,10 +30,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-#line 2 "lexer_inline.l"
+#line 1 "lexer_inline.l"
 
 #include "node.hh"
 #include "atom.hh"
+#include "lisp_reader.hh"
 
 #include <string>
 
@@ -68,14 +69,15 @@
 /* 1. First character MUST be a letter or underscore (Ruby style) */
 #line 17 "lexer_generic.l"
 /* 2. Subsequent characters can be letters, digits, underscores, or special symbols */
-#line 20 "lexer_generic.l"
+#line 22 "lexer_generic.l"
 /* 3. Combine them: one start character followed by zero or more rest characters */
-#line 24 "lexer_generic.l"
+//identifier          {sym_start}{sym_rest}*
+#line 27 "lexer_generic.l"
 //identifier_an      ([a-zA-Z][a-zA-Z0-9_]*)
 
 
 
-#line 28 "lexer_generic.l"
+#line 31 "lexer_generic.l"
 //lc_identifier   ([a-z_][a-z0-9_]*)
 //cap             ([A-Z_])
 
@@ -87,7 +89,7 @@
 
 unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 {
-  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:\\Q+\\E))|((?:\\Q-\\E))|((?:\\Q*\\E))|((?:\\Q/\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:\\Q:\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*)))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d/-9<-?A-Z_a-z])*))|(.)";
+  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:\\Q+\\E))|((?:\\Q-\\E))|((?:\\Q*\\E))|((?:\\Q/\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:\\Q:\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*)))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*)))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*))|((?:[!*+\\x2d/<-?_]))|(.)";
   static const reflex::Pattern PATTERN_INITIAL(REGEX_INITIAL);
   if (!has_matcher())
   {
@@ -100,7 +102,7 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
           case 0:
             if (matcher().at_end())
             {
-#line 87 "lexer_inline.l"
+#line 112 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::done, std::monostate{}, lineno(), columno()); }
 
 
@@ -111,56 +113,56 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
               out().put(matcher().input());
             }
             break;
-          case 1: // rule lexer_inline.l:27: {blank}+ :
-#line 27 "lexer_inline.l"
+          case 1: // rule lexer_inline.l:35: {blank}+ :
+#line 35 "lexer_inline.l"
 { /* Skip spaces, tabs, carriage returns */ }
             break;
-          case 2: // rule lexer_inline.l:28: \n+ :
-#line 28 "lexer_inline.l"
+          case 2: // rule lexer_inline.l:36: \n+ :
+#line 36 "lexer_inline.l"
 { /* Skip standalone newlines */ }
             break;
-          case 3: // rule lexer_inline.l:29: ";".* :
-#line 29 "lexer_inline.l"
+          case 3: // rule lexer_inline.l:37: ";".* :
+#line 37 "lexer_inline.l"
 { /* Skip line comments */ }
 
             break;
-          case 4: // rule lexer_inline.l:31: "(" :
-#line 31 "lexer_inline.l"
+          case 4: // rule lexer_inline.l:39: "(" :
+#line 39 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::Lparen, monostate{}, lineno(), columno()); }
 
             break;
-          case 5: // rule lexer_inline.l:33: ")" :
-#line 33 "lexer_inline.l"
+          case 5: // rule lexer_inline.l:41: ")" :
+#line 41 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::Rparen, monostate{}, lineno(), columno()); }
             break;
-          case 6: // rule lexer_inline.l:34: "+" :
-#line 34 "lexer_inline.l"
+          case 6: // rule lexer_inline.l:42: "+" :
+#line 42 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::add , Loosh::Node::Op::add, lineno(), columno()); }
             break;
-          case 7: // rule lexer_inline.l:35: "-" :
-#line 35 "lexer_inline.l"
+          case 7: // rule lexer_inline.l:43: "-" :
+#line 43 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::sub , Loosh::Node::Op::sub, lineno(), columno()); }
             break;
-          case 8: // rule lexer_inline.l:36: "*" :
-#line 36 "lexer_inline.l"
+          case 8: // rule lexer_inline.l:44: "*" :
+#line 44 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::mul , Loosh::Node::Op::mul, lineno(), columno()); }
             break;
-          case 9: // rule lexer_inline.l:37: "/" :
-#line 37 "lexer_inline.l"
+          case 9: // rule lexer_inline.l:45: "/" :
+#line 45 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::div , Loosh::Node::Op::div, lineno(), columno()); }
 
             break;
-          case 10: // rule lexer_inline.l:39: {float_} :
-#line 39 "lexer_inline.l"
+          case 10: // rule lexer_inline.l:47: {float_} :
+#line 47 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::float_,   std::stod(text()),  lineno(), columno()); }
             break;
-          case 11: // rule lexer_inline.l:40: {integer_} :
-#line 40 "lexer_inline.l"
+          case 11: // rule lexer_inline.l:48: {integer_} :
+#line 48 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::integer_, std::stoll(text()), lineno(), columno()); }
 
             break;
-          case 12: // rule lexer_inline.l:42: {dqstring} :
-#line 42 "lexer_inline.l"
+          case 12: // rule lexer_inline.l:50: {dqstring} :
+#line 50 "lexer_inline.l"
 {
   std::string str = text();
   std::string actual_val = str.substr(1, str.length() - 2);
@@ -168,8 +170,8 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 }
 
             break;
-          case 13: // rule lexer_inline.l:51: ":"({identifier}) :
-#line 51 "lexer_inline.l"
+          case 13: // rule lexer_inline.l:59: ":"({identifier}) :
+#line 59 "lexer_inline.l"
 {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
   std::string_view atom_match (matcher().begin() + 1, matcher().size() - 1);
 
@@ -195,8 +197,8 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 }
 
             break;
-          case 14: // rule lexer_inline.l:75: "begin."({identifier}) :
-#line 75 "lexer_inline.l"
+          case 14: // rule lexer_inline.l:83: "begin."({identifier}) :
+#line 83 "lexer_inline.l"
 {       // matcher()[1] isolates exactly what was caught in the 1st set of parentheses
   std::string symbol_text (matcher().begin() + 6, matcher().size() - 6);
   cout << "symbol_text: " << symbol_text << "\n";
@@ -206,13 +208,33 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 
 
             break;
-          case 15: // rule lexer_inline.l:83: {identifier} :
-#line 83 "lexer_inline.l"
-{ return Loosh::Token::create(Loosh::Token::Op::identifier, text(), lineno(), columno()); }
+          case 15: // rule lexer_inline.l:91: {identifier} :
+#line 91 "lexer_inline.l"
+{
+  string txt = text();
+  Node::OpStatus lisp_keyword = reader->lisp->str_to_op(txt);
+  if(lisp_keyword.first)  {
+    return Loosh::Token::create(lisp_keyword.second->_get_op(), txt, lineno(), columno());
+  }
+  else {
+    return Loosh::Token::create(Loosh::Token::Op::identifier, txt, lineno(), columno());
+  }
+
+
+
+}
+
 
             break;
-          case 16: // rule lexer_inline.l:85: . :
-#line 85 "lexer_inline.l"
+          case 16: // rule lexer_inline.l:106: {sym_op} :
+#line 106 "lexer_inline.l"
+{
+
+}
+
+            break;
+          case 17: // rule lexer_inline.l:110: . :
+#line 110 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno()); }
 
             break;

@@ -23,7 +23,7 @@ private:
   Tree *universal_tree;
 
   Lisp lisp_lang; // 
-  LispReader reader;
+  LispReader lisp_reader;
   static  Node *proc_shell;
 public:
   Interactive(Tree *t, const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
