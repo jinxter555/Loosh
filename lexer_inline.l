@@ -92,19 +92,23 @@ public:
   string txt = text();
   Node::OpStatus lisp_keyword = reader->lisp->str_to_op(txt);
   if(lisp_keyword.first)  {
-    return Loosh::Token::create(lisp_keyword.second->_get_op(), txt, lineno(), columno()); 
+    return Loosh::Token::create(lisp_keyword.second->_get_op(), lisp_keyword.second->_get_op(),  lineno(), columno()); 
   }
   else {
     return Loosh::Token::create(Loosh::Token::Op::identifier, txt, lineno(), columno()); 
   } 
 
 
-
 }
 
 
-{sym_op} {
-
+{operator} {
+  cout << "operator: " << text() << "\n";
+  string txt = text();
+  Node::OpStatus lisp_keyword = reader->lisp->str_to_op(txt);
+  if(lisp_keyword.first)  
+    return Loosh::Token::create(lisp_keyword.second->_get_op(), txt, lineno(), columno()); 
+  return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno()); 
 }
 
 .                       { return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno()); }

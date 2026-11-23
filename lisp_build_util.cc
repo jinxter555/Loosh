@@ -45,7 +45,7 @@ Node::OpStatus Lisp::run_program(int argc, char *argv[]) {
     }
     //cout << "token size after parse: " << tokens.size() << "\n";
     cout << "tree: " <<  tree->_to_str() << "\n\n";
-    eval(*tree, *tree);
+    eval(*kernel, *tree);
 
     /*
     std::stringstream stream(input_str);

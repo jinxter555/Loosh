@@ -72,12 +72,12 @@
 #line 22 "lexer_generic.l"
 /* 3. Combine them: one start character followed by zero or more rest characters */
 //identifier          {sym_start}{sym_rest}*
-#line 27 "lexer_generic.l"
+#line 28 "lexer_generic.l"
 //identifier_an      ([a-zA-Z][a-zA-Z0-9_]*)
 
 
 
-#line 31 "lexer_generic.l"
+#line 32 "lexer_generic.l"
 //lc_identifier   ([a-z_][a-z0-9_]*)
 //cap             ([A-Z_])
 
@@ -89,7 +89,7 @@
 
 unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
 {
-  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:\\Q+\\E))|((?:\\Q-\\E))|((?:\\Q*\\E))|((?:\\Q/\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:\\Q:\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*)))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*)))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*))|((?:[!*+\\x2d/<-?_]))|(.)";
+  static const char *REGEX_INITIAL = "(?m)((?:[\\x09\\x0d\\x20])+)|(\\n+)|((?:\\Q;\\E).*)|((?:\\Q(\\E))|((?:\\Q)\\E))|((?:\\Q+\\E))|((?:\\Q-\\E))|((?:\\Q*\\E))|((?:\\Q/\\E))|((?:(?:(?:(?:(?:(?:(?:(?:(?:(?:[0-9]+))?))(?:\\Q.\\E)(?:(?:[0-9]+)))|(?:(?:[0-9]+))(?:\\Q.\\E)))(?:(?:(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))?)))|(?:(?:(?:[0-9]+))(?:(?:[Ee][\\x2b\\x2d]?(?:(?:[0-9]+))))))))|((?:(?:(?:(?:[0-9]+)))))|((?:\"(?:[^\"\\x5c]|\\\\.|\\\\n|\\n)*\"))|((?:\\Q:\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*)))|((?:\\Qbegin.\\E)(?:(?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*)))|((?:(?:[A-Z_a-z])(?:[!*+\\x2d0-9\\x3fA-Z_a-z])*))|((?:(?:[!*+\\x2d/<-?_])(?:[!*+\\x2d/<-?_])*))|(.)";
   static const reflex::Pattern PATTERN_INITIAL(REGEX_INITIAL);
   if (!has_matcher())
   {
@@ -102,7 +102,7 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
           case 0:
             if (matcher().at_end())
             {
-#line 112 "lexer_inline.l"
+#line 116 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::done, std::monostate{}, lineno(), columno()); }
 
 
@@ -214,27 +214,31 @@ unique_ptr<Loosh::Token> Loosh::Reader::Inline::Lexer::lex(void)
   string txt = text();
   Node::OpStatus lisp_keyword = reader->lisp->str_to_op(txt);
   if(lisp_keyword.first)  {
-    return Loosh::Token::create(lisp_keyword.second->_get_op(), txt, lineno(), columno());
+    return Loosh::Token::create(lisp_keyword.second->_get_op(), lisp_keyword.second->_get_op(),  lineno(), columno());
   }
   else {
     return Loosh::Token::create(Loosh::Token::Op::identifier, txt, lineno(), columno());
   }
 
 
-
 }
 
 
             break;
-          case 16: // rule lexer_inline.l:106: {sym_op} :
-#line 106 "lexer_inline.l"
+          case 16: // rule lexer_inline.l:105: {operator} :
+#line 105 "lexer_inline.l"
 {
-
+  cout << "operator: " << text() << "\n";
+  string txt = text();
+  Node::OpStatus lisp_keyword = reader->lisp->str_to_op(txt);
+  if(lisp_keyword.first)
+    return Loosh::Token::create(lisp_keyword.second->_get_op(), txt, lineno(), columno());
+  return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno());
 }
 
             break;
-          case 17: // rule lexer_inline.l:110: . :
-#line 110 "lexer_inline.l"
+          case 17: // rule lexer_inline.l:114: . :
+#line 114 "lexer_inline.l"
 { return Loosh::Token::create(Loosh::Token::Op::error, text(), lineno(), columno()); }
 
             break;

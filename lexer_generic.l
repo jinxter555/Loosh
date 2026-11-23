@@ -22,6 +22,7 @@ sym_op        [+\-*/=<>!?_]
 /* 3. Combine them: one start character followed by zero or more rest characters */
 //identifier          {sym_start}{sym_rest}*
 identifier          {sym_start}{sym_rest_usable}*
+operator          {sym_op}{sym_op}*
 
 
 //identifier_an      ([a-zA-Z][a-zA-Z0-9_]*)
