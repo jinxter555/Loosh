@@ -43,7 +43,7 @@ public:
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
   , atom, symbol, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map, cc_imap
   , typeof_, size, is_atom, is_integer, is_float, is_string, is_list, is_deque, is_vector, is_cc_list, is_hash, is_ihash
-  , var, setq, assign
+  , var, setq, setq_index, assign
   , car, cdr, map, index, head, tail, body
   , add, sub, div, slash=div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_
   , read, readline, load, import, require
@@ -496,18 +496,6 @@ public:
 };
 
 
-// symbols table
-class Symbols : public Meta {
-public:
-  Symbols() ;  
-
-  static unique_ptr<Symbols> create();
-
-  OpStatus add_or_lookup(const string&name);
-  Lookup_t add(const string&name);
-
-
-};
 
 class Token: public Node {
 private:

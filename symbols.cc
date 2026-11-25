@@ -1,4 +1,5 @@
 #include "node.hh"
+#include "symbols.hh"
 
 //#include "trace_guard.hh"
 #define SLOG_DEBUG_TRACE_FUNC
@@ -12,13 +13,12 @@ using namespace std;
 namespace Loosh {
 
 Symbols::Symbols() : Meta() {
-  m_cc_class->set_value_type(Atom::symbols, Type::Atom);
+  m_cc_class->set_value_type(Atom::symbols, Node::Type::Atom);
 }
 
 Node::Lookup_t Symbols::add(const string&name) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
-
 
   UnsignedInteger symbol_index = m_vector_array->_size();
   m_vector_array->push_back(Node::create(name));
@@ -27,6 +27,18 @@ Node::Lookup_t Symbols::add(const string&name) {
 
 }
 
+Node::OpStatus Symbols::lookup(const string&name) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
+  AUTO_TRACE();
+
+  if(m_string_map->_has_key(name)) {
+    auto idx = (*m_string_map)[name].second._get_unsigned_integer();
+    return {true, Node::create(idx)};
+  } else {
+    return {false, Node::create()};
+  }
+
+}
 
 Node::OpStatus Symbols::add_or_lookup(const string&name) {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);

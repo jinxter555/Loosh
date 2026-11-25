@@ -56,4 +56,23 @@ Node::OpStatus Scope::table_add(UnsignedInteger atom_name, Node::ptr_U value) {
   return {true, Node::create()};
 }
 
+//------------------------------------------------------------------------ 
+void Scope::add(const string& name, Node::ptr_U value) {
+  auto idx_status = symbols->add_or_lookup(name);
+  //auto index =
+  m_vector_array->set(idx_status.second->_get_unsigned_integer(), move(value));
+}
+Node::OpStatus Scope::lookup(const string&name) {
+  auto idx_status = symbols->lookup(name);
+  if(idx_status.first) {
+  auto vptr = (*m_vector_array)[idx_status.second->_get_unsigned_integer()];
+
+  //return {true, (*m_vector_array)[idx_status.second->_get_unsigned_integer()].get()};
+
+  }
+
+}
+
+//------------------------------------------------------------------------ 
+
 }

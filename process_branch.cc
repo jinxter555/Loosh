@@ -78,10 +78,19 @@ void Process::pop_frame() {
 }
 
 Node::OpStatusRef Process::current_frame() {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   return  frame_vec->back();
 }
 Node::OpStatusRef Process::current_scope() {
-  auto frame = frame_vec->back();
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
+  auto current_frame = frame_vec->back();
+  if(!current_frame.first)  {
+
+    cerr <<  clean_function_name () + ": current scope error \n";
+  }
+  return current_frame.second.back();
+
+
 }
 
 
@@ -121,8 +130,19 @@ Process* ProcessBranch::create_kernel() {
   }
 */
 
-  auto proc = Process::create(_get_next_pid(), 0 );
+  auto proc = Process::create(_get_next_pid(), 0 ); // _get_next_pid() starts at 0 and then ++
   proc->push_frame()->push_scope();
+  auto current_scope = proc->current_scope();
+  auto symbols = Symbols::create();
+  auto symbols_index  = symbols->add("symbols");
+
+  if(!current_scope.first) {
+    cerr <<  clean_function_name() +  ": error current scope !\n";
+    return nullptr;
+  }
+
+  current_scope.second.set(symbols_index, move(symbols)); //
+
   auto ptr = proc.get();
 
   m_process->atom_add(0,  move(proc));

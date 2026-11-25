@@ -49,6 +49,7 @@ void Lisp::set_op_str() {
   m_ops->set("cc_vector", Op::cc_vector);
   m_ops->set("var", Op::var);
   m_ops->set("setq", Op::setq);
+  m_ops->set("setq_index", Op::setq_index);
   m_ops->set("assign", Op::assign);
   m_ops->set("car", Op::car);
   m_ops->set("cdr", Op::cdr);
@@ -224,6 +225,7 @@ string Lisp::_to_str(Lisp::Op op) {
 
     case Lisp::Op::var: return "var";
     case Lisp::Op::setq: return "setq";
+    case Lisp::Op::setq_index: return "setq_index";
     case Lisp::Op::assign: return "assign";
     case Lisp::Op::def: return "def";
     case Lisp::Op::call: return "call";

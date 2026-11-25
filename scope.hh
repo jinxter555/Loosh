@@ -1,4 +1,5 @@
 #pragma once
+#include "symbols.hh"
 #include "environment.hh"
 #include "defs.hh"
 
@@ -26,6 +27,15 @@ public :
   Node::OpStatus immute_add(UnsignedInteger atom_name, Node::ptr_U) ;
   Node::OpStatus arg_add(UnsignedInteger atom_name, Node::ptr_U) ;
   
+  void  add(const string&name, ptr_U value);
+  Node::OpStatus lookup(const string&name);
+/*
+  OpStatus add_or_lookup(const string&name) override;
+  OpStatus lookup(const string&name) override;
+  Lookup_t add(const string&name) override;
+  Lookup_t set(const string&name) override;
+*/
+
 
 };
 
