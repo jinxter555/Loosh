@@ -56,6 +56,9 @@ public:
   Node::OpStatus eval(Node& process, Node& code);
   Node::OpStatus eval(Node& process, Node::Vector& cc_vec_code, UnsignedInteger start);
 
+   // eval individual items and return vec
+  Node::OpStatus eval_each_element(Node& process, Node::Vector& cc_vec_code, UnsignedInteger start);
+
 
   Node::OpStatus add(Node& process, const  Vector& vector, UnsignedInteger start) ;
   Node::OpStatus mul(Node& process, const  Vector& vector, UnsignedInteger start) ;

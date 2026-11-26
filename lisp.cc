@@ -49,8 +49,8 @@ Node::OpStatus Lisp::eval(Node& process, Node& code) {
     auto &cc_vec = code._get_vector_ref();
     return eval(process, cc_vec, 0);
   }
-  case Node::Type::Integer: {
-    cout << "integer: " <<  code._get_integer() << "\n";
+  case Node::Type::Identifier: {
+    cout << "Identifier: " <<  code << "\n";
     break;
   }
   default: {}}
@@ -95,6 +95,12 @@ Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec, UnsignedInteger s
     cout << "setq: " <<  op_node_status << "\n";
     return {true, Node::create()};
   }
+  case Node::Op::print: {
+    //cout << "op status add: " <<  op_node_status << "\n";
+    auto result_status = eval_each_element(process, cc_vec, start+1) ;
+    cout << result_status << "\n";
+    return {true, Node::create(Atom::ok)};
+  }
 
 
   default:{}}
@@ -104,6 +110,22 @@ Node::OpStatus Lisp::eval(Node& process, Node::Vector& cc_vec, UnsignedInteger s
 }
 
 
+Node::OpStatus Lisp::eval_each_element(Node& process, Node::Vector& cc_vec, UnsignedInteger start){
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_INFO)
+
+  Vector result_vec;
+  UnsignedInteger s=cc_vec.size();
+
+  for(UnsignedInteger i=start; i< s; i++) {
+    auto result_status  = eval(process, *cc_vec[i]);
+    if(!result_status.first) {
+      cerr << clean_function_name() +  ": eval error  " << result_status << "\n";
+      return {false, Node::create()};
+    }
+    result_vec.push_back(move(result_status.second));
+  }
+  return {true, Node::create(move(result_vec))};
+}
 
 
 };

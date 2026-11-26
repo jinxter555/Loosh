@@ -58,18 +58,25 @@ Node::OpStatus Scope::table_add(UnsignedInteger atom_name, Node::ptr_U value) {
 
 //------------------------------------------------------------------------ 
 void Scope::add(const string& name, Node::ptr_U value) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
+
   auto idx_status = symbols->add_or_lookup(name);
-  //auto index =
-  m_vector_array->set(idx_status.second->_get_unsigned_integer(), move(value));
+
+  auto index_sym = idx_status.second->_get_unsigned_integer();
+  if(index_sym > m_vector_array->_size()) {
+    m_vector_array->push_back(move(value));
+  } else {
+    m_vector_array->set(index_sym, move(value));
+  }
 }
 Node::OpStatus Scope::lookup(const string&name) {
+  MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_FUNC_PROCESS)
   auto idx_status = symbols->lookup(name);
   if(idx_status.first) {
-  auto vptr = (*m_vector_array)[idx_status.second->_get_unsigned_integer()];
-
-  //return {true, (*m_vector_array)[idx_status.second->_get_unsigned_integer()].get()};
-
+    auto vptr = (*m_vector_array)[idx_status.second->_get_unsigned_integer()];
+    return {true, Node::create(&vptr.second)}; //return {true, vptr.second.clone()};
   }
+  return  {false, Node::create()};
 
 }
 
