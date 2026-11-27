@@ -1,4 +1,5 @@
 #include "node.hh"
+#include "defs.hh"
 #include "symbols.hh"
 
 //#include "trace_guard.hh"
@@ -14,6 +15,7 @@ namespace Loosh {
 
 Symbols::Symbols() : Meta() {
   m_cc_class->set_value_type(Atom::symbols, Node::Type::Atom);
+  add(LOOSH_SYMBOLS);
 }
 
 Node::Lookup_t Symbols::add(const string&name) {

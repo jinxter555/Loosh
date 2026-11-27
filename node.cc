@@ -361,6 +361,19 @@ Node::ptr_R Node::_get_ptr_r() {
   MYLOGGER(trace_function, clean_function_name(), clean_function_name(), SLOG_NODE_OP);
   AUTO_TRACE();
 
+  if(m_type == Type::Raw)  {
+    auto rptr = get<ptr_R>(m_value);
+    if(rptr->m_type == Node::Type::Raw) {
+      string msg = "Raw, ptr_R is pointing to another RAW pointer!";
+      spdlog::warn(clean_function_name() + ": " + msg);
+    }
+    return rptr;
+  } else {
+    return this;
+  }
+
+
+  /*
   switch(m_type) {
   case Type::Raw: {
     auto rptr = get<ptr_R>(m_value);
@@ -372,14 +385,15 @@ Node::ptr_R Node::_get_ptr_r() {
     return rptr;
   }
   default: {}}
-
+  
   auto msg = "Node::_get_ptr_r() Error! not a Node::ptr_R: Node::m_type " 
   + _to_str(m_type) + ", Node::m_value " +  _to_str() ;
 
   spdlog::error(clean_function_name() + ": " + msg);
   MYLOGGER_MSG(trace_function, "Error: " + msg, SLOG_NODE_OP)
   throw std::bad_typeid();
-  
+  */
+
 }
 
 

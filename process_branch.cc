@@ -134,14 +134,14 @@ Process* ProcessBranch::create_kernel() {
   proc->push_frame()->push_scope();
   auto current_scope = proc->current_scope();
   auto symbols = Symbols::create();
-  auto symbols_index  = symbols->add("symbols");
 
   if(!current_scope.first) {
     cerr <<  clean_function_name() +  ": error current scope !\n";
     return nullptr;
   }
 
-  current_scope.second.set(symbols_index, move(symbols)); //
+  //current_scope.second.set(symbols_index, move(symbols)); //
+  current_scope.second.set(0ll, move(symbols)); //
 
   auto ptr = proc.get();
 

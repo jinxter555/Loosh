@@ -4,6 +4,7 @@
 
 
 #define LOOSH_UNIVERSE "universe"
+#define LOOSH_SYMBOLS "symbols"
 #define LOOSH_PID "pid"
 #define LOOSH_PPID "ppid"
 //#define CFS "control_flow_state"
@@ -83,4 +84,4 @@
 
 #define LOOSH_T_LONG long long
 
-#define SYMBOLS_RESERVE_COUNT 16
+#define LOOSH_SYMBOLS_RESERVE_COUNT 16

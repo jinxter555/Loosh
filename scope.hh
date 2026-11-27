@@ -12,10 +12,11 @@ class Scope : public Environment {
 private:
 public :
   Node *m_table, *m_immute, *m_arg, *m_retv ;
-  Symbols* symbols;
+  Symbols* m_symbols;
   enum Index {Immute, Arg, Var, RetV, count};
 
-  Scope();
+  Scope();                        // kernel scope
+  Scope(Symbols*);
   static unique_ptr<Scope> create(ptr_R parent_node=nullptr) ;
   unique_ptr<Scope> create_child() ;
 
@@ -29,6 +30,8 @@ public :
   
   void  add(const string&name, ptr_U value);
   Node::OpStatus lookup(const string&name);
+
+  Symbols* get_symbols();
 /*
   OpStatus add_or_lookup(const string&name) override;
   OpStatus lookup(const string&name) override;
